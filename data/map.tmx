@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.0" orientation="orthogonal" renderorder="right-up" width="50" height="50" tilewidth="64" tileheight="64" infinite="0" nextobjectid="18">
+ <tileset firstgid="1" name="mario" tilewidth="64" tileheight="64" tilecount="256" columns="16">
+  <image source="mapres/mario_oldscool.png" width="1024" height="1024"/>
+  <tile id="51">
+   <objectgroup draworder="index">
+    <object id="1" type="static" x="4.25" y="8" width="55.5" height="55.75">
+     <ellipse/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="76">
+   <animation>
+    <frame tileid="76" duration="300"/>
+    <frame tileid="75" duration="300"/>
+    <frame tileid="74" duration="300"/>
+    <frame tileid="73" duration="300"/>
+   </animation>
+  </tile>
+  <tile id="92">
+   <animation>
+    <frame tileid="92" duration="300"/>
+    <frame tileid="91" duration="300"/>
+    <frame tileid="90" duration="300"/>
+    <frame tileid="89" duration="300"/>
+   </animation>
+  </tile>
+  <tile id="189">
+   <animation>
+    <frame tileid="189" duration="100"/>
+    <frame tileid="188" duration="100"/>
+    <frame tileid="187" duration="100"/>
+    <frame tileid="186" duration="100"/>
+    <frame tileid="185" duration="100"/>
+    <frame tileid="184" duration="100"/>
+    <frame tileid="183" duration="100"/>
+    <frame tileid="182" duration="100"/>
+   </animation>
+  </tile>
+ </tileset>
+ <tileset firstgid="257" name="entities" tilewidth="64" tileheight="64" tilecount="256" columns="16">
+  <image source="mapres/entities.png" width="1024" height="1024"/>
+  <tile id="1">
+   <objectgroup draworder="index">
+    <object id="1" type="static" x="0.00497159" y="0.00887784" width="63.9901" height="63.9911"/>
+   </objectgroup>
+  </tile>
+ </tileset>
+ <layer name="Background" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJztz8EJACAQA8ErzP7rsgRB8Ig6A3nmsVXvGJdPR9ZWdj4ddOg44deOVDqy6MiiI4sOAAAAAAAAuk3fLzPN
+  </data>
+ </layer>
+ <layer name="Lava" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJztz0ENACAMBMEaRAL1LwOeBAW0zCSbe18EAADwkrkbx1aVV1V1+QEAAAAAAPCDBZvHBEU=
+  </data>
+ </layer>
+ <layer name="Game" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJzt1VsKgCAQQFFz/5tqZ20gjZ4z2jkg9JHQxQnrUkqdZI1u9o51sLYr8xb9D+x9V2+mWu9Hz+ETHUd7vnCno/Uc4c/nkfG+OduRlY5cdOSiI5eZOrLdaQAAAAAAAG/YAB94AnM=
+  </data>
+ </layer>
+ <layer name="Foreground" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJzt1VEKgCAQQMH97T6dv7N1AS1Sy01mQPAjwYeGW0Rsi4y/0xGxj9xIp5b7NvsfKO3r6ixq38++hyM67tZ8oaejNp+hpeMojD92ZHxvnnZkpSMXHbnoyGWljmxvGgAAAAAAwBtOcA4I+w==
+  </data>
+ </layer>
+ <objectgroup name="Collisions">
+  <object id="10" type="death" x="2881" y="925" width="255.5" height="162.5"/>
+ </objectgroup>
+ <objectgroup name="Boxes">
+  <object id="14" type="dynamic" x="183.917" y="66.8333" width="61" height="62">
+   <properties>
+    <property name="color_a" type="int" value="255"/>
+   </properties>
+  </object>
+  <object id="16" type="dynamic" x="183.917" y="191.833" width="61" height="62">
+   <properties>
+    <property name="color_a" type="int" value="255"/>
+   </properties>
+  </object>
+  <object id="17" type="dynamic" x="183.917" y="129.333" width="61" height="62">
+   <properties>
+    <property name="color_a" type="int" value="255"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

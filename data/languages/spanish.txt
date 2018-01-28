@@ -1,0 +1,15 @@
+Start Game=Comenzar Partida
+BACK=ATRAS
+Options=Opciones
+EXIT=SALIR
+LOADING=CARGANDO
+CONTROLS=CONTROLES
+CREDITS=CREDITOS
+Credits=Creditos
+Controls=Controles
+Powered By=Impulsado Por
+Move Left=Moverse Izquierda
+Move Right=Moverse Derecha
+Main Coder=Programador
+Jump=Saltar
+Use=Usar

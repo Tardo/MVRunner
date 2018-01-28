@@ -1,0 +1,64 @@
+image: Visual Studio 2015
+
+environment:
+  SFML_ROOT: c:\projects\SFML-2.4.2
+  ZPG_ROOT: C:\Program Files (x86)\libZpg
+  
+cache:
+  - c:\projects\SFML-2.4.2
+  #- C:\Program Files (x86)\libZpg
+  #- C:\projects\zlib-1.2.11
+
+install:
+  - cd c:\projects
+  # Download SFML 2.4.2 binaries
+  - IF NOT EXIST "%SFML_ROOT%" (
+    md "%SFML_ROOT%" &&
+    curl -LfsS -o sfml.zip https://www.sfml-dev.org/files/SFML-2.4.2-windows-vc14-32-bit.zip &&
+    7z x sfml.zip)
+  # Download ZLib Source
+  - IF NOT EXIST zlib-1.2.11 (
+    curl -LfsS -o zlib-1.2.11.tar.gz http://zlib.net/zlib-1.2.11.tar.gz &&
+    7z x zlib-1.2.11.tar.gz &&
+    7z x zlib-1.2.11.tar &&
+    cd zlib-1.2.11 &&
+    md build32 & cd build32 &&
+    cmake -Werror=dev -G"Visual Studio 14 2015" .. &&
+    cd .. &&
+    cmake --build build32 --config Release --target install &&
+    cd ..)
+  # Download libZpg Source
+  - IF NOT EXIST "%ZPG_ROOT%" (
+    md "%ZPG_ROOT%" &&
+    curl -LfsS -o libzpg.zip https://github.com/Tardo/Zpg/archive/master.zip &&
+    7z x libzpg.zip &&
+    cd Zpg-master &&
+    md build32 & cd build32 &&
+    cmake -Werror=dev -G"Visual Studio 14 2015" .. &&
+    cd .. &&
+    cmake --build build32 --config Release --target install &&
+    cd ..)
+  - cd c:\projects\MediaVida
+
+before_build:
+- cmd: |
+    md build32\Release & cd build32
+    cmake -Werror=dev -G "Visual Studio 14 2015" ..
+    cd ..
+    
+build_script:
+  - cmd: cmake --build build32 --config Release --target package
+  - cmd: cmake --build build32 --config Release --target create_zip
+
+artifacts:
+  - path: build32/Release/MVRunner.exe
+          build32/Release/MVRunner_d.exe
+          build32/Release/.zip
+          build32/*.exe
+          build32/*.zip
+          build32/Release/assets.zpg
+    name: MVRunner
+
+branches:
+  except:
+  - staging.tmp
