@@ -1,4 +1,4 @@
-# To Build MediaVida Reto Game
+# To Build MVRunner Reto Game
 dependencies:
   pre:
     - |
@@ -21,8 +21,8 @@ dependencies:
 ## Artifacts
 general:
   artifacts:
-    - "build-debug/MediaVida_d"
-    - "build-release/MediaVida"
+    - "build-debug/MVRunner_d"
+    - "build-release/MVRunner"
     - "build-release/assets.zpg"
 
 ## Customize test commands

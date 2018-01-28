@@ -38,7 +38,7 @@ install:
     cd .. &&
     cmake --build build32 --config Release --target install &&
     cd ..)
-  - cd c:\projects\MediaVida
+  - cd c:\projects\MVRunner
 
 before_build:
 - cmd: |
