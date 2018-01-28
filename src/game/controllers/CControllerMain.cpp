@@ -94,8 +94,7 @@ void CControllerMain::tick() noexcept
 					else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 						moveState |= CCharacter::MOVE_STATE_RIGHT;
 
-					if (moveState != CCharacter::MOVE_STATE_STOP)
-						pChar->move(moveState, turbo);
+					pChar->move(moveState, turbo);
 
 					// Player Use Action
 					if (!pressedButtonUse && sf::Keyboard::isKeyPressed(sf::Keyboard::E))

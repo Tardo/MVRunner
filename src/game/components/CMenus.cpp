@@ -3,6 +3,7 @@
 #include <engine/CGame.hpp>
 #include <engine/CSystemSound.hpp>
 #include <engine/CLocalization.hpp>
+#include <game/version.h>
 #include <SFML/OpenGL.hpp>
 #include "CMenus.hpp"
 
@@ -155,7 +156,7 @@ void CMenus::renderMenuMain(sf::RenderTarget& target, sf::RenderStates states) c
 
 	text.setCharacterSize(32);
 	char title[128];
-	snprintf(title, sizeof(title), "v%s", g_Config.m_GameVer);
+	snprintf(title, sizeof(title), "v%s", GAME_RELEASE_VERSION);
 	text.setString(title);
 	float textH = text.getLocalBounds().height;
 	text.setPosition(10.0f, rectArea.height-textH-30.0f);

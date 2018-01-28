@@ -85,7 +85,7 @@ void CCharacter::tick() noexcept
 		const bool isGrounded = (pB2Engine->checkIntersectLine(shapePos, groundColPos, 0x0, this) != 0x0);
 		if (isGrounded)
 		{
-			m_pBody->SetLinearDamping(8.0f);
+			m_pBody->SetLinearDamping((m_State == MOVE_STATE_STOP)?8.0f:3.5f);
 			m_Jumps = 0;
 		} else {
 			m_pBody->SetLinearDamping(0.0f);
@@ -142,6 +142,15 @@ void CCharacter::draw(sf::RenderTarget& target, sf::RenderStates states) const n
 	states.shader = pShader;*/
 	CB2Circle::draw(target, states);
 	//states.shader = nullptr;
+	sf::Vector2f point = m_pShape->getPosition()+sf::Vector2f(0.0f, -1.0f)*(CCharacter::SIZE);
+	upm::vectorRotate(m_pShape->getPosition(), &point, upm::degToRad(m_pShape->getRotation()));
+	// Direction
+	const sf::Vertex lineDir[] =
+	{
+		sf::Vertex(m_pShape->getPosition(), sf::Color::Black),
+		sf::Vertex(point, sf::Color::Black)
+	};
+	target.draw(lineDir, 2, sf::Lines, states);
 
 	if (pGame->Client()->m_Debug)
 	{
@@ -218,6 +227,10 @@ void CCharacter::doImpulse(sf::Vector2f dir, float energy) noexcept
 
 void CCharacter::move(int state, bool turbo) noexcept
 {
+	m_State = state;
+	if (state == MOVE_STATE_STOP)
+		return;
+
 	const sf::Vector2f charVel = CSystemBox2D::b2ToSf(m_pBody->GetLinearVelocity());
     const float v = g_Config.m_CharacterImpulse;
     sf::Vector2f force = {
@@ -227,7 +240,7 @@ void CCharacter::move(int state, bool turbo) noexcept
     bool canMove = true;
 
     // Only can jump one time
-    if (state&MOVE_STATE_UP)
+    if (m_State&MOVE_STATE_UP)
     {
     	if (m_Jumps == 3)
     	{
@@ -237,7 +250,7 @@ void CCharacter::move(int state, bool turbo) noexcept
     }
 
     // Can't impulse in air
-    if ((state&MOVE_STATE_LEFT) || (state&MOVE_STATE_RIGHT))
+    if ((m_State&MOVE_STATE_LEFT) || (m_State&MOVE_STATE_RIGHT))
     {
 		CGame *pGame = CGame::getInstance();
 		CSystemBox2D *pB2Engine = pGame->Client()->getSystem<CSystemBox2D>();
@@ -246,16 +259,16 @@ void CCharacter::move(int state, bool turbo) noexcept
 		const sf::Vector2f groundColPos = shapePos + sf::Vector2f(0.0f, CCharacter::SIZE+5.0f);
 		const bool isGrounded = (pB2Engine->checkIntersectLine(shapePos, groundColPos, 0x0, this) != 0x0);
 		if (!isGrounded)
-			force.x = (state&MOVE_STATE_LEFT)?-v:v;
+			force.x = (m_State&MOVE_STATE_LEFT)?-v:v;
 
-		const sf::Vector2f endPos = shapePos + sf::Vector2f((CCharacter::SIZE+5.0f)*(state&MOVE_STATE_LEFT?-1.0f:1.0f), 0.0f);
+		const sf::Vector2f endPos = shapePos + sf::Vector2f((CCharacter::SIZE+5.0f)*(m_State&MOVE_STATE_LEFT?-1.0f:1.0f), 0.0f);
 		if (pB2Engine->checkIntersectLine(shapePos, endPos, 0x0, this) != 0x0)
 			force.x = 0.0f;
 
 		const sf::Vector2f dir = upm::vectorNormalize(charVel);
 		if ((isGrounded && abs(charVel.x) >= g_Config.m_CharacterMaxVelocity) || (!isGrounded && abs(charVel.x) >= g_Config.m_CharacterMaxVelocity/2.0f))
 		{
-			if (((state&MOVE_STATE_LEFT) && dir.x < 0) || ((state&MOVE_STATE_RIGHT) && dir.x > 0))
+			if (((m_State&MOVE_STATE_LEFT) && dir.x < 0) || ((m_State&MOVE_STATE_RIGHT) && dir.x > 0))
 				force.x = 0.0f;
 		}
     }
@@ -263,6 +276,8 @@ void CCharacter::move(int state, bool turbo) noexcept
     if (canMove)
     	m_pBody->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(force), true);
     	//m_pBody->ApplyForceToCenter(CSystemBox2D::sfToB2(force), true);
+
+    m_LastState = m_State;
 }
 
 void teleport(const sf::Vector2f &worldPosTo) noexcept

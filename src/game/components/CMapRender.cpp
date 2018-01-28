@@ -371,7 +371,7 @@ void CMapRender::analyzeLayerTile(int layerIndex) noexcept
 			}
 
 			const Tmx::Tile *pTile = pTileset->GetTile(tileId);
-			if (pTile && pTile->GetNumObjects())
+			if (pTile && pTile->HasObjects())
 			{
 				for (int i=0; i<pTile->GetNumObjects(); ++i)
 				{

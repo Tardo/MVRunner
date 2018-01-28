@@ -98,6 +98,9 @@ private:
 	bool m_Alive;
 	bool m_Visible;
 
+	int m_State;
+	int m_LastState;
+
 	float m_ShaderBlur;
 
 	CWeapon m_aWeapons[NUM_WEAPONS];

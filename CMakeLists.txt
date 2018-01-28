@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 
 # GET GAME VERSION
-file(STRINGS src/engine/config_vars.h VERSION_LINE
+file(STRINGS src/game/version.h VERSION_LINE
   LIMIT_COUNT 1
-  REGEX game_version
+  REGEX GAME_RELEASE_VERSION
 )
 if(VERSION_LINE MATCHES "\"([0-9]+)\\.([0-9]+)\\.([0-9]+[ab]?)\"")
   set(MVRUNNER_VERSION_MAJOR ${CMAKE_MATCH_1})
@@ -35,7 +35,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
-  src/engine/config_vars.h
+  src/game/version.h
 )
 
 # THE PROJECT

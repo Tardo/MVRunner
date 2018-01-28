@@ -4,8 +4,6 @@
 #define ENGINE_CONFIG_VARS_H
 #undef ENGINE_CONFIG_VARS_H  // this file will be included several times
 
-MACRO_CONFIG_STR(GameVer, game_version, 16, "0.0.1a", 0)
-
 MACRO_CONFIG_STR(Lang, lang, 18, "spanish", CConfig::SAVE)
 
 MACRO_CONFIG_BOOL(Sfx, sfx, true, CConfig::SAVE)
@@ -29,7 +27,7 @@ MACRO_CONFIG_FLOAT(CharacterMaxVelocity, character_max_velocity, 280.0f, 0.1f, 9
 MACRO_CONFIG_FLOAT(CharacterImpulse, character_impulse, 2.0f, 0.1f, 999.0f, CConfig::SAVE)
 MACRO_CONFIG_FLOAT(CharacterJumpImpulse, character_jump_impulse, 10.0f, 0.1f, 999.0f, CConfig::SAVE)
 
-MACRO_CONFIG_FLOAT(WeaponGrenadeLauncherEnergy, weapon_grenade_launcher_energy, 8.5f, 0.0f, 999.0f, CConfig::SAVE)
+MACRO_CONFIG_FLOAT(WeaponGrenadeLauncherEnergy, weapon_grenade_launcher_energy, 10.0f, 0.0f, 999.0f, CConfig::SAVE)
 MACRO_CONFIG_FLOAT(WeaponGrenadeLauncherRadius, weapon_grenade_launcher_radius, 192.0f, 0.0f, 999.0f, CConfig::SAVE)
 MACRO_CONFIG_FLOAT(WeaponGrenadeLauncherFireDelay, weapon_grenade_fire_delay, 0.45f, 0.0f, 999.0f, CConfig::SAVE)
 MACRO_CONFIG_FLOAT(WeaponGrenadeLauncherLifeTime, weapon_grenade_life_time, 2.0f, 0.0f, 999.0f, CConfig::SAVE)
