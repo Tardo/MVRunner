@@ -14,6 +14,8 @@ CConfig::CConfig(const char *pPathFile) noexcept
 	strncpy(m_PathFile, pPathFile, sizeof(m_PathFile));
 	reset();
 	load();
+
+	loadGameInfo();
 }
 
 
@@ -44,9 +46,12 @@ bool CConfig::load() noexcept
 
 	configFile.close();
 
-	g_Config.m_aWeaponsInfo[WEAPON_GRENADE_LAUNCHER] = {g_Config.m_WeaponGrenadeLauncherFireDelay, g_Config.m_WeaponGrenadeLauncherEnergy, g_Config.m_WeaponGrenadeLauncherLifeTime, g_Config.m_WeaponGrenadeLauncherRadius, g_Config.m_WeaponGrenadeLauncherSpeed};
-
 	return true;
+}
+
+void CConfig::loadGameInfo() noexcept
+{
+	g_Config.m_aWeaponsInfo[WEAPON_GRENADE_LAUNCHER] = {g_Config.m_WeaponGrenadeLauncherFireDelay, g_Config.m_WeaponGrenadeLauncherEnergy, g_Config.m_WeaponGrenadeLauncherLifeTime, g_Config.m_WeaponGrenadeLauncherRadius, g_Config.m_WeaponGrenadeLauncherSpeed};
 }
 
 void CConfig::reset() noexcept

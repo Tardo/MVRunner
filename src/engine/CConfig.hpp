@@ -49,6 +49,7 @@ public:
 	CConfig(const char *pPathFile) noexcept;
 
 	bool load() noexcept;
+	void loadGameInfo() noexcept;
 	void reset() noexcept;
 	bool save() noexcept;
 
