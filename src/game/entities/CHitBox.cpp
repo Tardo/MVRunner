@@ -5,7 +5,7 @@
 #include <engine/CAssetManager.hpp>
 #include <engine/CSystemBox2D.hpp>
 
-const CB2BodyInfo CHitBox::ms_BodyInfo = CB2BodyInfo(0.2f, 0.7f, 0.1f, b2_dynamicBody, CAT_HITBOX, false, CAT_CHARACTER_PLAYER|CAT_BOX|CAT_BUILD|CAT_GENERIC|CAT_HITBOX);
+const CB2BodyInfo CHitBox::ms_BodyInfo = CB2BodyInfo(0.1f, 0.7f, 0.1f, b2_dynamicBody, CAT_HITBOX, false, CAT_CHARACTER_PLAYER|CAT_BOX|CAT_BUILD|CAT_GENERIC|CAT_HITBOX);
 CHitBox::CHitBox(const sf::Vector2f &pos, const sf::Vector2f &size, const sf::Vector2f &dir, float force, float lifeTime, unsigned int typeHitBox, unsigned int level, const sf::Color &color) noexcept
 : CB2Polygon(pos, level, size, color, ms_BodyInfo, CEntity::HITBOX)
 {

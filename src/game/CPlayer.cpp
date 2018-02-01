@@ -20,12 +20,12 @@ CPlayer::~CPlayer() noexcept
 void CPlayer::update(float deltaTime) noexcept
 { }
 
-CEntity* CPlayer::createCharacter(const sf::Vector2f &pos, const sf::Vector2f &dir) noexcept
+CEntity* CPlayer::createCharacter(const sf::Vector2f &pos) noexcept
 {
 	if (m_pCharacter)
 		return m_pCharacter;
 
-	m_pCharacter = new CCharacter(pos, dir, this);
+	m_pCharacter = new CCharacter(pos, this);
 	return m_pCharacter;
 }
 void CPlayer::destroyCharacter() noexcept

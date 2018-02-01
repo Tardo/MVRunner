@@ -17,6 +17,11 @@ public:
 		m_Pos = VECTOR_ZERO;
 		m_Dir = VECTOR_ZERO;
 	}
+	CSpawn(const sf::Vector2f &pos) noexcept
+	{
+		m_Pos = pos;
+		m_Dir = VECTOR_ZERO;
+	}
 	CSpawn(const sf::Vector2f &pos, const sf::Vector2f &dir) noexcept
 	{
 		m_Pos = pos;

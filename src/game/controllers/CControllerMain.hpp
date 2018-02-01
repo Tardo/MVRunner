@@ -28,8 +28,8 @@ public:
 class CTeleport final : public CSpawn
 {
 public:
-	CTeleport(const sf::Vector2f &dir)
-	: CSpawn(VECTOR_ZERO, dir)
+	CTeleport()
+	: CSpawn(VECTOR_ZERO)
 	{ }
 
 	sf::Vector2f m_PosOut;
@@ -51,10 +51,8 @@ public:
 private:
 	std::vector<sf::Vector2f> m_vSpawnsCharacter;
 	std::map<int,CTeleport> m_vTeleports;
-	sf::Int64 m_TimerArrow;
-	sf::Int64 m_Timer10Hz;
-	sf::Int64 m_Timer15Hz;
-	bool m_Add10Hz;
+	sf::Int64 m_TimerFreezed;
+	sf::Vector2f m_LastCheckPoint;
 };
 
 #endif

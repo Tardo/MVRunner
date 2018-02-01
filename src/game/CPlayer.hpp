@@ -16,7 +16,7 @@ public:
 
 	virtual void update(float deltaTime) noexcept;
 
-	virtual CEntity* createCharacter(const sf::Vector2f &pos, const sf::Vector2f &dir) noexcept;
+	virtual CEntity* createCharacter(const sf::Vector2f &pos) noexcept;
 	virtual void destroyCharacter() noexcept;
 	CCharacter* getCharacter() const noexcept { return m_pCharacter; }
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.0" orientation="orthogonal" renderorder="right-up" width="50" height="50" tilewidth="64" tileheight="64" infinite="0" nextobjectid="18">
+<map version="1.0" tiledversion="1.1.0" orientation="orthogonal" renderorder="right-up" width="50" height="50" tilewidth="64" tileheight="64" infinite="0" nextobjectid="29">
  <tileset firstgid="1" name="mario" tilewidth="64" tileheight="64" tilecount="256" columns="16">
   <image source="mapres/mario_oldscool.png" width="1024" height="1024"/>
   <tile id="51">
@@ -46,44 +46,86 @@
    </objectgroup>
   </tile>
  </tileset>
+ <tileset firstgid="513" name="race" tilewidth="64" tileheight="64" tilecount="256" columns="16">
+  <image source="mapres/race.png" width="1024" height="1024"/>
+ </tileset>
  <layer name="Background" width="50" height="50">
   <data encoding="base64" compression="zlib">
-   eJztz8EJACAQA8ErzP7rsgRB8Ig6A3nmsVXvGJdPR9ZWdj4ddOg44deOVDqy6MiiI4sOAAAAAAAAuk3fLzPN
-  </data>
- </layer>
- <layer name="Lava" width="50" height="50">
-  <data encoding="base64" compression="zlib">
-   eJztz0ENACAMBMEaRAL1LwOeBAW0zCSbe18EAADwkrkbx1aVV1V1+QEAAAAAAPCDBZvHBEU=
+   eJztz8EJACAQA0ELs/+6LOFAUOI5A3nmsWP0MR+fjqxVdj436NBxwq8dqXRk0ZFFRxYdWTo0AAAAAAAAVBZ/fTSB
   </data>
  </layer>
  <layer name="Game" width="50" height="50">
   <data encoding="base64" compression="zlib">
-   eJzt1VsKgCAQQFFz/5tqZ20gjZ4z2jkg9JHQxQnrUkqdZI1u9o51sLYr8xb9D+x9V2+mWu9Hz+ETHUd7vnCno/Uc4c/nkfG+OduRlY5cdOSiI5eZOrLdaQAAAAAAAG/YAB94AnM=
+   eJztml0ORTAQRlve5G7B27UQO7E0W7EzGrdJI+jP1c50fCeZRKqYkwwjqtFKNUKCO19PjtI9lkC3Uav5GNFJBhDqEVNv1PfAWV53NXU1n7oOn/DwHVMCc/3uF+7Y3XzfNgX/eISMlyKlrjj2m1gPrtic3dqq2cNgXWr3MGy9d5LgcTXGndo9+i3XQe91dNwHj/K4/at1gkNPS4FbXwYAAAAAAO9ByrsnPHghxQMAS6ufjVzn9UWutTvqNUMAQD7sfw2f/ZvyTJ1PKpw9Sj9Dcz1fqXN/U59YAXUGEbg=
+  </data>
+ </layer>
+ <layer name="Animated" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJztxbEJACAMAMEsmBFc1dliYZkyIMgdPB8BALN2EwDwVp7WPQAAAAAAwK8KnEcErg==
   </data>
  </layer>
  <layer name="Foreground" width="50" height="50">
   <data encoding="base64" compression="zlib">
-   eJzt1VEKgCAQQMH97T6dv7N1AS1Sy01mQPAjwYeGW0Rsi4y/0xGxj9xIp5b7NvsfKO3r6ixq38++hyM67tZ8oaejNp+hpeMojD92ZHxvnnZkpSMXHbnoyGWljmxvGgAAAAAAwBtOcA4I+w==
+   eJztlUsKwjAQhgdRoUtX3kAPoOgNfCzc+lh4F0+gN/AsHs0pJdCFTTQZOpP4f/DTEtJ0PjplKiKqCknuwINoKVlIIjH9pv0PfKrL9y269mv3oYRH6Jk+qN//GDRpr/n2h+41SPH4Zr0vYvrK4rz51cMqruZ2b+XsUeNccvfwrVkHHra5UxkeT8rLo2t+WZhpMViczQAAAAAA4D+YahcgBDxsUYpHSayJXiuOdh2pzNlhpuBx5RwEr85D+tzQdSEc5yF9bijSaPWVNPCwRSkee6LbjrPlbDja9cRy4drPnBPnaMxjyBkZyDjRY2IopfMGQjA89g==
   </data>
  </layer>
  <objectgroup name="Collisions">
-  <object id="10" type="death" x="2881" y="925" width="255.5" height="162.5"/>
+  <object id="18" type="static" x="2689.33" y="1089.33">
+   <properties>
+    <property name="color" type="color" value="#ffffff7f"/>
+   </properties>
+   <polyline points="0,0 -80,66.6667 -150.667,194.667 -180,285.333 -329.333,761.333 -365.333,830.667 -434.667,910.667 -524,961.333 -590.667,981.333 -670.667,989.333 -729.333,976 -776,960 -806.667,921.333 -825.333,893.333 -845.333,874.667"/>
+  </object>
+  <object id="20" type="dynamic" x="1580.66" y="2969.56" width="24.3333" height="38">
+   <properties>
+    <property name="color" type="color" value="#ffffaa00"/>
+   </properties>
+  </object>
+  <object id="21" type="dynamic" x="1564.29" y="2946.74" width="54.3333" height="22.3333">
+   <properties>
+    <property name="color" type="color" value="#ffffaa00"/>
+   </properties>
+  </object>
+  <object id="24" type="static" x="1287.67" y="2373.33">
+   <polyline points="0,0 4,504 4.5,624.833 245.333,624"/>
+  </object>
+  <object id="25" type="static" x="1395.67" y="2372">
+   <polyline points="0,0 2.66667,445.333 1.33333,518.667 136,517.333"/>
+  </object>
+  <object id="26" type="static" x="3073.33" y="960.667" width="62" height="126.667"/>
+  <object id="27" type="dynamic" x="1585.38" y="2900.29" width="15.3333" height="46">
+   <properties>
+    <property name="color" type="color" value="#ffffaa00"/>
+   </properties>
+  </object>
+  <object id="28" type="static" x="2815" y="833">
+   <properties>
+    <property name="color" type="color" value="#ffffff7f"/>
+   </properties>
+   <polyline points="0,0 -126,63 -250,188 -314,341"/>
+  </object>
  </objectgroup>
  <objectgroup name="Boxes">
   <object id="14" type="dynamic" x="183.917" y="66.8333" width="61" height="62">
    <properties>
-    <property name="color_a" type="int" value="255"/>
+    <property name="color" type="color" value="#ffffaa00"/>
    </properties>
   </object>
   <object id="16" type="dynamic" x="183.917" y="191.833" width="61" height="62">
    <properties>
-    <property name="color_a" type="int" value="255"/>
+    <property name="color" type="color" value="#ff5500ff"/>
    </properties>
   </object>
   <object id="17" type="dynamic" x="183.917" y="129.333" width="61" height="62">
    <properties>
-    <property name="color_a" type="int" value="255"/>
+    <property name="color" type="color" value="#ff00ffff"/>
    </properties>
+  </object>
+  <object id="22" type="dynamic" x="2007.33" y="2745.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa5500"/>
+   </properties>
+   <polyline points="0,0 -41.5,29 -64,87.5 -131.5,122"/>
   </object>
  </objectgroup>
 </map>

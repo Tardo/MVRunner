@@ -55,46 +55,7 @@ void CSystemWeather::renderWeatherRain() noexcept
 
 	// Rain & Splash
 	const sf::Vector2f pos = sf::Vector2f(startX+rand()%(endX-startX), startY+rand()%(endY-startY));
-	const int gameTileIndexRoutesPeaton = Client()->MapRender().getWorldTileIndex(pos, Client()->MapRender().getRoutesPeatonLayer());
-	if (gameTileIndexRoutesPeaton > 0)
-		pFxEngine->createWaterSplash(pos);
-}
-
-
-bool CSystemWeather::isPuddleZone(const sf::Vector2i &mapPos) noexcept
-{
-	static const float intensity = 0.4f;
-	const int gameTileIndexRoutesPeaton = Client()->MapRender().getMapTileIndex(mapPos, Client()->MapRender().getRoutesPeatonLayer());
-	if (gameTileIndexRoutesPeaton > 0)
-	{
-		static const float frequency = 4.0f / Client()->MapRender().getMap()->GetWidth();
-		const float noise = m_pNoise->Noise((float)mapPos.x*frequency, (float)mapPos.y*frequency);
-		if(noise > intensity)
-			return true;
-	}
-
-	return false;
-}
-
-void CSystemWeather::renderPuddles() noexcept
-{
-	sf::IntRect mapBounds = m_pGameClient->MapRender().getMapBounds(Client()->Camera());
-
-	sf::CircleShape shape(PUDDLE_SIZE);
-	shape.setTexture(m_pGameClient->Assets().getTexture(CAssetManager::TEXTURE_WATER_SHADER));
-	for(int x = mapBounds.left-1; x < mapBounds.width+1; x++)
-	{
-		for(int y = mapBounds.top-1; y < mapBounds.height+1; y++)
-		{
-			const sf::Vector2i tilePos(x, y);
-			if (isPuddleZone(tilePos))
-			{
-				shape.setPosition(sf::Vector2f(tilePos.x*m_pGameClient->MapRender().getMap()->GetTileWidth(), tilePos.y*m_pGameClient->MapRender().getMap()->GetTileHeight()));
-				shape.setRotation((y*x)%360);
-				m_WeatherMapTexture.draw(shape);
-			}
-		}
-	}
+	pFxEngine->createRain(pos, 30.0f);
 }
 
 void CSystemWeather::update(float deltaTime) noexcept
@@ -113,7 +74,6 @@ const sf::Sprite& CSystemWeather::getWeatherMap(const sf::View &camera) noexcept
 	if (m_Weather == WEATHER_RAIN)
 	{
 		m_WeatherMapTexture.clear(sf::Color::Black);
-		renderPuddles();
 	}
 
 	m_WeatherMapTexture.display();

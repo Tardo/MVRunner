@@ -510,7 +510,7 @@ void CSystemFx::createSpitFireCarDamaged(const sf::Vector2f &worldPos, const sf:
 
 void CSystemFx::createExplosionCar(const sf::Vector2f &worldPos, bool ring) noexcept
 {
-	if (!m_Add100Hz || Client()->isClipped(worldPos, 128.0f))
+	if (Client()->isClipped(worldPos, 128.0f))
 		return;
 
 	CParticle *pParticle;
@@ -522,7 +522,7 @@ void CSystemFx::createExplosionCar(const sf::Vector2f &worldPos, bool ring) noex
 		pParticle->m_SizeInit = sf::Vector2f(26.0f, 26.0f);
 		pParticle->m_SizeEnd = sf::Vector2f(95.0f, 95.0f);
 		pParticle->m_ColorEnd.a = 0;
-		pParticle->m_Duration = 1.7f;
+		pParticle->m_Duration = 0.35f;
 		pParticle->m_Shape.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_EXPLOSION_RING));
 		Client()->Controller()->Context()->addParticle(pParticle);
 
@@ -531,7 +531,7 @@ void CSystemFx::createExplosionCar(const sf::Vector2f &worldPos, bool ring) noex
 		pParticle->m_SizeInit = sf::Vector2f(26.0f, 26.0f);
 		pParticle->m_SizeEnd = sf::Vector2f(175.0f, 175.0f);
 		pParticle->m_ColorEnd.a = 0;
-		pParticle->m_Duration = 1.7f;
+		pParticle->m_Duration = 0.35f;
 		pParticle->m_Shape.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_EXPLOSION_RING));
 		Client()->Controller()->Context()->addParticle(pParticle);
 	}
@@ -539,12 +539,12 @@ void CSystemFx::createExplosionCar(const sf::Vector2f &worldPos, bool ring) noex
 	pParticle = new CParticle(sf::BlendAdd, RENDER_FRONT);
 	pParticle->m_Pos = worldPos;
 	pParticle->m_SizeInit = sf::Vector2f(32.0f, 32.0f);
-	pParticle->m_SizeEnd = sf::Vector2f(172.0f, 172.0f);
+	pParticle->m_SizeEnd = sf::Vector2f(272.0f, 272.0f);
 	pParticle->m_ColorEnd.a = 0;
-	pParticle->m_Duration = 2.2f;
+	pParticle->m_Duration = 0.6f;
 	pParticle->m_Shape.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_EXPLOSION_ANIM));
 	pParticle->m_Vel = 0.0f;
-	pParticle->m_VelRot = 2.75;
+	pParticle->m_VelRot = 1.0;
 	pParticle->m_Animated = true;
 	pParticle->m_AnimSize = { 4, 4 };
 	Client()->Controller()->Context()->addParticle(pParticle);
@@ -552,12 +552,12 @@ void CSystemFx::createExplosionCar(const sf::Vector2f &worldPos, bool ring) noex
 	pParticle = new CParticle(sf::BlendAlpha, RENDER_FRONT);
 	pParticle->m_Pos = worldPos;
 	pParticle->m_SizeInit = sf::Vector2f(15.0f, 15.0f);
-	pParticle->m_SizeEnd = sf::Vector2f(175.0f, 175.0f);
+	pParticle->m_SizeEnd = sf::Vector2f(275.0f, 275.0f);
 	pParticle->m_ColorInit = sf::Color(125, 125, 125, 120);
 	pParticle->m_ColorEnd = sf::Color::Black;
 	pParticle->m_ColorEnd.a = 0;
 	pParticle->m_VelRot = upm::randInt(0, 2) == 1?-2.45f:2.45f;
-	pParticle->m_Duration = 4.0f;
+	pParticle->m_Duration = 0.4f;
 	pParticle->m_Shape.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_SMOKE_WHITE));
 	Client()->Controller()->Context()->addParticle(pParticle);
 
@@ -569,7 +569,7 @@ void CSystemFx::createExplosionCar(const sf::Vector2f &worldPos, bool ring) noex
 	pParticleLight->m_ColorInit = sf::Color(255, 210, 90, 200);
 	pParticleLight->m_ColorEnd = sf::Color(232, 171, 8);
 	pParticleLight->m_ColorEnd.a = 0;
-	pParticleLight->m_Duration = 4.0f;
+	pParticleLight->m_Duration = 0.4f;
 	Client()->Controller()->Context()->addParticle(pParticleLight);
 }
 

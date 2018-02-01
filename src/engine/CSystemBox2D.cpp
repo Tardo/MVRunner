@@ -173,7 +173,8 @@ void CSystemBox2D::createExplosion(const sf::Vector2f &worldPos, float energy, f
 		const float dist = upm::vectorLength(pos - worldPos);
 		if (dist > radius)
 			continue;
-		float impulse = upm::clamp(dist/radius * energy, 0.0f, 40.0f);
+
+		float impulse = upm::clamp((1.0f - dist/radius) * energy, 0.0f, 40.0f);
 		sf::Vector2f force = dir * impulse;
 		pBody->ApplyLinearImpulseToCenter(sfToB2(force), true);
 	}

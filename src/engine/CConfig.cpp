@@ -35,7 +35,7 @@ bool CConfig::load() noexcept
 		#define MACRO_CONFIG_STR(Name,ScriptName,len,def,flags) if (paramName.compare(#ScriptName) == 0) strncpy(g_Config.m_##Name, paramValue.c_str(), len);
 		#define MACRO_CONFIG_BOOL(Name,ScriptName,def,flags) if (paramName.compare(#ScriptName) == 0) g_Config.m_##Name = (paramValue.compare("true") == 0);
 
-		#include "config_vars.h"
+		#include <game/config_vars.h>
 
 		#undef MACRO_CONFIG_INT
 		#undef MACRO_CONFIG_FLOAT
@@ -61,7 +61,7 @@ void CConfig::reset() noexcept
 	#define MACRO_CONFIG_STR(Name,ScriptName,len,def,flags) strncpy(g_Config.m_##Name, def, len);
 	#define MACRO_CONFIG_BOOL(Name,ScriptName,def,flags) g_Config.m_##Name = def;
 
-	#include "config_vars.h"
+	#include <game/config_vars.h>
 
 	#undef MACRO_CONFIG_INT
 	#undef MACRO_CONFIG_FLOAT
@@ -84,7 +84,7 @@ bool CConfig::save() noexcept
 	#define MACRO_CONFIG_STR(Name,ScriptName,len,def,flags) if(flags&SAVE){ snprintf(aLineBuf, sizeof(aLineBuf), "%s %s\n", #ScriptName, g_Config.m_##Name); configFile << aLineBuf; }
 	#define MACRO_CONFIG_BOOL(Name,ScriptName,def,flags) if(flags&SAVE){ snprintf(aLineBuf, sizeof(aLineBuf), "%s %s\n", #ScriptName, g_Config.m_##Name?"true":"false"); configFile << aLineBuf; }
 
-	#include "config_vars.h"
+	#include <game/config_vars.h>
 
 	#undef MACRO_CONFIG_INT
 	#undef MACRO_CONFIG_FLOAT

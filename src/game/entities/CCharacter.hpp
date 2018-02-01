@@ -30,6 +30,10 @@ class CCharacter final : public CB2Circle
 public:
 	enum
 	{
+		STATE_NORMAL = 0,
+		STATE_FREEZED = 2<<1,
+		STATE_ROTATE = 2<<2,
+
 	    MOVE_STATE_STOP = 0,
 	    MOVE_STATE_RIGHT = 2<<1,
 	    MOVE_STATE_DOWN = 2<<2,
@@ -41,7 +45,7 @@ public:
 	static const long ANIM_TIME;
 	static const unsigned int ANIM_SUBRECTS;
 
-	CCharacter(const sf::Vector2f &pos, const sf::Vector2f &dir, class CPlayer *pPlayer) noexcept;
+	CCharacter(const sf::Vector2f &pos, class CPlayer *pPlayer) noexcept;
 	~CCharacter() noexcept;
 
 	virtual void tick() noexcept final;
@@ -51,7 +55,6 @@ public:
 	virtual void takeHealth(int amount, class CPlayer *pPlayer) noexcept final;
 
     void doImpulse(sf::Vector2f dir, float energy) noexcept;
-    void setToAngle(sf::Vector2f dir) noexcept { m_ToDir = dir; }
 
     void setActiveWeapon(int wid) noexcept;
     CWeapon* getWeapon(int wid) noexcept { return &m_aWeapons[wid]; }
@@ -74,20 +77,18 @@ public:
     void doFire() noexcept;
     void setVisible(bool visible) noexcept;
 
-    void move(int moveState, bool turbo) noexcept;
+    void move(int moveState) noexcept;
     void teleport(const sf::Vector2f &worldPosTo) noexcept;
 
-    unsigned int getAnimSubRect() const noexcept { return m_SubrectIndex; }
+    int getCharacterState() const { return m_CharacterState; }
+    void setCharacterState(int state) { m_CharacterState = state; }
 
     std::vector<CEntity*>& getSensorEntities() { return m_vpSensorEntities; }
 
 protected:
 	b2Body *m_pBody;
 	class CPlayer *m_pPlayer;
-
-	unsigned int m_SubrectIndex;
-	sf::Int64 m_TimerAnim;
-    sf::Vector2f m_ToDir;
+	int m_CharacterState;
 
 private:
 	sf::Int64 m_TimerFire;
@@ -100,8 +101,6 @@ private:
 
 	int m_State;
 	int m_LastState;
-
-	float m_ShaderBlur;
 
 	CWeapon m_aWeapons[NUM_WEAPONS];
 	int m_ActiveWeapon;

@@ -35,6 +35,7 @@ public:
 		TEXTURE_PLAYER,
 		TEXTURE_SFML_LOGO,
 		TEXTURE_WATER_SHADER,
+		TEXTURE_GRENADE,
 		MAX_TEXTURES,
 
 		SOUND_MOUSE_CLICK=0,
@@ -75,7 +76,7 @@ public:
 	const sf::SoundBuffer& getSound(int soundId) noexcept;
 
 	void load() noexcept;
-	bool isLoaded() const noexcept { return m_Loaded == NUM_TOTAL; }
+	bool isLoaded() const noexcept;
 	bool hasErrors() const noexcept { return m_LoadErrors; }
 	int getLoadedNum() const noexcept { return m_Loaded; }
 	const char* getCurrentLoadAssetPath() const noexcept { return m_aCurrentLoadAssetPath; }

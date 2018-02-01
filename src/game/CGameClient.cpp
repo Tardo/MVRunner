@@ -35,6 +35,7 @@ CGameClient::CGameClient() noexcept
 CGameClient::~CGameClient() noexcept
 {
 	reset();
+	m_Zpg.close();
 
 	#ifdef DEBUG_DESTRUCTORS
     ups::msgDebug("CGame", "Deleted");
@@ -305,7 +306,10 @@ bool CGameClient::init() noexcept
 	setMouseCursorVisible(false);
 	setMouseCursorGrabbed(true);
 
-	m_Zpg.load("assets.zpg");
+	if (!sf::Shader::isAvailable())
+		g_Config.m_UseShaders = false;
+
+	m_Zpg.open("assets.zpg");
 
 	if (!g_l10n.load(g_Config.m_Lang, &m_Zpg))
 		ups::msgDebug("CGame", "Can't found selected language! using english...");

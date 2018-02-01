@@ -17,15 +17,11 @@ public:
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept;
 
 	b2Body* getBody() const noexcept { return m_pBody; }
-	void setShadowSizeFactor(float factor) noexcept { m_ShadowSizeFactor = factor; }
 
 private:
 	b2Body *m_pBody;
 	sf::CircleShape m_DbgShape;
 	bool m_IsSensor;
-	float m_ShadowSizeFactor;
-	sf::Sprite m_aShadows[MAX_SHADOWS];
-	unsigned int m_NumShadows;
 };
 
 #endif

@@ -23,6 +23,13 @@ CAssetManager::~CAssetManager() noexcept
 	#endif
 }
 
+bool CAssetManager::isLoaded() const noexcept
+{
+	if (!g_Config.m_UseShaders)
+		return m_Loaded == NUM_TOTAL-MAX_SHADERS;
+	return m_Loaded == NUM_TOTAL;
+}
+
 void CAssetManager::load() noexcept
 {
 	if (isLoaded())
@@ -49,6 +56,7 @@ void CAssetManager::load() noexcept
 	LOAD_TEXTURE(TEXTURE_BOX, "data/fx/box.png")
 	LOAD_TEXTURE(TEXTURE_SFML_LOGO, "data/fx/sfml_logo.png")
 	LOAD_TEXTURE(TEXTURE_WATER_SHADER, "data/fx/water_shader.png")
+	LOAD_TEXTURE(TEXTURE_GRENADE, "data/objects/grenade.png")
 
 	LOAD_SOUND(SOUND_MOUSE_CLICK, "data/sfx/mouse_click.wav")
 	LOAD_SOUND(SOUND_GAMEOVER, "data/sfx/gameover.wav")
@@ -63,12 +71,15 @@ void CAssetManager::load() noexcept
 	LOAD_SOUND(SOUND_WHEEL_CLICK, "data/sfx/wheel_click.wav")
 	LOAD_SOUND(SOUND_BEEP, "data/sfx/beep.wav")
 
-	LOAD_SHADER(SHADER_WATER, "data/shaders/water.frag", sf::Shader::Fragment)
-	LOAD_SHADERS(SHADER_WAVE, "data/shaders/wave.vert", "data/shaders/wave.frag")
-	LOAD_SHADERS(SHADER_FLAG, "data/shaders/wave.vert", "data/shaders/flag.frag")
-	LOAD_SHADER(SHADER_PIXELATE, "data/shaders/pixelate.frag", sf::Shader::Fragment)
-	LOAD_SHADER(SHADER_CHROMATIC_ABERRATION, "data/shaders/chromatic_aberration.frag", sf::Shader::Fragment)
-	LOAD_SHADER(SHADER_BLUR, "data/shaders/blur.frag", sf::Shader::Fragment)
+	if (g_Config.m_UseShaders)
+	{
+		LOAD_SHADER(SHADER_WATER, "data/shaders/water.frag", sf::Shader::Fragment)
+		LOAD_SHADERS(SHADER_WAVE, "data/shaders/wave.vert", "data/shaders/wave.frag")
+		LOAD_SHADERS(SHADER_FLAG, "data/shaders/wave.vert", "data/shaders/flag.frag")
+		LOAD_SHADER(SHADER_PIXELATE, "data/shaders/pixelate.frag", sf::Shader::Fragment)
+		LOAD_SHADER(SHADER_CHROMATIC_ABERRATION, "data/shaders/chromatic_aberration.frag", sf::Shader::Fragment)
+		LOAD_SHADER(SHADER_BLUR, "data/shaders/blur.frag", sf::Shader::Fragment)
+	}
 
 	s_Mutex.unlock();
 }
@@ -88,7 +99,7 @@ const sf::SoundBuffer& CAssetManager::getSound(int soundId) noexcept
 
 sf::Shader* CAssetManager::getShader(int shaderId) noexcept
 {
-	if (shaderId < 0 || shaderId >= MAX_SHADERS)
+	if (shaderId < 0 || shaderId >= MAX_SHADERS || !g_Config.m_UseShaders)
 		return 0x0;
 
 	return &m_vShaders[shaderId];

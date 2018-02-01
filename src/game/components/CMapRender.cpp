@@ -15,9 +15,7 @@ CMapRender::CMapRender() noexcept
 	m_pMap = nullptr;
 	m_pGameLayer = nullptr;
 	m_pGameModifiersLayer = nullptr;
-	m_pRoutesPeatonLayer = nullptr;
 	m_GameLayerIndex = -1;
-	m_RoutesPeatonLayerIndex = -1;
 	m_GameModifiersLayerIndex = -1;
 	m_vpObjects = nullptr;
 	m_pNoise = nullptr;
@@ -97,11 +95,6 @@ bool CMapRender::init() noexcept
 				{
 					m_pGameLayer = (const Tmx::TileLayer*)(*itl);
 					m_GameLayerIndex = counter;
-				}
-				else if  ((*itl)->GetName().compare("RoutesPeaton") == 0)
-				{
-					m_pRoutesPeatonLayer = (const Tmx::TileLayer*)(*itl);
-					m_RoutesPeatonLayerIndex = counter;
 				}
 				else if ((*itl)->GetName().compare("GameModifiers") == 0)
 				{

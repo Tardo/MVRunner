@@ -51,9 +51,12 @@ void CControllerMenu::tick() noexcept
 	else if (!inMenu)
 	{
 		sf::Shader *pShader = Game()->Client()->Assets().getShader(CAssetManager::SHADER_FLAG);
-		pShader->setUniform("wave_phase", Game()->Client()->getElapsedTime());
-		pShader->setUniform("wave_amplitude", sf::Vector2f(8.0f, 8.0f));
-		pShader->setUniform("texture", sf::Shader::CurrentTexture);
+		if (pShader)
+		{
+			pShader->setUniform("wave_phase", Game()->Client()->getElapsedTime());
+			pShader->setUniform("wave_amplitude", sf::Vector2f(8.0f, 8.0f));
+			pShader->setUniform("texture", sf::Shader::CurrentTexture);
+		}
 
 		Game()->Client()->clear(sf::Color::Black);
 

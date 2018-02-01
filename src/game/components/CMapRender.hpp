@@ -20,21 +20,20 @@
 
 enum
 {
-	TILE_BOT_DENY=1,
-	TILE_ROAD=64,
-	TILE_ROAD_LIGHT,
-	TILE_ROAD_PEATON=68,
-
 	TILE_UP=0,
 	TILE_DOWN,
 	TILE_LEFT,
 	TILE_RIGHT,
 
+	TILE_SOLID=1,
+	TILE_DEAD,
+	TILE_STATE_FREEZE=9,
+	TILE_STATE_CLEAN=11,
 	TILE_TELEPORT_IN=26,
 	TILE_TELEPORT_OUT,
-
-	/* Game Tiles */
-	TILE_SOLID=1,
+	TILE_STATE_ROTATE,
+	TILE_SPEED_SOFT=64,
+	TILE_SPEED_HARD,
 
 	/** Used in Modifiers Layer **/
 	TILE_1=35,
@@ -162,12 +161,10 @@ public:
 	Tmx::Map* getMap() noexcept { return m_pMap; }
 	const Tmx::TileLayer* getGameLayer() const noexcept { return m_pGameLayer; }
 	const Tmx::TileLayer* getGameModifiersLayer() const noexcept { return m_pGameModifiersLayer; }
-	const Tmx::TileLayer* getRoutesPeatonLayer() const noexcept { return m_pRoutesPeatonLayer; }
 	CQuadTree<CMapRenderObject*>* getObjects() noexcept { return m_vpObjects; }
 	CMapRenderObject* getObject(int id) noexcept;
 	int getGameLayerIndex() const noexcept { return m_GameLayerIndex; }
 	int getGameModifiersLayerIndex() const noexcept { return m_GameModifiersLayerIndex; }
-	int getRoutesPeatonLayerIndex() const noexcept { return m_RoutesPeatonLayerIndex; }
 	int getWorldTileIndex(const sf::Vector2f &worldPos, const Tmx::TileLayer *pLayer) noexcept;
 	int getMapTileIndex(const sf::Vector2i &mapPos, const Tmx::TileLayer *pLayer) noexcept;
 	int getTileDirection(const sf::Vector2i &mapPos) noexcept;
@@ -198,10 +195,8 @@ private:
 	Tmx::Map *m_pMap;
 	const Tmx::TileLayer *m_pGameLayer;
 	const Tmx::TileLayer *m_pGameModifiersLayer;
-	const Tmx::TileLayer *m_pRoutesPeatonLayer;
 	CQuadTree<CMapRenderObject*> *m_vpObjects;
 	int m_GameLayerIndex;
-	int m_RoutesPeatonLayerIndex;
 	int m_GameModifiersLayerIndex;
 	std::vector<sf::Texture*> m_vpTextures;
 

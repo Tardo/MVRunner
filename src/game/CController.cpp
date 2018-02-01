@@ -53,7 +53,6 @@ bool CController::onMapTile(unsigned int tileId, const sf::Vector2f &pos, unsign
 		if (entityId == ENTITY_SPAWN_PLAYER)
 		{
 			m_PlayerSpawnPos.m_Pos = pos;
-			m_PlayerSpawnPos.m_Dir = Game()->Client()->MapRender().getTileDirectionVector(tileDir);
 			return true;
 		}
 	}
@@ -73,15 +72,6 @@ void CController::updateCamera(float deltaTime) noexcept
 	Game()->Client()->setView(Game()->Client()->Camera());
 	// Camera Pos
 	Game()->Client()->Camera().update(deltaTime);
-	CCharacter *pChar = Context()->getPlayer()->getCharacter();
-	if (pChar)
-	{
-		Game()->Client()->Camera().setSmoothZoom(pChar->isAlive()?g_Config.m_ZoomCharacter:g_Config.m_ZoomDead);
-		if (!pChar->isAlive())
-			Game()->Client()->Camera().rotate(32.0f*deltaTime);
-		else
-			Game()->Client()->Camera().setRotation(0.0f);
-	}
 }
 
 bool CController::isStaticObject(const char *pType) const noexcept
@@ -194,11 +184,8 @@ void CController::tick() noexcept
 						const Tmx::PropertySet &lightProps = pMapObj->m_pObject->GetProperties();
 						const float blink = lightProps.GetFloatProperty("blink", 0.0f);
 						const float variationSize = lightProps.GetFloatProperty("variation_size", 0.0f);
-						sf::Color colorLight;
-						colorLight.r = lightProps.GetIntProperty("color_r", 255);
-						colorLight.g = lightProps.GetIntProperty("color_g", 255);
-						colorLight.b = lightProps.GetIntProperty("color_b", 255);
-						colorLight.a = lightProps.GetIntProperty("color_a", 255);
+						const Tmx::Color color = lightProps.GetColorProperty("color", Tmx::Color(255, 255, 255, 255));
+						const sf::Color colorLight(color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
 
 						std::string lightType = lightProps.GetStringProperty("type");
 						bool alwaysOn = lightProps.GetBoolProperty("always_on", false);
@@ -252,13 +239,9 @@ void CController::tick() noexcept
 				}
 			} else if (!pMapObj->m_pLight && !pMapObj->m_pEntity)
 			{
-				const Tmx::PropertySet GeoProps = pMapObj->m_pObject->GetProperties();
-				const sf::Color GeoColor(
-					GeoProps.GetIntProperty("color_r", 255),
-					GeoProps.GetIntProperty("color_g", 255),
-					GeoProps.GetIntProperty("color_b", 255),
-					GeoProps.GetIntProperty("color_a", 0)
-				);
+				const Tmx::PropertySet GeomProps = pMapObj->m_pObject->GetProperties();
+				const Tmx::Color color = GeomProps.GetColorProperty("color", Tmx::Color(255, 255, 255, 0));
+				const sf::Color colorGeom(color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
 
 				b2BodyType b2Type = b2_dynamicBody;
 				if (pMapObj->m_pObject->GetType().compare("static") == 0)
@@ -278,7 +261,7 @@ void CController::tick() noexcept
 							sf::Vector2f(globalBounds.left, globalBounds.top),
 							1,
 							points,
-							GeoColor,
+							colorGeom,
 							bodyInfo);
 					pMapObj->m_pEntity->getShape()->setOrigin(globalBounds.width/2.0f, globalBounds.height/2.0f);
 					ups::msgDebug("GameContext", "Polygon Created! [#%d]", objId);
@@ -293,7 +276,7 @@ void CController::tick() noexcept
 								worldPosObj,
 								1,
 								pEllipse->GetRadiusX(),
-								GeoColor,
+								colorGeom,
 								bodyInfo);
 						ups::msgDebug("GameContext", "Ellipse Created: %s [#%d]", pMapObj->m_pObject->GetType().c_str(), objId);
 					}
@@ -311,7 +294,7 @@ void CController::tick() noexcept
 									worldPosObj,
 									1,
 									points,
-									GeoColor,
+									colorGeom,
 									bodyInfo);
 							ups::msgDebug("GameContext", "PolyLine Created! [#%d]", objId);
 						}
@@ -322,7 +305,7 @@ void CController::tick() noexcept
 									worldPosObj,
 									1,
 									sizeObj,
-									GeoColor,
+									colorGeom,
 									bodyInfo);
 							ups::msgDebug("GameContext", "Rectangle Created! [#%d]", objId);
 						}
@@ -415,8 +398,11 @@ void CController::tick() noexcept
 		{
 			const sf::Sprite &WaterSprite = pWeatherEngine->getWeatherMap(Game()->Client()->Camera());
 			sf::Shader *pWaterShader = Game()->Client()->Assets().getShader(CAssetManager::SHADER_WATER);
-			pWaterShader->setUniform("wave_phase", Game()->Client()->getElapsedTime());
-			pWaterShader->setUniform("texture_water", *WaterSprite.getTexture());
+			if (pWaterShader)
+			{
+				pWaterShader->setUniform("wave_phase", Game()->Client()->getElapsedTime());
+				pWaterShader->setUniform("texture_water", *WaterSprite.getTexture());
+			}
 			Game()->Client()->draw(BackMap, pWaterShader);
 		}
 		else
@@ -476,9 +462,12 @@ void CController::tick() noexcept
     	//pAbbShader->setUniform("offc", sf::Vector3f(0.001f, -0.0012f, 0.0015f));
     	//pAbbShader->setUniform("texture", sf::Shader::CurrentTexture);
     	sf::Shader *pBlurShader = Game()->Client()->Assets().getShader(CAssetManager::SHADER_BLUR);
-    	pBlurShader->setUniform("blur_radius_x", 0.0008f);
-    	pBlurShader->setUniform("blur_radius_y", 0.0008f);
-    	pBlurShader->setUniform("texture", sf::Shader::CurrentTexture);
+    	if (pBlurShader)
+    	{
+			pBlurShader->setUniform("blur_radius_x", 0.0008f);
+			pBlurShader->setUniform("blur_radius_y", 0.0008f);
+			pBlurShader->setUniform("texture", sf::Shader::CurrentTexture);
+    	}
     	Game()->Client()->draw(Game()->Client()->MapRender().getFrontMap(Game()->Client()->Camera(), pLightEngine->getTimeColor()), pBlurShader);
     }
 
@@ -498,7 +487,7 @@ void CController::onStart() noexcept
 {
 	Game()->Client()->Menus().setActive(CMenus::NONE);
 	// Spawn Player
-	Context()->getPlayer()->createCharacter(m_PlayerSpawnPos.m_Pos, m_PlayerSpawnPos.m_Dir);
+	Context()->getPlayer()->createCharacter(m_PlayerSpawnPos.m_Pos);
 	Game()->Client()->Camera().setZoom(g_Config.m_ZoomCharacter);
 
 	Game()->Client()->Camera().setTarget(Context()->getPlayer()->getCharacter());

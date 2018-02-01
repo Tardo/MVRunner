@@ -14,7 +14,6 @@ CBox::CBox(const sf::Vector2f &pos, const sf::Vector2f &size, const sf::Vector2f
 	m_BoxType = typeBox;
 	m_Dir = dir;
 	m_Health = MAX_HEALTH_BOX;
-	setShadowSizeFactor(0.8f);
 
 	CGame *pGame = CGame::getInstance();
 	m_pSystemFx = pGame->Client()->getSystem<CSystemFx>();

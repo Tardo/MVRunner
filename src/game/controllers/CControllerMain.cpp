@@ -17,18 +17,14 @@
 CControllerMain::CControllerMain() noexcept
 : CController()
 {
-	m_TimerArrow = ups::timeGet();
-	m_Timer10Hz = ups::timeGet();
-	m_Timer15Hz = ups::timeGet();
-	m_Add10Hz = false;
+	m_LastCheckPoint = VECTOR_ZERO;
+	m_TimerFreezed = 0;
 }
 CControllerMain::CControllerMain(class CContext *pContext) noexcept
 : CController(pContext)
 {
-	m_TimerArrow = ups::timeGet();
-	m_Timer10Hz = ups::timeGet();
-	m_Timer15Hz = ups::timeGet();
-	m_Add10Hz = false;
+	m_LastCheckPoint = VECTOR_ZERO;
+	m_TimerFreezed = 0;
 }
 CControllerMain::~CControllerMain() noexcept
 {
@@ -51,17 +47,6 @@ void CControllerMain::tick() noexcept
 
 	CPlayer *pMainPlayer = Context()->getPlayer();
 
-	const sf::Int64 CTime = ups::timeGet();
-	static const sf::Int64 time10Hz = ups::timeFreq()/10;
-	if(CTime - m_Timer10Hz > time10Hz)
-	{
-		m_Add10Hz = true;
-		m_Timer10Hz = CTime;
-	}
-	else
-		m_Add10Hz = false;
-
-
 	if (Game()->Client()->hasFocus() && Game()->Client()->Menus().getActive() == CMenus::NONE)
 	{
 		static bool pressedButtonUse = false;
@@ -73,28 +58,41 @@ void CControllerMain::tick() noexcept
 			if (pChar && pChar->isAlive())
 			{
 				const sf::Vector2f &charPos = pChar->getShape()->getPosition();
-				const int tileId = Game()->Client()->MapRender().getMapTileIndex(Game()->Client()->MapRender().getMapPos(charPos), Game()->Client()->MapRender().getGameLayer());
+				int charState = pChar->getCharacterState();
 
 				// If the camera is in travel not execute player commands
 				if (!(Game()->Client()->Camera().getStatus()&CCamera::TRAVEL))
 				{
+					const sf::Vector2f dir = upm::vectorNormalize(Game()->Client()->mapPixelToCoords(Game()->Client()->m_MousePosition, Game()->Client()->Camera()) - charPos);
+					if (pChar->getBody()->IsFixedRotation())
+						pChar->getBody()->SetTransform(pChar->getBody()->GetPosition(), upm::degToRad(upm::vectorAngle(dir)+90.0f));
+
 					// Player Character Movement
-					upm::degToDir(pChar->getShape()->getRotation());
-					sf::Vector2f dir = upm::vectorNormalize(Game()->Client()->mapPixelToCoords(Game()->Client()->m_MousePosition, Game()->Client()->Camera()) - charPos);
-					pChar->getBody()->SetTransform(pChar->getBody()->GetPosition(), upm::degToRad(upm::vectorAngle(dir)+90.0f));
-					bool turbo = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift);
+					if (!(charState&CCharacter::STATE_FREEZED))
+					{
+						int moveState = CCharacter::MOVE_STATE_STOP;
+						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+							moveState = CCharacter::MOVE_STATE_UP;
+						if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+							moveState |= CCharacter::MOVE_STATE_LEFT;
+						else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+							moveState |= CCharacter::MOVE_STATE_RIGHT;
 
-					int moveState = CCharacter::MOVE_STATE_STOP;
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-						moveState = CCharacter::MOVE_STATE_UP;
-					/*else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-						moveState = CCharacter::MOVE_STATE_DOWN;*/
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-						moveState |= CCharacter::MOVE_STATE_LEFT;
-					else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-						moveState |= CCharacter::MOVE_STATE_RIGHT;
+						pChar->move(moveState);
 
-					pChar->move(moveState, turbo);
+						// Player Select Weapon
+						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num0))
+							pChar->setActiveWeapon(-1);
+						else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
+						{
+							pChar->giveWeapon(WEAPON_GRENADE_LAUNCHER, 10, 10);
+							pChar->setActiveWeapon(WEAPON_GRENADE_LAUNCHER);
+						}
+
+						// Player Shoot
+						if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+							pChar->doFire();
+					}
 
 					// Player Use Action
 					if (!pressedButtonUse && sf::Keyboard::isKeyPressed(sf::Keyboard::E))
@@ -110,24 +108,19 @@ void CControllerMain::tick() noexcept
 					else if (!sf::Keyboard::isKeyPressed(sf::Keyboard::E))
 						pressedButtonUse = false;
 
-					// Player Select Weapon
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num0))
-						pChar->setActiveWeapon(-1);
-					else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
-					{
-						pChar->giveWeapon(WEAPON_GRENADE_LAUNCHER, 10, 10);
-						pChar->setActiveWeapon(WEAPON_GRENADE_LAUNCHER);
-					}
-
-					// Player Shoot
-					if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-						pChar->doFire();
-
 					// Player Light
 					if (m_pPlayerLight)
 						m_pPlayerLight->m_Position = charPos;
 				}
 
+				// Unfreeze
+				if ((charState&CCharacter::STATE_FREEZED) && ups::timeGet()-m_TimerFreezed > ups::timeFreq()*4.0f)
+				{
+					charState &= ~CCharacter::STATE_FREEZED;
+					pChar->setCharacterState(charState);
+				}
+
+				const int tileId = Game()->Client()->MapRender().getMapTileIndex(Game()->Client()->MapRender().getMapPos(charPos), Game()->Client()->MapRender().getGameLayer());
 				// Interact with the map environment
 				if (tileId == TILE_TELEPORT_IN)
 				{
@@ -141,6 +134,40 @@ void CControllerMain::tick() noexcept
 						Game()->Client()->Camera().moveTo((*it).second.m_PosOut, 2.0f);
 						pChar->getBody()->SetTransform(CSystemBox2D::sfToB2((*it).second.m_PosOut), pChar->getBody()->GetAngle());
 					}
+				}
+				else if (tileId == TILE_STATE_ROTATE)
+				{
+					charState |= CCharacter::STATE_ROTATE;
+					pChar->setCharacterState(charState);
+					pChar->getBody()->SetFixedRotation(false);
+				}
+				else if (tileId == TILE_STATE_FREEZE)
+				{
+					charState |= CCharacter::STATE_FREEZED;
+					pChar->setCharacterState(charState);
+					m_TimerFreezed = ups::timeGet();
+				}
+				else if (tileId == TILE_STATE_CLEAN)
+				{
+					pChar->setCharacterState(CCharacter::STATE_NORMAL);
+					pChar->getBody()->SetFixedRotation(true);
+				}
+				else if (tileId == TILE_SPEED_SOFT)
+				{
+					const sf::Vector2f tileDir = Game()->Client()->MapRender().getTileDirectionVector(Game()->Client()->MapRender().getMapPos(charPos));
+					pChar->getBody()->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(tileDir*g_Config.m_SpeedSoftImpulse), true);
+				}
+				else if (tileId >= TILE_1 && tileId <= TILE_25)
+				{
+					m_LastCheckPoint = charPos;
+				}
+				else if (tileId == TILE_DEAD)
+				{
+					pChar->getBody()->SetFixedRotation(true);
+					pChar->getBody()->SetLinearVelocity(b2Vec2(0.0f, 0.0f));
+					pChar->getBody()->SetAngularVelocity(0.0f);
+					Game()->Client()->getSystem<CSystemFx>()->createFireBall(pChar);
+					pChar->getBody()->SetTransform(CSystemBox2D::sfToB2(m_LastCheckPoint), pChar->getBody()->GetAngle());
 				}
 			}
 		}
@@ -174,7 +201,7 @@ bool CControllerMain::onMapTile(unsigned int tileId, const sf::Vector2f &pos, un
 				}
 				else
 				{
-					std::pair<std::map<int, CTeleport>::iterator, bool> rec = m_vTeleports.insert(std::make_pair(teleId, CTeleport(Game()->Client()->MapRender().getTileDirectionVector(tileDir))));
+					std::pair<std::map<int, CTeleport>::iterator, bool> rec = m_vTeleports.insert(std::make_pair(teleId, CTeleport()));
 					if (tileId == TILE_TELEPORT_OUT)
 						(*rec.first).second.m_PosOut = pos;
 					else

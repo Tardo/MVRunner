@@ -8,7 +8,6 @@
  * 		- A <path>					> Adds the indicate file/directory into ZPG package
  * 		- L							> List all files inside ZPG package
  * 		- E <file>					> Extract file
- * 		- I <num>					> Select num. iterations for compression algorithm (high values = slower | 0 = ZLib)
  * 		- R <path>					> Remove
  * 		- O							> Overwrite mode
  * 		- M <path> <new path>		> Move the file to new path
@@ -25,7 +24,6 @@
  * 		zpg_packer mypack.zpg -O -A photo.png					> Adds into 'mypack.zpg' the "photo.png" file, overwriting if already exists into the package.
  * 		zpg_packer mypack.zpg -M notes.txt data/notes.txt		> Move 'notes.txt' to 'data/notes.txt'
  */
-#include <SFML/Config.hpp>
 #include <cstring>
 #include <cstdio>
 #include <cstdlib>
@@ -33,10 +31,10 @@
 #include <fstream>
 #include <iomanip>
 #include <Zpg/Zpg.hpp>
-#if defined(SFML_SYSTEM_LINUX)
+#if defined(__linux__)
 	#include <dirent.h>
 	#include <sys/stat.h>
-#elif defined(SFML_SYSTEM_WINDOWS)
+#elif defined(__WIN32__) || defined(_WIN32) || defined(_WIN64)
     #include <windows.h>
     #include <direct.h>
 #endif
@@ -73,9 +71,9 @@ void makeDir(const char *pPath)
 	std::size_t delPos = 0;
 	while ((delPos = path.find_first_of("/\\", delPos+1)) != std::string::npos)
 	{
-	#if defined(SFML_SYSTEM_LINUX)
+	#if defined(__linux__)
 		mkdir(path.substr(0, delPos+1).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-    #elif defined(SFML_SYSTEM_WINDOWS)
+    #elif defined(__WIN32__) || defined(_WIN32) || defined(_WIN64)
         CreateDirectory(path.substr(0, delPos).c_str(), NULL);
 	#else
 		#error Not Implemented!
@@ -184,7 +182,7 @@ bool addDirectory(Zpg &zpg, const char *pFromFullPath, const char *pToFullPath, 
 	}
 
 	closedir(pDir);
-#elif defined(SFML_SYSTEM_WINDOWS)
+#elif defined(__WIN32__) || defined(_WIN32) || defined(_WIN64)
     char wildcard[FILENAME_MAX];
     snprintf(wildcard, FILENAME_MAX, "%s*", pFromFullPath);
 
@@ -295,7 +293,7 @@ int main(int argc, char *argv[])
     bool NeedWrite = false;
 	if (!Options.m_CreateMode)
 	{
-		if (!myZpg.load(Options.m_aToFile))
+		if (!myZpg.open(Options.m_aToFile))
 			return -1;
 	}
 

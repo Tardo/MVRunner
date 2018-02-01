@@ -43,9 +43,6 @@ private:
 	sf::Sprite m_WeatherMapTemp;
 
 	void renderWeatherRain() noexcept;
-	void renderPuddles() noexcept;
-
-	bool isPuddleZone(const sf::Vector2i &mapPos) noexcept;
 };
 
 #endif

@@ -15,8 +15,6 @@ CB2Polygon::CB2Polygon(sf::Vector2f worldPos, int zlevel, const std::vector<sf::
 	m_pShape = pConvex;
 	m_pShape->setFillColor(color);
 	m_pShape->setPosition(worldPos);
-	m_ShadowSizeFactor = 1.1f;
-	m_NumShadows = 0;
 
 	CGame *pGame = CGame::getInstance();
 	m_pBody = pGame->Client()->getSystem<CSystemBox2D>()->createPolygonBody(worldPos, points, bodyInfo);
@@ -33,8 +31,6 @@ CB2Polygon::CB2Polygon(sf::Vector2f worldPos, int zlevel, const sf::Vector2f siz
 	m_pShape->setFillColor(color);
 	m_pShape->setOrigin(size.x/2.0f, size.y/2.0f);
 	m_pShape->setPosition(worldPos);
-	m_ShadowSizeFactor = 1.1f;
-	m_NumShadows = 0;
 
 	CGame *pGame = CGame::getInstance();
 	m_pBody = pGame->Client()->getSystem<CSystemBox2D>()->createBoxBody(worldPos, size, bodyInfo);
@@ -68,50 +64,6 @@ void CB2Polygon::tick() noexcept
 		m_DbgShape.setOutlineThickness(1.0f);
 		m_DbgShape.setOutlineColor(sf::Color::Magenta);
 	}
-
-	// Clean Shadows
-	m_NumShadows = 0;
-
-	// Sun Shadow
-	if (!m_IsSensor && getZLevel())
-	{
-		const sf::Vector2f &shapePos = m_pShape->getPosition();
-		const sf::Texture *pTexture = getShape()->getTexture();
-		if (pTexture)
-		{
-			CSystemLight *pLight = pGame->Client()->getSystem<CSystemLight>();
-			sf::Sprite Shadow;
-			Shadow.setTexture(*pTexture, true);
-			Shadow.setTextureRect(getShape()->getTextureRect());
-			Shadow.setOrigin(sf::Vector2f(Shadow.getTextureRect().width/2.0f, Shadow.getTextureRect().height/2.0f));
-			Shadow.setColor(pLight->getShadowColor());
-			Shadow.setRotation(upm::radToDeg(m_pBody->GetAngle()));
-			Shadow.setScale(m_ShadowSizeFactor, m_ShadowSizeFactor);
-			Shadow.setPosition(shapePos+pLight->getShadowOffset());
-			m_aShadows[m_NumShadows++] = Shadow;
-			// Lights Shadows
-			std::vector<CLight*> vpNearLights = pGame->Client()->getSystem<CSystemLight>()->getNearLights(shapePos);
-			std::vector<CLight*>::const_iterator itl = vpNearLights.begin();
-			while (itl != vpNearLights.end())
-			{
-				if (m_NumShadows == MAX_SHADOWS)
-					break;
-
-				CLight *pLight = (*itl);
-				sf::Vector2f dir = shapePos - pLight->m_Position;
-				const float dist = upm::vectorLength(dir);
-				dir = upm::vectorNormalize(dir);
-
-				sf::Color shadowColor = pGame->Client()->getSystem<CSystemLight>()->getShadowColor();
-				shadowColor.a = 90 - upm::clamp(dist, 0.0f, 90.0f);
-				Shadow.setColor(shadowColor);
-				Shadow.setPosition(shapePos+dir*dist*0.1f);
-				m_aShadows[m_NumShadows++] = Shadow;
-
-				++itl;
-			}
-		}
-	}
 }
 
 void CB2Polygon::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
@@ -119,12 +71,6 @@ void CB2Polygon::draw(sf::RenderTarget& target, sf::RenderStates states) const n
 	CGame *pGame = CGame::getInstance();
 	if (m_pBody && m_pBody->IsActive())
 	{
-		// Shadow
-		if (!m_IsSensor && getZLevel())
-		{
-			for (unsigned int i=0; i<m_NumShadows; target.draw(m_aShadows[i++], states));
-		}
-
 		if (pGame->Client()->m_Debug)
 		{
 			target.draw(m_DbgShape, states);

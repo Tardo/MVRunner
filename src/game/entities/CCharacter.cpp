@@ -14,12 +14,11 @@
 const float CCharacter::SIZE = 28.0f;
 const long CCharacter::ANIM_TIME = 150;
 const unsigned int CCharacter::ANIM_SUBRECTS = 4;
-const CB2BodyInfo CCharacter::ms_BodyInfo = CB2BodyInfo(0.01f, 0.7f, 0.1f, b2_dynamicBody, CAT_CHARACTER_PLAYER);
-CCharacter::CCharacter(const sf::Vector2f &pos, const sf::Vector2f &dir, class CPlayer *pPlayer) noexcept
+const CB2BodyInfo CCharacter::ms_BodyInfo = CB2BodyInfo(1.0f, 0.7f, 0.1f, b2_dynamicBody, CAT_CHARACTER_PLAYER);
+CCharacter::CCharacter(const sf::Vector2f &pos, class CPlayer *pPlayer) noexcept
 : CB2Circle(pos, 2, SIZE, sf::Color::White, ms_BodyInfo, CEntity::CHARACTER)
 {
 	m_pPlayer = pPlayer;
-	m_SubrectIndex = 0;
 	m_Visible = true;
 	m_Health = MAX_HEALTH_PLAYER;
 	m_Alive = true;
@@ -29,11 +28,8 @@ CCharacter::CCharacter(const sf::Vector2f &pos, const sf::Vector2f &dir, class C
 	m_TimerDamageIndicator = 0;
 	m_TimerFire = 0;
 	m_FlagDamage = false;
-	m_ShaderBlur = 0.0f;
 	m_TimerHeartbeat = 0;
-	m_TimerAnim = ups::timeFreq();
-
-	setShadowSizeFactor(0.7f);
+	m_CharacterState = STATE_NORMAL;
 
 	//CGame *pGame = CGame::getInstance();
 
@@ -54,6 +50,8 @@ CCharacter::CCharacter(const sf::Vector2f &pos, const sf::Vector2f &dir, class C
 		fixtureDef.filter.maskBits = CAT_CHARACTER_PLAYER;
 		m_pBody->CreateFixture(&fixtureDef);
 	}
+
+	getShape()->setOutlineThickness(3.0f);
 
 	giveWeapon(WEAPON_GRENADE_LAUNCHER, -1, -1);
 	setActiveWeapon(WEAPON_GRENADE_LAUNCHER);
@@ -85,11 +83,15 @@ void CCharacter::tick() noexcept
 		const bool isGrounded = (pB2Engine->checkIntersectLine(shapePos, groundColPos, 0x0, this) != 0x0);
 		if (isGrounded)
 		{
-			m_pBody->SetLinearDamping((m_State == MOVE_STATE_STOP)?8.0f:3.5f);
+			if (!getBody()->IsFixedRotation())
+				m_pBody->SetLinearDamping(0.0f);
+			else
+				m_pBody->SetLinearDamping((m_State == MOVE_STATE_STOP)?15.0f:1.5f);
 			m_Jumps = 0;
 		} else {
 			m_pBody->SetLinearDamping(0.0f);
-			m_Jumps |= 1;
+			if (m_Jumps == 0)
+				++m_Jumps;
 		}
 
 		if (m_Health <= 0)
@@ -110,23 +112,22 @@ void CCharacter::tick() noexcept
 			pGame->Client()->Controller()->onCharacterDeath(this, nullptr);
 		}
 
-		const float velLen = upm::vectorLength(sf::Vector2f(m_pBody->GetLinearVelocity().x,m_pBody->GetLinearVelocity().y))*0.1f;
-		if ((m_Fire || velLen > 0.03f) && ups::timeGet()-m_TimerAnim > ups::timeFreq()*(0.25f-velLen))
+		// TODO: Create a component for this stuff... not use "draw"
+		sf::Color bodyInColor = sf::Color::White;
+		sf::Color bodyOutColor = sf::Color::Black;
+		if (m_CharacterState&STATE_ROTATE)
 		{
-			++m_SubrectIndex;
-			if (m_SubrectIndex>=ANIM_SUBRECTS)
-				m_SubrectIndex = 0;
-			m_TimerAnim = ups::timeGet();
+			bodyInColor = sf::Color::Black;
+			bodyOutColor = sf::Color::White;
 		}
-		else if (velLen == 0.0f)
-			m_SubrectIndex = 0;
-
-		getShape()->setTextureRect(sf::IntRect(m_SubrectIndex*32, 0, 32, 32));
-
-		m_ShaderBlur = upm::max(m_ShaderBlur-0.001f*pGame->Client()->getDeltaTime(), 0.0f);
+		if (m_CharacterState&STATE_FREEZED)
+		{
+			bodyInColor = sf::Color::Red;
+			bodyOutColor = sf::Color::White;
+		}
+		getShape()->setFillColor(bodyInColor);
+		getShape()->setOutlineColor(bodyOutColor);
 	}
-
-	m_Fire = false;
 }
 
 void CCharacter::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
@@ -145,10 +146,11 @@ void CCharacter::draw(sf::RenderTarget& target, sf::RenderStates states) const n
 	sf::Vector2f point = m_pShape->getPosition()+sf::Vector2f(0.0f, -1.0f)*(CCharacter::SIZE);
 	upm::vectorRotate(m_pShape->getPosition(), &point, upm::degToRad(m_pShape->getRotation()));
 	// Direction
+	sf::Color lineColor = getBody()->IsFixedRotation()?sf::Color::Black:sf::Color::White;
 	const sf::Vertex lineDir[] =
 	{
-		sf::Vertex(m_pShape->getPosition(), sf::Color::Black),
-		sf::Vertex(point, sf::Color::Black)
+		sf::Vertex(m_pShape->getPosition(), lineColor),
+		sf::Vertex(point, lineColor)
 	};
 	target.draw(lineDir, 2, sf::Lines, states);
 
@@ -188,7 +190,7 @@ void CCharacter::doFire() noexcept
 		{
 			case WEAPON_GRENADE_LAUNCHER:
 			{
-				new CProjectile(shapePos+shapeDir*(CCharacter::SIZE+25.0f), sf::Vector2f(32.0f,32.0f), shapeDir, g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_Speed, getOwner(), m_ActiveWeapon, 0);
+				new CProjectile(shapePos+shapeDir*(CCharacter::SIZE), sf::Vector2f(40.0f, 22.6f), shapeDir, g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_Speed, getOwner(), m_ActiveWeapon, 0);
 			} break;
 		}
 
@@ -225,30 +227,18 @@ void CCharacter::doImpulse(sf::Vector2f dir, float energy) noexcept
 	m_pBody->ApplyForceToCenter(CSystemBox2D::sfToB2(dir*energy), true);
 }
 
-void CCharacter::move(int state, bool turbo) noexcept
+void CCharacter::move(int state) noexcept
 {
 	m_State = state;
 	if (state == MOVE_STATE_STOP)
+	{
+		m_LastState = m_State;
 		return;
+	}
 
 	const sf::Vector2f charVel = CSystemBox2D::b2ToSf(m_pBody->GetLinearVelocity());
     const float v = g_Config.m_CharacterImpulse;
-    sf::Vector2f force = {
-    	(state & MOVE_STATE_RIGHT ? v : ( MOVE_STATE_LEFT & state ? -v : 0)),
-		(state & MOVE_STATE_DOWN ? v : ( MOVE_STATE_UP & state ? -g_Config.m_CharacterJumpImpulse : 0))
-    };
-    bool canMove = true;
-
-    // Only can jump one time
-    if (m_State&MOVE_STATE_UP)
-    {
-    	if (m_Jumps == 3)
-    	{
-    		force.y = 0.0f;
-    	}
-    	m_Jumps |= 2;
-    }
-
+    sf::Vector2f force = VECTOR_ZERO;
     // Can't impulse in air
     if ((m_State&MOVE_STATE_LEFT) || (m_State&MOVE_STATE_RIGHT))
     {
@@ -258,8 +248,8 @@ void CCharacter::move(int state, bool turbo) noexcept
 
 		const sf::Vector2f groundColPos = shapePos + sf::Vector2f(0.0f, CCharacter::SIZE+5.0f);
 		const bool isGrounded = (pB2Engine->checkIntersectLine(shapePos, groundColPos, 0x0, this) != 0x0);
-		if (!isGrounded)
-			force.x = (m_State&MOVE_STATE_LEFT)?-v:v;
+		//if (!isGrounded)
+		force.x = (m_State&MOVE_STATE_LEFT)?-v:v;
 
 		const sf::Vector2f endPos = shapePos + sf::Vector2f((CCharacter::SIZE+5.0f)*(m_State&MOVE_STATE_LEFT?-1.0f:1.0f), 0.0f);
 		if (pB2Engine->checkIntersectLine(shapePos, endPos, 0x0, this) != 0x0)
@@ -273,9 +263,24 @@ void CCharacter::move(int state, bool turbo) noexcept
 		}
     }
 
-    if (canMove)
-    	m_pBody->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(force), true);
-    	//m_pBody->ApplyForceToCenter(CSystemBox2D::sfToB2(force), true);
+    // Only can jump one time
+    ups::msgDebug("SSS", "JUmps: %d", m_Jumps);
+    if ((m_State&MOVE_STATE_UP) && m_Jumps < 2 && !(m_LastState&MOVE_STATE_UP))
+    {
+    	++m_Jumps;
+    	//if (m_pBody->IsFixedRotation())
+    	{
+    		const sf::Vector2f vel(charVel.x, -g_Config.m_CharacterJumpImpulse);
+    		m_pBody->SetLinearVelocity(CSystemBox2D::sfToB2(vel));
+    	}
+    } else
+    {
+
+	if (m_pBody->IsFixedRotation())
+		m_pBody->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(force), true);
+	else
+		m_pBody->ApplyAngularImpulse((m_State&MOVE_STATE_LEFT)?-0.0001f:0.0001f, true);
+    }
 
     m_LastState = m_State;
 }

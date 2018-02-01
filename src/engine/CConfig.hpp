@@ -27,7 +27,7 @@ struct CConfiguration
 	#define MACRO_CONFIG_FLOAT(Name,ScriptName,Def,Min,Max,Save) float m_##Name;
 	#define MACRO_CONFIG_STR(Name,ScriptName,Len,Def,Save) char m_##Name[Len];
 	#define MACRO_CONFIG_BOOL(Name,ScriptName,Def,Save) bool m_##Name;
-	#include "config_vars.h"
+	#include <game/config_vars.h>
 	#undef MACRO_CONFIG_INT
 	#undef MACRO_CONFIG_FLOAT
 	#undef MACRO_CONFIG_STR
