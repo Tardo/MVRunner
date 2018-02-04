@@ -1,15 +1,14 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
 #include "CFire.hpp"
-#include "CBox.hpp"
 #include <engine/CGame.hpp>
 #include <engine/CAssetManager.hpp>
 #include <engine/CSystemBox2D.hpp>
 
 const float CFire::SIZE = 2.5f;
-const CB2BodyInfo CFire::ms_BodyInfo = CB2BodyInfo(0.2f, 0.7f, 0.1f, b2_dynamicBody, CAT_FIRE, false, CAT_CHARACTER_PLAYER|CAT_FIRE|CAT_BUILD|CAT_PROJECTILE_MAP|CAT_PROJECTILE|CAT_GENERIC|CAT_BOX);
+const CB2BodyInfo CFire::ms_BodyInfo = CB2BodyInfo(0.2f, 0.7f, 0.1f, b2_dynamicBody, CAT_FIRE, false, CAT_CHARACTER_PLAYER|CAT_FIRE|CAT_BUILD|CAT_PROJECTILE|CAT_GENERIC);
 CFire::CFire(const sf::Vector2f &pos, const sf::Vector2f &dir, float force, float lifeTime) noexcept
-: CB2Circle(pos, 1, SIZE, sf::Color::Transparent, ms_BodyInfo, CEntity::FIRE)
+: CB2Circle(pos, SIZE, sf::Color::Transparent, ms_BodyInfo, CEntity::FIRE)
 {
 	m_LifeTime = lifeTime;
 	m_Dir = dir;
@@ -44,11 +43,10 @@ void CFire::tick() noexcept
 	CB2Circle::tick();
 	CGame *pGame = CGame::getInstance();
 
-	const sf::Vector2f &shapePos = getShape()->getPosition();
+	const sf::Vector2f shapePos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
 	const unsigned long elapsedTicks = ups::timeGet()-m_TickStart;
 
-	if (getBody())
-		getBody()->SetLinearVelocity(CSystemBox2D::sfToB2(m_Dir*m_Force));
+	getBody()->SetLinearVelocity(CSystemBox2D::sfToB2(m_Dir*m_Force));
 
 	if (m_LifeTime != 0.0f)
 	{

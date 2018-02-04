@@ -6,7 +6,7 @@
 #include <engine/CSystemSound.hpp>
 
 CAmbientSound::CAmbientSound(const sf::Vector2f &worldPos, int soundId, float radius, bool loop, float volume) noexcept
-: CEntity(CEntity::AMBIENTSOUND, 1)
+: CEntity(CEntity::AMBIENTSOUND)
 {
 	CGame *pGame = CGame::getInstance();
 	m_pSound = pGame->Client()->getSystem<CSystemSound>()->createSound(soundId, worldPos, volume, loop, radius, true);
@@ -21,12 +21,5 @@ CAmbientSound::~CAmbientSound() noexcept
 	#endif
 }
 
-
 void CAmbientSound::tick() noexcept
 { }
-
-
-void CAmbientSound::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
-{
-
-}

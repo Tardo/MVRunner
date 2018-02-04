@@ -41,6 +41,88 @@ CControllerMain::~CControllerMain() noexcept
 void CControllerMain::onSystemEvent(sf::Event *pEvent) noexcept
 { }
 
+bool CControllerMain::onInit() noexcept
+{
+	CController::onInit();
+
+	unsigned long fileSize = 0;
+	const unsigned char *pData = Game()->Client()->Storage().getFileData("data/map.tmx", &fileSize);
+	if (!Context()->Map().loadMap(Zpg::toString(pData, fileSize).c_str()))
+	{
+		ups::msgDebug("CGame", "Oops... Error loading map!");
+		return false;
+	}
+
+	if (Context()->Map().isMapLoaded())
+	{
+		// Analizar Game Layer
+		const Tmx::TileLayer *pGameLayer = Context()->Map().getGameLayer();
+		const Tmx::TileLayer *pGameModifiersLayer = Context()->Map().getGameModifiersLayer();
+		if (pGameLayer)
+		{
+			ups::msgDebug("CGame", "Analyzing map entities (%dx%d)...", pGameLayer->GetWidth(), pGameLayer->GetHeight());
+			for (int i=0; i<pGameLayer->GetHeight(); i++)
+			{
+				for (int e=0; e<pGameLayer->GetWidth(); e++)
+				{
+					const Tmx::MapTile &curTile = pGameLayer->GetTile(e, i);
+					if (curTile.tilesetId < 0)
+						continue;
+
+					const Tmx::Tileset *pTileset = Context()->Map().GetTileset(curTile.tilesetId);
+					const int tileIndex = (curTile.gid - pTileset->GetFirstGid());
+					if (tileIndex<=0)
+						continue;
+
+					sf::Vector2f worldPos(
+						e*Context()->Map().GetTileWidth()+Context()->Map().GetTileWidth()/2.0f,
+						i*Context()->Map().GetTileHeight()+Context()->Map().GetTileHeight()/2.0f
+					);
+
+					unsigned int modifierId = 0;
+					if (pGameModifiersLayer)
+					{
+						const Tmx::MapTile &curModifierTile = pGameModifiersLayer->GetTile(e, i);
+						if (curModifierTile.tilesetId >= 0)
+						{
+							const Tmx::Tileset *pTilesetModifiers = Context()->Map().GetTileset(curModifierTile.tilesetId);
+							modifierId = (curModifierTile.gid - pTilesetModifiers->GetFirstGid());
+						}
+					}
+
+					onMapTile(tileIndex, worldPos, Context()->Map().getTileDirection(sf::Vector2i(e, i)), modifierId);
+				}
+			}
+		}
+
+		// Map Objects
+		std::list<CMapRenderObject*> vObjects = Context()->Map().getObjects()->queryAll();
+		std::list<CMapRenderObject*>::const_iterator itob = vObjects.cbegin();
+		while (itob != vObjects.cend())
+		{
+			CMapRenderObject *pMapObj = (*itob);
+			if (!pMapObj || (pMapObj && !pMapObj->m_pObject))
+			{
+				++itob;
+				continue;
+			}
+
+			const sf::FloatRect globalBounds(
+				pMapObj->m_pObject->GetX(), pMapObj->m_pObject->GetY(),
+				pMapObj->m_pObject->GetWidth(), pMapObj->m_pObject->GetHeight()
+			);
+			const sf::Vector2f worldPosObj(globalBounds.left+pMapObj->m_pObject->GetWidth()/2.0f, globalBounds.top+pMapObj->m_pObject->GetHeight()/2.0f);
+			const sf::Vector2f sizeObj(globalBounds.width, globalBounds.height);
+			const int objId = pMapObj->m_pObject->GetId();
+
+			onMapObject(pMapObj, objId, worldPosObj, sizeObj);
+			++itob;
+		}
+	}
+
+	return true;
+}
+
 void CControllerMain::tick() noexcept
 {
 	CController::tick();
@@ -57,7 +139,7 @@ void CControllerMain::tick() noexcept
 			CCharacter *pChar = pMainPlayer->getCharacter();
 			if (pChar && pChar->isAlive())
 			{
-				const sf::Vector2f &charPos = pChar->getShape()->getPosition();
+				const sf::Vector2f &charPos = CSystemBox2D::b2ToSf(pChar->getBody()->GetPosition());
 				int charState = pChar->getCharacterState();
 
 				// If the camera is in travel not execute player commands
@@ -120,11 +202,11 @@ void CControllerMain::tick() noexcept
 					pChar->setCharacterState(charState);
 				}
 
-				const int tileId = Game()->Client()->MapRender().getMapTileIndex(Game()->Client()->MapRender().getMapPos(charPos), Game()->Client()->MapRender().getGameLayer());
+				const int tileId = Context()->Map().getMapTileIndex(Context()->Map().getMapPos(charPos), Context()->Map().getGameLayer());
 				// Interact with the map environment
 				if (tileId == TILE_TELEPORT_IN)
 				{
-					const int modifierId = Game()->Client()->MapRender().getMapTileIndex(Game()->Client()->MapRender().getMapPos(charPos), Game()->Client()->MapRender().getGameModifiersLayer());
+					const int modifierId = Context()->Map().getMapTileIndex(Context()->Map().getMapPos(charPos), Context()->Map().getGameModifiersLayer());
 					int teleId = -1;
 					if (modifierId >= TILE_1 && modifierId <= TILE_25)
 						teleId = (modifierId-TILE_1)+1;
@@ -154,7 +236,7 @@ void CControllerMain::tick() noexcept
 				}
 				else if (tileId == TILE_SPEED_SOFT)
 				{
-					const sf::Vector2f tileDir = Game()->Client()->MapRender().getTileDirectionVector(Game()->Client()->MapRender().getMapPos(charPos));
+					const sf::Vector2f tileDir = Context()->Map().getTileDirectionVector(Context()->Map().getMapPos(charPos));
 					pChar->getBody()->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(tileDir*g_Config.m_SpeedSoftImpulse), true);
 				}
 				else if (tileId >= TILE_1 && tileId <= TILE_25)
@@ -177,6 +259,11 @@ void CControllerMain::tick() noexcept
 void CControllerMain::onStart() noexcept
 {
 	CController::onStart();
+	// Spawn Player
+	Context()->getPlayer()->createCharacter(m_PlayerSpawnPos.m_Pos);
+	Game()->Client()->Camera().setZoom(g_Config.m_ZoomCharacter);
+
+	Game()->Client()->Camera().setTarget(Context()->getPlayer()->getCharacter());
 	Game()->Client()->getSystem<CSystemSound>()->playBackgroundMusic(CAssetManager::MUSIC_FIRST_FLOOR);
 }
 

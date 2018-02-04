@@ -43,7 +43,7 @@ public:
     bool m_OnlyLight;
     sf::Int32 m_ShaderId;
     sf::Int64 m_Timer;
-    CEntity *m_pTarget;
+    class CEntity *m_pTarget;
     sf::Vector2f m_Offset;
 
 private:
@@ -62,13 +62,13 @@ public:
 
 	void createSpiritTrail(const sf::Vector2f &worldPos) noexcept;
 	void createSpirit(const sf::Vector2f &worldPos) noexcept;
-	void createFireBall(CEntity *pTarget, const sf::Vector2f &offSet = VECTOR_ZERO) noexcept;
+	void createFireBall(class CEntity *pTarget, const sf::Vector2f &offSet = VECTOR_ZERO) noexcept;
 	void createFireTrailSmall(const sf::Vector2f &worldPos) noexcept;
 	void createFireTrailLarge(const sf::Vector2f &worldPos) noexcept;
 	void createBloodSpark(const sf::Vector2f &worldPos, float duration = 60.0f) noexcept;
 	void createBlood(const sf::Vector2f &worldPos) noexcept;
 	void createPoints(const sf::Vector2f &worldPos, int points) noexcept;
-	void createSmokeImpact(const sf::Vector2f &worldPos) noexcept;
+	void createSmokeImpact(const sf::Vector2f &worldPos, const sf::Vector2f &dir, float vel) noexcept;
 
 	void createSmokeCarDamaged(const sf::Vector2f &worldPos, bool fire) noexcept;
 	void createSpitFireCarDamaged(const sf::Vector2f &worldPos, const sf::Vector2f &dir = VECTOR_ZERO) noexcept;

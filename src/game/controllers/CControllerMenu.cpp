@@ -16,23 +16,11 @@
 CControllerMenu::CControllerMenu() noexcept
 : CController(),
   m_CamPos(0.0f, 0.0f)
-{
-	if (Game()->Client()->MapRender().getMap())
-	{
-		m_CamPos = sf::Vector2f(Game()->Client()->MapRender().getMap()->GetWidth()*Game()->Client()->MapRender().getMap()->GetTileWidth()/2.0f,
-								Game()->Client()->MapRender().getMap()->GetHeight()*Game()->Client()->MapRender().getMap()->GetTileHeight()/2.0f);
-	}
-}
+{ }
 CControllerMenu::CControllerMenu(class CContext *pContext) noexcept
 : CController(pContext),
   m_CamPos(0.0f, 0.0f)
-{
-	if (Game()->Client()->MapRender().getMap())
-	{
-		m_CamPos = sf::Vector2f(Game()->Client()->MapRender().getMap()->GetWidth()*Game()->Client()->MapRender().getMap()->GetTileWidth()/2.0f,
-								Game()->Client()->MapRender().getMap()->GetHeight()*Game()->Client()->MapRender().getMap()->GetTileHeight()/2.0f);
-	}
-}
+{ }
 CControllerMenu::~CControllerMenu() noexcept
 {
 	#ifdef DEBUG_DESTRUCTORS
@@ -80,9 +68,15 @@ void CControllerMenu::updateCamera(float deltaTime) noexcept
 	Game()->Client()->Camera().setCenter(m_CamPos+sf::Vector2f(cosf(Game()->Client()->getElapsedTime()*0.25f)*64.0f, sinf(Game()->Client()->getElapsedTime()*0.25f)*64.0f));
 }
 
+bool CControllerMenu::onInit() noexcept
+{
+	return CController::onInit();
+}
 
 void CControllerMenu::onStart() noexcept
 {
+	CController::onStart();
+
 	m_SpriteLogo.setTexture(*Game()->Client()->Assets().getTexture(CAssetManager::TEXTURE_SFML_LOGO));
 	m_SpriteLogo.setScale(0.75f, 0.75f);
 	m_SpriteLogo.setPosition(sf::Vector2f(g_Config.m_ScreenWidth/2.0f - m_SpriteLogo.getLocalBounds().width/2.0f*m_SpriteLogo.getScale().x, g_Config.m_ScreenHeight/2.0f - m_SpriteLogo.getLocalBounds().height/2.0f*m_SpriteLogo.getScale().y));

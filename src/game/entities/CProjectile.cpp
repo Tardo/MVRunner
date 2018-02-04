@@ -6,9 +6,9 @@
 #include <engine/CSystemBox2D.hpp>
 #include <engine/CSystemSound.hpp>
 
-const CB2BodyInfo CProjectile::ms_BodyInfo = CB2BodyInfo(0.2f, 0.7f, 0.1f, b2_dynamicBody, CAT_PROJECTILE, false, CAT_FIRE|CAT_BUILD|CAT_BOX|CAT_GENERIC);
+const CB2BodyInfo CProjectile::ms_BodyInfo = CB2BodyInfo(0.2f, 0.7f, 0.1f, b2_dynamicBody, CAT_PROJECTILE, false, CAT_FIRE|CAT_BUILD|CAT_GENERIC);
 CProjectile::CProjectile(const sf::Vector2f &pos, const sf::Vector2f &size, const sf::Vector2f &dir, float speed, class CPlayer *pOwner, unsigned int type, unsigned int subtype) noexcept
-: CB2Polygon(pos, 2, size, sf::Color::White, ms_BodyInfo, CEntity::PROJECTILE)
+: CB2Polygon(pos, size, sf::Color::White, ms_BodyInfo, CEntity::PROJECTILE)
 {
     m_pBody = getBody();
     m_Speed = speed;
@@ -29,7 +29,6 @@ CProjectile::CProjectile(const sf::Vector2f &pos, const sf::Vector2f &size, cons
 			m_pBody->SetTransform(m_pBody->GetPosition(), upm::degToRad(upm::vectorAngle(m_Dir)));
 			m_pBody->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(m_Dir*m_Speed), true);
 			m_pBody->SetAngularVelocity(upm::floatRand(-8.0f, 8.0f));
-			getShape()->setTexture(pGame->Client()->Assets().getTexture(CAssetManager::TEXTURE_GRENADE));
 		}
     }
 }
@@ -47,19 +46,13 @@ void CProjectile::tick() noexcept
 	//const sf::Vector2f &shapePos = getShape()->getPosition();
 }
 
-void CProjectile::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
-{
-    CB2Polygon::draw(target, states);
-}
-
-
 void CProjectile::onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexcept
 {
 	if (pEntity->getType() == CEntity::FIRE)
 		return;
 
 	CGame *pGame = CGame::getInstance();
-	if (m_ProjType == WEAPON_GRENADE_LAUNCHER)
+	if (!isToDelete() && m_ProjType == WEAPON_GRENADE_LAUNCHER)
 	{
 		pGame->Client()->getSystem<CSystemFx>()->createImpactSparkMetal(worldPos);
 		pGame->Client()->getSystem<CSystemFx>()->createExplosionCar(worldPos, true);

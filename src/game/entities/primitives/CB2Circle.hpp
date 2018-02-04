@@ -10,18 +10,10 @@
 class CB2Circle : public CEntity
 {
 public:
-	CB2Circle(sf::Vector2f worldPos, int zlevel, float radius, sf::Color, const CB2BodyInfo &bodyInfo, int entityType = CEntity::B2CIRCLE) noexcept;
+	CB2Circle(sf::Vector2f worldPos, float radius, sf::Color, const CB2BodyInfo &bodyInfo, int entityType = CEntity::B2CIRCLE) noexcept;
 	virtual ~CB2Circle() noexcept;
 
 	virtual void tick() noexcept;
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept;
-
-	b2Body* getBody() const noexcept { return m_pBody; }
-
-private:
-	b2Body *m_pBody;
-	sf::CircleShape m_DbgShape;
-	bool m_IsSensor;
 };
 
 #endif

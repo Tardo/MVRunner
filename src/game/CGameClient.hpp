@@ -16,8 +16,12 @@
 #include <game/components/CMapRender.hpp>
 #include <game/components/CMenus.hpp>
 #include <game/components/CUI.hpp>
+#include <game/components/CPlayerRender.hpp>
+#include <game/components/CItemRender.hpp>
+#include <game/components/CParticleRender.hpp>
 #include <game/CController.hpp>
 #include <game/CEntity.hpp>
+#include <game/CCamera.hpp>
 #include <Zpg/Zpg.hpp>
 #include <cstdlib>
 #include <list>
@@ -28,6 +32,7 @@
 #define BROADCAST_MAX_LENGTH	64
 #define HELP_TEXT_MAX_LENGTH	128
 
+
 class CGameClient final : public sf::RenderWindow
 {
 public:
@@ -35,7 +40,6 @@ public:
 	~CGameClient() noexcept;
 
 	CController* Controller() const noexcept { return m_pGameController; }
-	CMapRender& MapRender() noexcept { return m_MapRender; }
 	CAssetManager& Assets() noexcept { return m_AssetManager; }
 	CMenus& Menus() noexcept { return m_Menus; }
 	CUI& UI() noexcept { return m_UI; }
@@ -94,10 +98,15 @@ private:
 
 	CController *m_pGameController;
 
-	CMapRender m_MapRender;
+	CMapRender m_MapRenderBack;
+	CMapRender m_MapRenderFront;
 	CMenus m_Menus;
 	CUI m_UI;
 	CCamera m_Camera;
+	CPlayerRender m_PlayerRender;
+	CItemRender m_ItemRender;
+	CParticleRender m_ParticleRenderBack;
+	CParticleRender m_ParticleRenderFront;
 
 	CSystemBox2D m_SystemBox2D;
 	CSystemFx m_SystemFx;

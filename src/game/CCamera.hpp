@@ -1,14 +1,15 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
-#ifndef H_GAME_COMPONENT_CAMERA
-#define H_GAME_COMPONENT_CAMERA
+#ifndef H_GAME_CAMERA
+#define H_GAME_CAMERA
 
-#include <game/CComponent.hpp>
+#include <SFML/Graphics.hpp>
 
 #define CAMERA_ZOOM_FACTOR 0.75f
 
-class CCamera final : public CComponent, public sf::View
+class CCamera final : public sf::View
 {
+	friend class CGameClient;
 public:
 	enum
 	{
@@ -21,9 +22,11 @@ public:
 	CCamera() noexcept;
 	virtual ~CCamera() noexcept;
 
+	class CGameClient* Client() const noexcept { return m_pGameClient; }
+
 	virtual void update(float deltaTime) noexcept final;
 
-	void setTarget(CEntity *pEntity) noexcept
+	void setTarget(class CEntity *pEntity) noexcept
 	{
 		m_pTarget = pEntity;
 		if (m_pTarget)
@@ -31,7 +34,7 @@ public:
 		else
 			m_Status &= ~FOLLOW;
 	}
-	CEntity* getEntity() noexcept { return m_pTarget; }
+	class CEntity* getTarget() noexcept { return m_pTarget; }
 
 	void setZoom(float zoom) noexcept { m_ToZoom = m_Zoom = zoom; }
 	void setSmoothZoom(float tozoom) noexcept { m_ToZoom = tozoom; }
@@ -42,7 +45,8 @@ public:
 	int getStatus() const { return m_Status; }
 
 private:
-	CEntity *m_pTarget;
+	class CGameClient *m_pGameClient;
+	class CEntity *m_pTarget;
 
 	float m_VibrateCamTime;
 	float m_VibrateCamIntensity;

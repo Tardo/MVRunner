@@ -20,8 +20,9 @@ public:
 	CUI() noexcept;
 	virtual ~CUI() noexcept;
 
-	virtual void update(float deltaTime) noexcept final;
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept final;
 
+	void update() noexcept;
 	bool doButton(const char*pText, const sf::FloatRect &bounds, unsigned int fontSize, int align = 0) noexcept;
 
 private:

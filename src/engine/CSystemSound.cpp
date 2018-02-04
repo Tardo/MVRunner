@@ -36,7 +36,7 @@ void CSystemSound::update(float deltaTime) noexcept
 	CGame *pGame = CGame::getInstance();
 	if (pGame->Client()->Controller() && pGame->Client()->Controller()->Context()->getPlayer()->getCharacter())
 	{
-		const sf::Vector2f &pos = pGame->Client()->Controller()->Context()->getPlayer()->getCharacter()->getShape()->getPosition();
+		const sf::Vector2f &pos = CSystemBox2D::b2ToSf(pGame->Client()->Controller()->Context()->getPlayer()->getCharacter()->getBody()->GetPosition());
 		sf::Listener::setPosition(pos.x, 0.0f, pos.y);
 	}
 }

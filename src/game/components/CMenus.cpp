@@ -20,9 +20,6 @@ CMenus::~CMenus() noexcept
 	#endif
 }
 
-void CMenus::update(float deltaTime) noexcept
-{ }
-
 void CMenus::setActive(int mid, CEntity *pEnt) noexcept
 {
 	if (mid < NONE || mid > NUM_MENUS)

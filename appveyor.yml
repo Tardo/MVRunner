@@ -3,11 +3,12 @@ image: Visual Studio 2015
 environment:
   SFML_ROOT: c:\projects\SFML-2.4.2
   ZPG_ROOT: C:\Program Files (x86)\libZpg
+  ZLIB_ROOT: C:\Program Files (x86)\zlib
   
 cache:
   - c:\projects\SFML-2.4.2
-  #- C:\Program Files (x86)\libZpg
-  #- C:\projects\zlib-1.2.11
+  - C:\Program Files (x86)\libZpg
+  - C:\Program Files (x86)\zlib
 
 install:
   - cd c:\projects
@@ -17,7 +18,8 @@ install:
     curl -LfsS -o sfml.zip https://www.sfml-dev.org/files/SFML-2.4.2-windows-vc14-32-bit.zip &&
     7z x sfml.zip)
   # Download ZLib Source
-  - IF NOT EXIST zlib-1.2.11 (
+  - IF NOT EXIST "%ZLIB_ROOT%" (
+    md "%ZLIB_ROOT%" &&
     curl -LfsS -o zlib-1.2.11.tar.gz http://zlib.net/zlib-1.2.11.tar.gz &&
     7z x zlib-1.2.11.tar.gz &&
     7z x zlib-1.2.11.tar &&
@@ -53,10 +55,9 @@ build_script:
 artifacts:
   - path: build32/Release/MVRunner.exe
           build32/Release/MVRunner_d.exe
-          build32/Release/.zip
           build32/*.exe
           build32/*.zip
-          build32/Release/assets.zpg
+          #build32/Release/assets.zpg
     name: MVRunner
 
 branches:

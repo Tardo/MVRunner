@@ -5,7 +5,6 @@
 #include <game/entities/primitives/CB2Circle.hpp>
 #include <game/entities/primitives/CB2Chain.hpp>
 #include <game/entities/CSign.hpp>
-#include <game/entities/CBox.hpp>
 #include <game/entities/CAmbientSound.hpp>
 #include <tmxparser/TmxObject.h>
 #include <tmxparser/TmxPolygon.h>
@@ -43,6 +42,11 @@ CController::~CController() noexcept
 	if (m_pPlayerLight)
 		m_pPlayerLight->destroy();
 	m_pPlayerLight = nullptr;
+}
+
+bool CController::onInit() noexcept
+{
+	return true;
 }
 
 bool CController::onMapTile(unsigned int tileId, const sf::Vector2f &pos, unsigned int tileDir, unsigned int modifierId) noexcept
@@ -99,13 +103,13 @@ void CController::tick() noexcept
 	// Camera Pos
 	updateCamera(Game()->Client()->getDeltaTime());
 
-	if (Game()->Client()->MapRender().isMapLoaded())
+	if (Context()->Map().isMapLoaded())
 	{
 		// Create Map Objects
 		sf::FloatRect screenArea;
 		Game()->Client()->getViewportGlobalBounds(&screenArea, Game()->Client()->Camera(), 0.0f); // MARGIN_CREATE_OBJECTS
 
-		std::list<CMapRenderObject*> vObjects = Game()->Client()->MapRender().getObjects()->queryAABB(screenArea);
+		std::list<CMapRenderObject*> vObjects = Context()->Map().getObjects()->queryAABB(screenArea);
 		//ups::msgDebug("CONTEXT", "Num: %d", vObjects.size());
 		std::list<CMapRenderObject*>::const_iterator itob = vObjects.cbegin();
 		while (itob != vObjects.cend())
@@ -221,10 +225,6 @@ void CController::tick() noexcept
 					{
 						const sf::Vector2f pos(globalBounds.left+globalBounds.width/2.0f, globalBounds.top+globalBounds.height/2.0f);
 					}
-					else if (pMapObj->m_pObject->GetType().compare("box") == 0)
-					{
-						pMapObj->m_pEntity = new CBox(worldPosObj, sizeObj, VECTOR_ZERO, 0.0f, BOX_WOOD, 2u);
-					}
 					else if (pMapObj->m_pObject->GetType().compare("sign") == 0)
 					{
 						const Tmx::PropertySet &signProps = pMapObj->m_pObject->GetProperties();
@@ -259,11 +259,9 @@ void CController::tick() noexcept
 					const CB2BodyInfo bodyInfo = CB2BodyInfo(0.1f, 0.5f, 0.1f, b2Type, CAT_BUILD);
 					pMapObj->m_pEntity = new CB2Polygon(
 							sf::Vector2f(globalBounds.left, globalBounds.top),
-							1,
 							points,
 							colorGeom,
 							bodyInfo);
-					pMapObj->m_pEntity->getShape()->setOrigin(globalBounds.width/2.0f, globalBounds.height/2.0f);
 					ups::msgDebug("GameContext", "Polygon Created! [#%d]", objId);
 				}
 				else
@@ -274,7 +272,6 @@ void CController::tick() noexcept
 						const CB2BodyInfo bodyInfo = CB2BodyInfo(0.1f, 0.5f, 0.1f, b2Type, CAT_BUILD);
 						pMapObj->m_pEntity = new CB2Circle(
 								worldPosObj,
-								1,
 								pEllipse->GetRadiusX(),
 								colorGeom,
 								bodyInfo);
@@ -292,7 +289,6 @@ void CController::tick() noexcept
 							const CB2BodyInfo bodyInfo = CB2BodyInfo(0.1f, 0.5f, 0.1f, b2Type, CAT_BUILD);
 							pMapObj->m_pEntity = new CB2Chain(
 									worldPosObj,
-									1,
 									points,
 									colorGeom,
 									bodyInfo);
@@ -303,7 +299,6 @@ void CController::tick() noexcept
 							const CB2BodyInfo bodyInfo = CB2BodyInfo(0.1f, 0.5f, 0.1f, b2Type, CAT_BUILD);
 							pMapObj->m_pEntity = new CB2Polygon(
 									worldPosObj,
-									1,
 									sizeObj,
 									colorGeom,
 									bodyInfo);
@@ -321,7 +316,6 @@ void CController::tick() noexcept
 	std::vector<CEntity*> &vpEntities = Context()->getAllEntities();
 	std::vector<CParticle*> &vpParticles = Context()->getAllParticles();
 
-	/** DELETE **/
 	// Entities
     std::vector<CEntity*>::iterator itE = vpEntities.begin();
     while (itE != vpEntities.end())
@@ -329,29 +323,15 @@ void CController::tick() noexcept
     	CEntity *pEnt = (*itE);
     	if (pEnt->isToDelete())
     	{
-    		// Is a MapObject Entity?
-    		if (Game()->Client()->MapRender().isMapLoaded())
-    		{
-				// TODO: Add a flag for know if is a map object entity
-				std::list<CMapRenderObject*> mapObjs = Game()->Client()->MapRender().getObjects()->queryAll();
-				std::list<CMapRenderObject*>::iterator itObj = mapObjs.begin();
-				while (itObj != mapObjs.end())
-				{
-					if ((*itObj)->m_pEntity == pEnt)
-					{
-						(*itObj)->m_pEntity = nullptr;
-						break;
-					}
-					++itObj;
-				}
-    		}
-
     		delete pEnt;
     		pEnt = nullptr;
     		itE = vpEntities.erase(itE);
     	}
     	else
+    	{
+    		(*itE)->tick();
     		++itE;
+    	}
     }
     // Particles
 	std::vector<CParticle*>::iterator itP = vpParticles.begin();
@@ -366,131 +346,16 @@ void CController::tick() noexcept
 			continue;
 		}
 		else
+		{
+			(*itP)->update();
 			++itP;
-	}
-
-	// Immutable Lists
-	const std::vector<CEntity*> vpInmEntities(vpEntities.begin(), vpEntities.end());
-	const std::vector<CParticle*> vpInmParticles(vpParticles.begin(), vpParticles.end());
-
-	/** UPDATE **/
-    // Entities
-	std::vector<CEntity*>::const_iterator itEnt = vpInmEntities.cbegin();
-    while (itEnt != vpInmEntities.cend())
-    	(*itEnt++)->tick();
-	// Particles
-    std::vector<CParticle*>::const_iterator itPar = vpInmParticles.cbegin();
-	while (itPar != vpInmParticles.cend())
-		(*itPar++)->update();
-
-
-	/** RENDER **/
-	Game()->Client()->setView(m_pGame->Client()->getDefaultView());
-
-	if (!Game()->Client()->m_Debug && Game()->Client()->MapRender().isMapLoaded())
-	{
-		// Map - Background
-		const sf::Sprite &BackMap = Game()->Client()->MapRender().getBackMap(Game()->Client()->Camera(), sf::Color(128,128,128));
-
-		// Render Map Background with Weather or not
-		CSystemWeather *pWeatherEngine = m_pGame->Client()->getSystem<CSystemWeather>();
-		if (pWeatherEngine->getWeather() == CSystemWeather::WEATHER_RAIN)
-		{
-			const sf::Sprite &WaterSprite = pWeatherEngine->getWeatherMap(Game()->Client()->Camera());
-			sf::Shader *pWaterShader = Game()->Client()->Assets().getShader(CAssetManager::SHADER_WATER);
-			if (pWaterShader)
-			{
-				pWaterShader->setUniform("wave_phase", Game()->Client()->getElapsedTime());
-				pWaterShader->setUniform("texture_water", *WaterSprite.getTexture());
-			}
-			Game()->Client()->draw(BackMap, pWaterShader);
 		}
-		else
-		{
-			Game()->Client()->draw(BackMap);
-		}
-	}
-
-	Game()->Client()->setView(Game()->Client()->Camera());
-
-	// Draw Entities (Lo que mas debajo esta...)
-	itEnt = vpInmEntities.cbegin();
-	while (itEnt != vpInmEntities.cend())
-	{
-		CEntity *pEnt = (*itEnt++);
-		if (pEnt->getZLevel() == -1)
-			Game()->Client()->draw(*pEnt);
-	}
-
-	// Particles
-	itPar = vpInmParticles.cbegin();
-	while (itPar != vpInmParticles.cend())
-	{
-		CParticle *pParticle = (*itPar++);
-		if (pParticle->m_Render == RENDER_BACK)
-			Game()->Client()->draw(*reinterpret_cast<sf::Drawable*>(pParticle));
-	}
-
-	// Draw Entities
-	itEnt = vpInmEntities.cbegin();
-	while (itEnt != vpInmEntities.cend())
-	{
-		CEntity *pEnt = (*itEnt++);
-		if (pEnt->getZLevel() != -1)
-			Game()->Client()->draw(*pEnt);
-	}
-
-
-	// Particles Front
-	itPar = vpInmParticles.cbegin();
-	while (itPar != vpInmParticles.cend())
-	{
-		CParticle *pParticle = (*itPar++);
-		if (pParticle->m_Render == RENDER_FRONT)
-			Game()->Client()->draw(*reinterpret_cast<sf::Drawable*>(pParticle));
-	}
-
-	Game()->Client()->setView(m_pGame->Client()->getDefaultView());
-
-    // Render Light
-    Game()->Client()->draw(pLightEngine->getLightmap(Game()->Client()->Camera()), sf::BlendMultiply);
-
-	// Map - Front
-    if (!Game()->Client()->m_Debug && Game()->Client()->MapRender().isMapLoaded())
-    {
-    	//sf::Shader *pAbbShader = Game()->Client()->Assets().getShader(CAssetManager::SHADER_CHROMATIC_ABERRATION);
-    	//pAbbShader->setUniform("offc", sf::Vector3f(0.001f, -0.0012f, 0.0015f));
-    	//pAbbShader->setUniform("texture", sf::Shader::CurrentTexture);
-    	sf::Shader *pBlurShader = Game()->Client()->Assets().getShader(CAssetManager::SHADER_BLUR);
-    	if (pBlurShader)
-    	{
-			pBlurShader->setUniform("blur_radius_x", 0.0008f);
-			pBlurShader->setUniform("blur_radius_y", 0.0008f);
-			pBlurShader->setUniform("texture", sf::Shader::CurrentTexture);
-    	}
-    	Game()->Client()->draw(Game()->Client()->MapRender().getFrontMap(Game()->Client()->Camera(), pLightEngine->getTimeColor()), pBlurShader);
-    }
-
-    Game()->Client()->setView(Game()->Client()->Camera());
-
-	// Particles Foreground
-	itPar = vpInmParticles.cbegin();
-	while (itPar != vpInmParticles.cend())
-	{
-		CParticle *pParticle = (*itPar++);
-		if (pParticle->m_Render == RENDER_FOREGROUND)
-			Game()->Client()->draw(*reinterpret_cast<sf::Drawable*>(pParticle));
 	}
 }
 
 void CController::onStart() noexcept
 {
 	Game()->Client()->Menus().setActive(CMenus::NONE);
-	// Spawn Player
-	Context()->getPlayer()->createCharacter(m_PlayerSpawnPos.m_Pos);
-	Game()->Client()->Camera().setZoom(g_Config.m_ZoomCharacter);
-
-	Game()->Client()->Camera().setTarget(Context()->getPlayer()->getCharacter());
 }
 
 void CController::onResetGame() noexcept

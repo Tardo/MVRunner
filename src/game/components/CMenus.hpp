@@ -5,7 +5,7 @@
 
 #include <game/CComponent.hpp>
 
-class CMenus final : public CComponent, public sf::Drawable
+class CMenus final : public CComponent
 {
 public:
 	enum
@@ -23,11 +23,8 @@ public:
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept final;
 
-	virtual void update(float deltaTime) noexcept final;
 	void setActive(int mid, CEntity *pEnt = nullptr) noexcept;
-
 	void setActiveEntity(CEntity *pEnt) { m_pEntity = pEnt; }
-
 	const int getActive() const noexcept { return m_ActiveMenu; }
 
 private:

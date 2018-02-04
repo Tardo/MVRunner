@@ -3,6 +3,7 @@
 #ifndef H_GAME_CONTROLLER
 #define H_GAME_CONTROLLER
 
+#include <base/math.hpp>
 #include <game/CContext.hpp>
 #include <SFML/Graphics.hpp>
 #include <vector>
@@ -45,6 +46,7 @@ public:
 
 	virtual void tick() noexcept;
 
+	virtual bool onInit() noexcept;
 	virtual void onStart() noexcept;
 	virtual void onResetGame() noexcept;
 	virtual void onCharacterDeath(CCharacter *pVictim, CPlayer *pKiller) noexcept;

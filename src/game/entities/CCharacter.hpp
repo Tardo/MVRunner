@@ -49,7 +49,7 @@ public:
 	~CCharacter() noexcept;
 
 	virtual void tick() noexcept final;
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept final;
+    virtual void onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexcept final;
 	virtual void onSensorIn(CEntity *pEntity) noexcept final;
 	virtual void onSensorOut(CEntity *pEntity) noexcept final;
 	virtual void takeHealth(int amount, class CPlayer *pPlayer) noexcept final;
@@ -81,20 +81,22 @@ public:
     void teleport(const sf::Vector2f &worldPosTo) noexcept;
 
     int getCharacterState() const { return m_CharacterState; }
-    void setCharacterState(int state) { m_CharacterState = state; }
+    void setCharacterState(int state);
 
     std::vector<CEntity*>& getSensorEntities() { return m_vpSensorEntities; }
+
+	sf::Int64 m_TimerFire;
+	sf::Int64 m_TimerDamageIndicator;
+	sf::Int64 m_TimerHeartbeat;
+	sf::Int64 m_TimerCharacterState;
 
 protected:
 	b2Body *m_pBody;
 	class CPlayer *m_pPlayer;
 	int m_CharacterState;
+	sf::CircleShape m_ShapeTimerIndicator;
 
 private:
-	sf::Int64 m_TimerFire;
-	sf::Int64 m_TimerDamageIndicator;
-	sf::Int64 m_TimerHeartbeat;
-
 	bool m_FlagDamage;
 	bool m_Alive;
 	bool m_Visible;

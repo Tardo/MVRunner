@@ -5,7 +5,7 @@
 
 #include <engine/CSystemFx.hpp>
 #include <game/CPlayer.hpp>
-#include <game/components/CCamera.hpp>
+#include "CMap.hpp"
 #include <vector>
 
 class CContext final
@@ -14,8 +14,9 @@ public:
 	CContext() noexcept;
 	~CContext() noexcept;
 
+	CMap& Map() { return m_Map; }
+
 	int addEntity(CEntity *pEntity) noexcept;
-	void setEntityZLevel(CEntity *pEntity, int ZLevel) noexcept;
 	int addParticle(CParticle *pParticle) noexcept;
 	void clearParticles() noexcept;
 
@@ -47,12 +48,16 @@ public:
 
 	CPlayer* getPlayer() noexcept { return m_pPlayer; }
 
+protected:
+	bool m_MapLoaded;
+
 private:
 	std::vector<CParticle*> m_vpParticles;
 	std::vector<CEntity*> m_vpEntities;
 	std::size_t m_NumParticles;
 
 	CPlayer *m_pPlayer;
+	CMap m_Map;
 };
 
 #endif

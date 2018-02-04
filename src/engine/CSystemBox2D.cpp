@@ -224,7 +224,7 @@ b2Fixture* CSystemBox2D::getFixtureAt(const sf::Vector2f &worldPos) noexcept
 	return queryCallBack.m_pFixture;
 }
 
-CEntity* CSystemBox2D::checkIntersectLine(const sf::Vector2f &worlPosInit, const sf::Vector2f &worldPosEnd, sf::Vector2f *pPoint, CEntity *pNotThis) noexcept
+CEntity* CSystemBox2D::checkIntersectLine(const sf::Vector2f &worlPosInit, const sf::Vector2f &worldPosEnd, sf::Vector2f *pPoint, b2Body *pNotThis) noexcept
 {
 	if (upm::vectorLength(worldPosEnd-worlPosInit) == 0.0f)
 		return nullptr;

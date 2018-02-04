@@ -16,6 +16,7 @@ public:
 
 	virtual void tick() noexcept final;
 	virtual void updateCamera(float deltaTime) noexcept final;
+	virtual bool onInit() noexcept final;
 	virtual void onStart() noexcept final;
 
 private:

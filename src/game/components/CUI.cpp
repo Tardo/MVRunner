@@ -15,7 +15,7 @@ CUI::~CUI() noexcept
 	#endif
 }
 
-void CUI::update(float deltaTime) noexcept
+void CUI::update() noexcept
 {
 	m_MouseLeftClicked = false;
 	static bool s_MouseLeftPressed = false;
@@ -27,6 +27,9 @@ void CUI::update(float deltaTime) noexcept
 		m_MouseLeftClicked = true;
 	}
 }
+
+void CUI::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
+{ }
 
 bool CUI::doButton(const char* pText, const sf::FloatRect &bounds, unsigned int fontSize, int align) noexcept
 {

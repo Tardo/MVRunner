@@ -5,16 +5,14 @@
 #include <engine/CAssetManager.hpp>
 #include <engine/CSystemBox2D.hpp>
 
-const CB2BodyInfo CHitBox::ms_BodyInfo = CB2BodyInfo(0.1f, 0.7f, 0.1f, b2_dynamicBody, CAT_HITBOX, false, CAT_CHARACTER_PLAYER|CAT_BOX|CAT_BUILD|CAT_GENERIC|CAT_HITBOX);
-CHitBox::CHitBox(const sf::Vector2f &pos, const sf::Vector2f &size, const sf::Vector2f &dir, float force, float lifeTime, unsigned int typeHitBox, unsigned int level, const sf::Color &color) noexcept
-: CB2Polygon(pos, level, size, color, ms_BodyInfo, CEntity::HITBOX)
+const CB2BodyInfo CHitBox::ms_BodyInfo = CB2BodyInfo(0.1f, 0.7f, 0.1f, b2_dynamicBody, CAT_HITBOX, false, CAT_CHARACTER_PLAYER|CAT_BUILD|CAT_GENERIC|CAT_HITBOX);
+CHitBox::CHitBox(const sf::Vector2f &pos, const sf::Vector2f &size, const sf::Vector2f &dir, float force, float lifeTime, unsigned int typeHitBox, unsigned int level, const sf::Color &color, int textureId) noexcept
+: CB2Polygon(pos, size, color, ms_BodyInfo, CEntity::HITBOX)
 {
 	m_HitBoxType = typeHitBox;
 	m_LifeTime = lifeTime;
 	m_Dir = dir;
-
-	CGame *pGame = CGame::getInstance();
-	int textId = -1;
+	m_TextureId = textureId;
 
 	switch (m_HitBoxType)
 	{
@@ -23,14 +21,6 @@ CHitBox::CHitBox(const sf::Vector2f &pos, const sf::Vector2f &size, const sf::Ve
 		case HITBOX_CHARACTER_HEAD:
 		case HITBOX_EXPLOSION_TRASH:
 		{
-			if (m_HitBoxType == HITBOX_EXPLOSION_TRASH)
-			{
-				textId = -1;
-				getShape()->setFillColor(sf::Color::Black);
-			}
-
-			getShape()->setTexture(pGame->Client()->Assets().getTexture(textId));
-
 			if (getBody())
 			{
 				getBody()->SetAngularDamping(5.25f);
@@ -54,8 +44,6 @@ CHitBox::CHitBox(const sf::Vector2f &pos, const sf::Vector2f &size, const sf::Ve
 				getBody()->SetAngularDamping(5.25f);
 				getBody()->SetLinearDamping(5.25f);
 			}
-
-			getShape()->setTexture(pGame->Client()->Assets().getTexture(textId));
 		} break;
 	}
 
@@ -76,7 +64,7 @@ void CHitBox::tick() noexcept
 	CB2Polygon::tick();
 	CGame *pGame = CGame::getInstance();
 
-	const sf::Vector2f &shapePos = getShape()->getPosition();
+	const sf::Vector2f shapePos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
 	const unsigned long elapsedTicks = ups::timeGet()-m_TickStart;
 
 	if (m_LifeTime != 0.0f)

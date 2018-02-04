@@ -8,6 +8,7 @@ CContext::CContext() noexcept
 {
 	m_pPlayer = new CPlayer();
 	m_NumParticles = 0;
+	m_MapLoaded = false;
 }
 CContext::~CContext() noexcept
 {
@@ -20,6 +21,25 @@ CContext::~CContext() noexcept
     while (itEnt != m_vpEntities.end())
     {
     	CEntity *pEnty = (*itEnt);
+
+    	// Is a MapObject Entity?
+		if (Map().isMapLoaded())
+		{
+			// TODO: Add a flag for know if is a map object entity
+			std::list<CMapRenderObject*> mapObjs = Map().getObjects()->queryAll();
+			std::list<CMapRenderObject*>::iterator itObj = mapObjs.begin();
+			while (itObj != mapObjs.end())
+			{
+				if ((*itObj)->m_pEntity == pEnty)
+				{
+					(*itObj)->m_pEntity = nullptr;
+					break;
+				}
+				++itObj;
+			}
+		}
+
+
     	delete pEnty;
     	pEnty = nullptr;
     	itEnt = m_vpEntities.erase(itEnt);
@@ -45,24 +65,10 @@ int CContext::addEntity(CEntity *pEntity) noexcept
 {
 	if (pEntity)
 	{
-		// Search pos
-		std::vector<CEntity*>::iterator it = m_vpEntities.begin();
-		while (it != m_vpEntities.end())
-		{
-			if (pEntity->getZLevel() < (*it)->getZLevel())
-				break;
-			++it;
-		}
-		std::vector<CEntity*>::iterator nit = m_vpEntities.insert(it, pEntity);
-		return nit - m_vpEntities.begin();
+		m_vpEntities.push_back(pEntity);
+		return m_vpEntities.size() - 1;
 	}
 	return -1;
-}
-
-void CContext::setEntityZLevel(CEntity *pEntity, int ZLevel) noexcept
-{
-	pEntity->m_ZLevel = ZLevel;
-	// TODO
 }
 
 int CContext::addParticle(CParticle *pParticle) noexcept

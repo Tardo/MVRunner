@@ -13,7 +13,6 @@ public:
 	~CAmbientSound() noexcept;
 
 	virtual void tick() noexcept final;
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept final;
 
 private:
 	sf::Sound *m_pSound;

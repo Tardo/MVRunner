@@ -143,17 +143,18 @@ set(ENGINE_SRC  src/engine/CAssetManager.cpp
                 src/engine/CSystemLight.cpp
                 src/engine/CSystemSound.cpp
                 src/engine/CSystemWeather.cpp)
-set(GAME_SRC    src/game/components/CCamera.cpp
-                src/game/components/CMapRender.cpp
+set(GAME_SRC    src/game/components/CMapRender.cpp
                 src/game/components/CMenus.cpp
                 src/game/components/CUI.cpp
+                src/game/components/CPlayerRender.cpp
+                src/game/components/CItemRender.cpp
+                src/game/components/CParticleRender.cpp
                 src/game/controllers/CControllerMain.cpp
                 src/game/controllers/CControllerMenu.cpp
                 src/game/entities/primitives/CB2Circle.cpp
                 src/game/entities/primitives/CB2Polygon.cpp
                 src/game/entities/primitives/CB2Chain.cpp
                 src/game/entities/CAmbientSound.cpp
-                src/game/entities/CBox.cpp
                 src/game/entities/CCharacter.cpp
                 src/game/entities/CFire.cpp
                 src/game/entities/CHitBox.cpp
@@ -162,7 +163,10 @@ set(GAME_SRC    src/game/components/CCamera.cpp
                 src/game/CContext.cpp
                 src/game/CController.cpp
                 src/game/CGameClient.cpp
-                src/game/CPlayer.cpp)
+                src/game/CCamera.cpp
+                src/game/CPlayer.cpp
+                src/game/CEntity.cpp
+                src/game/CMap.cpp)
 set(CLIENT_SRC  ${BASE_SRC} ${ENGINE_SRC} ${GAME_SRC})
  
 

@@ -6,13 +6,13 @@
 #include "CCamera.hpp"
 
 CCamera::CCamera() noexcept
-: CComponent(),
-  sf::View()
+: sf::View()
 {
 	m_VibrateCamTime = 0.0f;
 	m_VibrateCamIntensity = 0.0f;
 	m_TimerVibrateCam = 0;
 	m_pTarget = nullptr;
+	m_pGameClient = nullptr;
 	m_ToZoom = m_Zoom = 1.0f;
 
 	m_ToPos = VECTOR_ZERO;
@@ -44,8 +44,8 @@ void CCamera::update(float deltaTime) noexcept
     if (!(m_Status&TRAVEL))
     {
 		// Follow Target
-		if (m_pTarget && m_pTarget->getShape())
-			camCenter = m_pTarget->getShape()->getPosition();
+		if (m_pTarget && m_pTarget->getBody())
+			camCenter = CSystemBox2D::b2ToSf(m_pTarget->getBody()->GetPosition());
 
 		// Vibration
 		if (ups::timeGet()-m_TimerVibrateCam < ups::timeFreq()*m_VibrateCamTime)

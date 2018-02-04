@@ -23,18 +23,19 @@ general:
   artifacts:
     - "build-debug/MVRunner_d"
     - "build-release/MVRunner"
-    - "build-release/assets.zpg"
+    #- "build-release/assets.zpg"
 
 ## Customize test commands
 test:
   override:
     - |
         mkdir build-release/ && cd build-release/
-        cmake -DCMAKE_BUILD_TYPE:STRING=Release ..
+        cmake -DCMAKE_BUILD_TYPE:STRING=Release .. && make
         cpack --debug --verbose -C CPackConfig.cmake
     - |
         mkdir build-debug/ && cd build-debug/
-        cmake -DCMAKE_BUILD_TYPE:STRING=Debug ..
+        cmake -DCMAKE_BUILD_TYPE:STRING=Debug .. && make
+
   post:
     - mkdir $CIRCLE_ARTIFACTS/packages
     - mv build-release/*.sh $CIRCLE_ARTIFACTS/packages

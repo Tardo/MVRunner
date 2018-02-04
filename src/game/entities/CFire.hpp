@@ -18,7 +18,6 @@ public:
 
 	virtual void tick() noexcept final;
 	virtual void onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexcept;
-    //virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 private:
 	sf::Vector2f m_LastPos;

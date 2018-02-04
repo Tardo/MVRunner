@@ -17,12 +17,14 @@ MACRO_CONFIG_INT(ScreenHeight, screen_height, 768, 1, 1080, CConfig::SAVE)
 MACRO_CONFIG_FLOAT(SpeedSoftImpulse, speed_soft_impulse, 3.0f, 0.1f, 99.0f, CConfig::SAVE)
 MACRO_CONFIG_FLOAT(SpeedHardImpulse, speed_hard_impulse, 12.0f, 0.1f, 99.0f, CConfig::SAVE)
 
+MACRO_CONFIG_FLOAT(TimeFreeze, time_freeze, 4.0f, 0.1f, 99.0f, CConfig::SAVE)
+
 MACRO_CONFIG_FLOAT(ZoomCharacter, zoom_character, 1.7f, 0.1f, 4.0f, CConfig::SAVE)
 
 MACRO_CONFIG_FLOAT(CharacterHitDistance, character_hit_distance, 20.0f, 0.1f, 999.9f, CConfig::SAVE)
 MACRO_CONFIG_FLOAT(CharacterMaxVelocity, character_max_velocity, 280.0f, 0.1f, 9999.9f, CConfig::SAVE)
-MACRO_CONFIG_FLOAT(CharacterImpulse, character_impulse, 650.0f, 0.1f, 999.0f, CConfig::SAVE)
-MACRO_CONFIG_FLOAT(CharacterJumpImpulse, character_jump_impulse, 10.0f, 0.1f, 999.0f, CConfig::SAVE)
+MACRO_CONFIG_FLOAT(CharacterImpulse, character_impulse, 3.0f, 0.1f, 99.0f, CConfig::SAVE)
+MACRO_CONFIG_FLOAT(CharacterJumpImpulse, character_jump_impulse, 680.0f, 0.1f, 999.0f, CConfig::SAVE)
 
 MACRO_CONFIG_FLOAT(WeaponGrenadeLauncherEnergy, weapon_grenade_launcher_energy, 5.0f, 0.0f, 999.0f, CConfig::SAVE)
 MACRO_CONFIG_FLOAT(WeaponGrenadeLauncherRadius, weapon_grenade_launcher_radius, 192.0f, 0.0f, 999.0f, CConfig::SAVE)

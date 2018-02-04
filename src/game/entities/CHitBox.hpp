@@ -26,13 +26,14 @@ enum
 class CHitBox final : public CB2Polygon
 {
 public:
-	CHitBox(const sf::Vector2f &pos, const sf::Vector2f &size, const sf::Vector2f &dir, float force, float lifeTime, unsigned int typeHitBox, unsigned int level = 0u, const sf::Color &color = sf::Color::White) noexcept;
+	CHitBox(const sf::Vector2f &pos, const sf::Vector2f &size, const sf::Vector2f &dir, float force, float lifeTime, unsigned int typeHitBox, unsigned int level = 0u, const sf::Color &color = sf::Color::White, int textureId = -1) noexcept;
 	~CHitBox() noexcept;
 
 	virtual void tick() noexcept final;
     //virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 	unsigned int getHitBoxType() const noexcept { return m_HitBoxType; }
+	int m_TextureId;
 
 private:
 	unsigned int m_HitBoxType;

@@ -7,7 +7,6 @@
 #include "CCharacter.hpp"
 #include "CProjectile.hpp"
 #include "CHitBox.hpp"
-#include "CBox.hpp"
 #include <game/controllers/CControllerMain.hpp>
 
 
@@ -16,7 +15,7 @@ const long CCharacter::ANIM_TIME = 150;
 const unsigned int CCharacter::ANIM_SUBRECTS = 4;
 const CB2BodyInfo CCharacter::ms_BodyInfo = CB2BodyInfo(1.0f, 0.7f, 0.1f, b2_dynamicBody, CAT_CHARACTER_PLAYER);
 CCharacter::CCharacter(const sf::Vector2f &pos, class CPlayer *pPlayer) noexcept
-: CB2Circle(pos, 2, SIZE, sf::Color::White, ms_BodyInfo, CEntity::CHARACTER)
+: CB2Circle(pos, SIZE, sf::Color::White, ms_BodyInfo, CEntity::CHARACTER)
 {
 	m_pPlayer = pPlayer;
 	m_Visible = true;
@@ -37,8 +36,6 @@ CCharacter::CCharacter(const sf::Vector2f &pos, class CPlayer *pPlayer) noexcept
 	if (m_pBody)
 	{
 		m_pBody->SetFixedRotation(true);
-		//m_pBody->SetAngularDamping(1.25f);
-		//m_pBody->SetLinearDamping(10.25f);
 
 		// Crear Sensor
 		b2FixtureDef fixtureDef;
@@ -50,8 +47,6 @@ CCharacter::CCharacter(const sf::Vector2f &pos, class CPlayer *pPlayer) noexcept
 		fixtureDef.filter.maskBits = CAT_CHARACTER_PLAYER;
 		m_pBody->CreateFixture(&fixtureDef);
 	}
-
-	getShape()->setOutlineThickness(3.0f);
 
 	giveWeapon(WEAPON_GRENADE_LAUNCHER, -1, -1);
 	setActiveWeapon(WEAPON_GRENADE_LAUNCHER);
@@ -75,12 +70,12 @@ void CCharacter::tick() noexcept
 
 	if (isAlive())
 	{
-		const sf::Vector2f &shapePos = getShape()->getPosition();
+		const sf::Vector2f shapePos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
 
 		// Check Ground
 		CSystemBox2D *pB2Engine = pGame->Client()->getSystem<CSystemBox2D>();
 		const sf::Vector2f groundColPos = shapePos + sf::Vector2f(0.0f, CCharacter::SIZE+5.0f);
-		const bool isGrounded = (pB2Engine->checkIntersectLine(shapePos, groundColPos, 0x0, this) != 0x0);
+		const bool isGrounded = (pB2Engine->checkIntersectLine(shapePos, groundColPos, 0x0, getBody()) != 0x0);
 		if (isGrounded)
 		{
 			if (!getBody()->IsFixedRotation())
@@ -111,60 +106,6 @@ void CCharacter::tick() noexcept
 
 			pGame->Client()->Controller()->onCharacterDeath(this, nullptr);
 		}
-
-		// TODO: Create a component for this stuff... not use "draw"
-		sf::Color bodyInColor = sf::Color::White;
-		sf::Color bodyOutColor = sf::Color::Black;
-		if (m_CharacterState&STATE_ROTATE)
-		{
-			bodyInColor = sf::Color::Black;
-			bodyOutColor = sf::Color::White;
-		}
-		if (m_CharacterState&STATE_FREEZED)
-		{
-			bodyInColor = sf::Color::Red;
-			bodyOutColor = sf::Color::White;
-		}
-		getShape()->setFillColor(bodyInColor);
-		getShape()->setOutlineColor(bodyOutColor);
-	}
-}
-
-void CCharacter::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
-{
-	if (!m_Visible)
-		return;
-
-	CGame *pGame = CGame::getInstance();
-
-	/*sf::Shader *pShader = pGame->Client()->Assets().getShader(CAssetManager::SHADER_BLUR);
-	pShader->setUniform("texture", sf::Shader::CurrentTexture);
-	pShader->setUniform("blur_radius", 0.04f);
-	states.shader = pShader;*/
-	CB2Circle::draw(target, states);
-	//states.shader = nullptr;
-	sf::Vector2f point = m_pShape->getPosition()+sf::Vector2f(0.0f, -1.0f)*(CCharacter::SIZE);
-	upm::vectorRotate(m_pShape->getPosition(), &point, upm::degToRad(m_pShape->getRotation()));
-	// Direction
-	sf::Color lineColor = getBody()->IsFixedRotation()?sf::Color::Black:sf::Color::White;
-	const sf::Vertex lineDir[] =
-	{
-		sf::Vertex(m_pShape->getPosition(), lineColor),
-		sf::Vertex(point, lineColor)
-	};
-	target.draw(lineDir, 2, sf::Lines, states);
-
-	if (pGame->Client()->m_Debug)
-	{
-		sf::Vector2f point = m_pShape->getPosition()+sf::Vector2f(0.0f, -1.0f)*(CCharacter::SIZE+g_Config.m_CharacterHitDistance);
-		upm::vectorRotate(m_pShape->getPosition(), &point, upm::degToRad(m_pShape->getRotation()));
-		// Direction
-		const sf::Vertex lineDir[] =
-		{
-			sf::Vertex(m_pShape->getPosition(), sf::Color::Yellow),
-			sf::Vertex(point, sf::Color::Yellow)
-		};
-		target.draw(lineDir, 2, sf::Lines, states);
 	}
 }
 
@@ -183,14 +124,14 @@ void CCharacter::doFire() noexcept
 		if (m_aWeapons[m_ActiveWeapon].m_Ammo != -1 && m_aWeapons[m_ActiveWeapon].m_Ammo == 0)
 			return;
 
-		const sf::Vector2f &shapePos = getShape()->getPosition();
-		const sf::Vector2f shapeDir = upm::degToDir(getShape()->getRotation()-90.0f);
+		const sf::Vector2f charPos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
+		const sf::Vector2f charDir = upm::degToDir(upm::radToDeg(getBody()->GetAngle())-90.0f);
 
 		switch (m_ActiveWeapon)
 		{
 			case WEAPON_GRENADE_LAUNCHER:
 			{
-				new CProjectile(shapePos+shapeDir*(CCharacter::SIZE), sf::Vector2f(40.0f, 22.6f), shapeDir, g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_Speed, getOwner(), m_ActiveWeapon, 0);
+				new CProjectile(charPos+charDir*(CCharacter::SIZE), sf::Vector2f(40.0f, 22.6f), charDir, g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_Speed, getOwner(), m_ActiveWeapon, 0);
 			} break;
 		}
 
@@ -208,12 +149,12 @@ void CCharacter::setVisible(bool visible) noexcept
 
 void CCharacter::takeHealth(int amount, class CPlayer *pPlayer) noexcept
 {
+	const sf::Vector2f charPos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
 	m_Health = upm::max(m_Health-amount, 0);
-	getShape()->setFillColor(sf::Color::Red);
 	CGame *pGame = CGame::getInstance();
 	m_TimerDamageIndicator = ups::timeGet();
-	pGame->Client()->getSystem<CSystemFx>()->createPoints(getShape()->getPosition(), -amount);
-	pGame->Client()->getSystem<CSystemSound>()->play(CAssetManager::SOUND_DAMAGE, getShape()->getPosition(), 15.0f);
+	pGame->Client()->getSystem<CSystemFx>()->createPoints(charPos, -amount);
+	pGame->Client()->getSystem<CSystemSound>()->play(CAssetManager::SOUND_DAMAGE, charPos, 15.0f);
 	if (m_Health == 1)
 		m_TimerHeartbeat = ups::timeGet();
 }
@@ -244,15 +185,14 @@ void CCharacter::move(int state) noexcept
     {
 		CGame *pGame = CGame::getInstance();
 		CSystemBox2D *pB2Engine = pGame->Client()->getSystem<CSystemBox2D>();
-		const sf::Vector2f &shapePos = getShape()->getPosition();
-
-		const sf::Vector2f groundColPos = shapePos + sf::Vector2f(0.0f, CCharacter::SIZE+5.0f);
-		const bool isGrounded = (pB2Engine->checkIntersectLine(shapePos, groundColPos, 0x0, this) != 0x0);
+		const sf::Vector2f charPos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
+		const sf::Vector2f groundColPos = charPos + sf::Vector2f(0.0f, CCharacter::SIZE+5.0f);
+		const bool isGrounded = (pB2Engine->checkIntersectLine(charPos, groundColPos, 0x0, getBody()) != 0x0);
 		//if (!isGrounded)
 		force.x = (m_State&MOVE_STATE_LEFT)?-v:v;
 
-		const sf::Vector2f endPos = shapePos + sf::Vector2f((CCharacter::SIZE+5.0f)*(m_State&MOVE_STATE_LEFT?-1.0f:1.0f), 0.0f);
-		if (pB2Engine->checkIntersectLine(shapePos, endPos, 0x0, this) != 0x0)
+		const sf::Vector2f endPos = charPos + sf::Vector2f((CCharacter::SIZE+5.0f)*(m_State&MOVE_STATE_LEFT?-1.0f:1.0f), 0.0f);
+		if (pB2Engine->checkIntersectLine(charPos, endPos, 0x0, getBody()) != 0x0)
 			force.x = 0.0f;
 
 		const sf::Vector2f dir = upm::vectorNormalize(charVel);
@@ -264,7 +204,6 @@ void CCharacter::move(int state) noexcept
     }
 
     // Only can jump one time
-    ups::msgDebug("SSS", "JUmps: %d", m_Jumps);
     if ((m_State&MOVE_STATE_UP) && m_Jumps < 2 && !(m_LastState&MOVE_STATE_UP))
     {
     	++m_Jumps;
@@ -310,7 +249,28 @@ void CCharacter::giveWeapon(int wid, int ammo, int maxammo) noexcept
 	m_aWeapons[wid].m_MaxAmmo = maxammo;
 }
 
+void CCharacter::setCharacterState(int state)
+{
+	if (m_CharacterState == state)
+		return;
 
+	m_CharacterState = state;
+	m_TimerCharacterState = ups::timeGet();
+}
+
+void CCharacter::onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexcept
+{
+	const sf::Vector2f charVel = CSystemBox2D::b2ToSf(getBody()->GetLinearVelocity());
+	if ((m_State&MOVE_STATE_LEFT) && charVel.x > 500.0f)
+	{
+		CGame *pGame = CGame::getInstance();
+		pGame->Client()->getSystem<CSystemFx>()->createSmokeImpact(worldPos, sf::Vector2f(-1.0f, 0.0f), upm::vectorLength(charVel)/500.0f);
+	} else if ((m_State&MOVE_STATE_RIGHT) && charVel.x < -500.0f)
+	{
+		CGame *pGame = CGame::getInstance();
+		pGame->Client()->getSystem<CSystemFx>()->createSmokeImpact(worldPos, sf::Vector2f(1.0f, 0.0f), upm::vectorLength(charVel)/500.0f);
+	}
+}
 
 /** SENSOR **/
 void CCharacter::onSensorIn(CEntity *pEntity) noexcept

@@ -3,6 +3,7 @@
 #ifndef H_ENGINE_SYSTEM_BOX2D
 #define H_ENGINE_SYSTEM_BOX2D
 
+#include <base/math.hpp>
 #include <Box2D/Box2D.h>
 #include <SFML/Graphics.hpp>
 #include <engine/CSystem.hpp>
@@ -75,7 +76,7 @@ public:
 	std::vector<b2Body*> getBodiesNear(const sf::Vector2f &worldPos, float margin, sf::Uint16 categoryBits, b2Body *pNotThis = nullptr) noexcept;
 	b2Fixture* getFixtureAt(const sf::Vector2f &worldPos) noexcept;
 
-	CEntity* checkIntersectLine(const sf::Vector2f &worlPosInit, const sf::Vector2f &worldPosEnd, sf::Vector2f *pPoint = nullptr, CEntity *pNotThis = nullptr) noexcept;
+	class CEntity* checkIntersectLine(const sf::Vector2f &worlPosInit, const sf::Vector2f &worldPosEnd, sf::Vector2f *pPoint = nullptr, b2Body *pNotThis = nullptr) noexcept;
 	void createExplosion(const sf::Vector2f &worldPos, float energy, float radius, b2Body *pNotThis = nullptr) noexcept;
 
 	void destroyBody(b2Body *pBody) noexcept;
@@ -92,7 +93,7 @@ private:
 class RaysCastCallback final : public b2RayCastCallback
 {
 public:
-	RaysCastCallback(CEntity *pNotThis = nullptr) noexcept
+	RaysCastCallback(b2Body *pNotThis = nullptr) noexcept
 	{
 		m_Hit = false;
 		m_Fraction = 1.0f;
@@ -103,10 +104,10 @@ public:
 
 	float32 ReportFixture(b2Fixture *pFixture, const b2Vec2& point, const b2Vec2& normal, float32 fraction) noexcept
 	{
-		CEntity *pEnt = static_cast<CEntity*>(pFixture->GetBody()->GetUserData());
-		if(!pFixture->IsSensor() && fraction < this->m_Fraction && pEnt && pEnt != m_pNotThis)
+		class CEntity *pEnt = static_cast<class CEntity*>(pFixture->GetBody()->GetUserData());
+		if(!pFixture->IsSensor() && fraction < this->m_Fraction && pEnt && pFixture->GetBody() != m_pNotThis)
 		{
-			m_pEntity = static_cast<CEntity*>(pFixture->GetBody()->GetUserData());
+			m_pEntity = static_cast<class CEntity*>(pFixture->GetBody()->GetUserData());
 			m_Point = CSystemBox2D::b2ToSf(point);
 			m_Fraction = fraction;
 			m_Hit = true;
@@ -117,8 +118,8 @@ public:
 	bool m_Hit;
 	sf::Vector2f m_Point;
 	float32 m_Fraction;
-	CEntity *m_pEntity;
-	CEntity *m_pNotThis;
+	class CEntity *m_pEntity;
+	b2Body *m_pNotThis;
 };
 
 class SimpleQueryCallBack final : public b2QueryCallback

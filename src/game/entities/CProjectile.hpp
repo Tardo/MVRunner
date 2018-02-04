@@ -14,7 +14,6 @@ public:
 	~CProjectile() noexcept;
 
 	virtual void tick() noexcept final;
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept final;
     virtual void onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexcept final;
 
     void setDir(sf::Vector2f dir) noexcept { m_Dir = dir; }

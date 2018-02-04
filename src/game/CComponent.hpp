@@ -3,15 +3,15 @@
 #ifndef H_GAME_COMPONENT
 #define H_GAME_COMPONENT
 
-class CComponent
+#include <SFML/Graphics.hpp>
+
+class CComponent : public sf::Drawable
 {
 	friend class CGameClient;
 public:
 	virtual ~CComponent() { }
 
 	class CGameClient* Client() const noexcept { return m_pGameClient; }
-
-	virtual void update(float deltaTime) noexcept = 0;
 
 protected:
 	class CGameClient *m_pGameClient;

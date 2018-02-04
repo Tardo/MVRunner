@@ -67,9 +67,9 @@ void CParticle::update() noexcept
     {
     	if (m_pTarget->isToDelete())
     		m_pTarget = nullptr;
-    	else if (m_pTarget->getShape())
+    	else if (m_pTarget->getBody())
     	{
-    		m_Pos = m_pTarget->getShape()->getPosition();
+    		m_Pos = CSystemBox2D::b2ToSf(m_pTarget->getBody()->GetPosition());
     	}
     }
 
@@ -300,9 +300,9 @@ void CSystemFx::createBlood(const sf::Vector2f &worldPos) noexcept
 	}
 }
 
-void CSystemFx::createFireBall(CEntity *pTarget, const sf::Vector2f &offSet) noexcept
+void CSystemFx::createFireBall(class CEntity *pTarget, const sf::Vector2f &offSet) noexcept
 {
-	if (Client()->isClipped(pTarget->getShape()->getPosition()+offSet, 128.0f))
+	if (!pTarget->getBody() || Client()->isClipped(CSystemBox2D::b2ToSf(pTarget->getBody()->GetPosition())+offSet, 128.0f))
 		return;
 
 	CParticle *pParticle = new CParticle(sf::BlendAdd, RENDER_FRONT, true, CAssetManager::SHADER_BLUR);
@@ -447,7 +447,7 @@ void CSystemFx::createPoints(const sf::Vector2f &worldPos, int points) noexcept
 	Client()->Controller()->Context()->addParticle(pParticle);
 }
 
-void CSystemFx::createSmokeImpact(const sf::Vector2f &worldPos) noexcept
+void CSystemFx::createSmokeImpact(const sf::Vector2f &worldPos, const sf::Vector2f &dir, float vel) noexcept
 {
 	if (Client()->isClipped(worldPos, 128.0f))
 		return;
@@ -455,12 +455,14 @@ void CSystemFx::createSmokeImpact(const sf::Vector2f &worldPos) noexcept
 	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_FRONT);
 	pParticle->m_Pos = worldPos;
 	pParticle->m_SizeInit = sf::Vector2f(12.0f, 12.0f);
-	pParticle->m_SizeEnd = sf::Vector2f(36.0f, 36.0f);
+	pParticle->m_SizeEnd = sf::Vector2f(92.0f, 92.0f);
 	pParticle->m_ColorInit = sf::Color(200, 200, 200, 200);
 	pParticle->m_ColorEnd = sf::Color::White;
 	pParticle->m_ColorEnd.a = 0;
 	pParticle->m_VelRot = upm::randInt(0, 2) == 1?-0.3f:0.3f;
-	pParticle->m_Duration = upm::floatRand(0.5f, 1.0f);
+	pParticle->m_Dir = dir;
+	pParticle->m_Vel = vel;
+	pParticle->m_Duration = upm::floatRand(0.25f, 0.5f);
 	pParticle->m_Shape.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_SMOKE_WHITE));
 	Client()->Controller()->Context()->addParticle(pParticle);
 }

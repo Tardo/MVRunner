@@ -14,7 +14,11 @@
 
 CGameClient::CGameClient() noexcept
 : sf::RenderWindow(sf::VideoMode(g_Config.m_ScreenWidth, g_Config.m_ScreenHeight), "", g_Config.m_FullScreen?sf::Style::Fullscreen:sf::Style::Close),
-  m_AssetManager(&m_Zpg)
+  m_AssetManager(&m_Zpg),
+  m_MapRenderBack(RENDER_BACK),
+  m_MapRenderFront(RENDER_FRONT),
+  m_ParticleRenderBack(RENDER_BACK),
+  m_ParticleRenderFront(RENDER_FRONT)
 {
 	setFramerateLimit(60);
 	m_pGameController = nullptr;
@@ -108,10 +112,11 @@ void CGameClient::run() noexcept
     	while (itSys != m_vpSystems.cend())
         	(*itSys++)->update(m_DeltaTime);
 
-        // Update Components
-    	std::deque<CComponent*>::const_iterator itComp = m_vpComponents.cbegin();
-    	while (itComp != m_vpComponents.cend())
-        	(*itComp++)->update(m_DeltaTime);
+    	// Update Camera
+    	m_Camera.update(m_DeltaTime);
+
+    	// Update UI
+    	m_UI.update();
 
         // Update Controller
         if (Controller())
@@ -119,8 +124,15 @@ void CGameClient::run() noexcept
         	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         	Controller()->tick();
         }
-        else
-        	clear(sf::Color::Black);
+        //else
+        clear(sf::Color::Black);
+
+        // Render
+        setView(m_Camera);
+        // Update Components
+        std::deque<CComponent*>::const_iterator itComp = m_vpComponents.cbegin();
+    	while (itComp != m_vpComponents.cend())
+        	draw(*reinterpret_cast<sf::Drawable*>((*itComp++)));
 
         // HUD
     	setView(m_ViewHud);
@@ -292,7 +304,6 @@ void CGameClient::drawCursor() noexcept
 
 void CGameClient::reset() noexcept
 {
-	MapRender().reset();
 	if (m_pGameController != nullptr)
 		delete m_pGameController;
 	m_pGameController = nullptr;
@@ -371,10 +382,16 @@ bool CGameClient::init() noexcept
 	}
 	/**/
 
-	m_vpComponents.push_back(&m_MapRender);
-	m_vpComponents.push_back(&m_Menus);
+	m_Camera.m_pGameClient = this;
+
+	m_vpComponents.push_back(&m_MapRenderBack);
+	m_vpComponents.push_back(&m_ParticleRenderBack);
+	m_vpComponents.push_back(&m_PlayerRender);
+	m_vpComponents.push_back(&m_ParticleRenderFront);
+	m_vpComponents.push_back(&m_ItemRender);
+	m_vpComponents.push_back(&m_MapRenderFront);
 	m_vpComponents.push_back(&m_UI);
-	m_vpComponents.push_back(&m_Camera);
+	m_vpComponents.push_back(&m_Menus);
 
 	std::deque<CComponent*>::iterator itComp = m_vpComponents.begin();
 	while (itComp != m_vpComponents.end())
@@ -407,100 +424,17 @@ bool CGameClient::initializeGameMode(const char *pGameType) noexcept
 		return false;
 	}
 
-
     ups::msgDebug("CGame", "Initializing game mode...");
-    bool needLoadMap = false;
-
     if (ups::strCaseCmp(pGameType, "menu") == 0)
     	m_pGameController = new CControllerMenu();
     else if (ups::strCaseCmp(pGameType, "main") == 0)
-    {
     	m_pGameController = new CControllerMain();
-    	needLoadMap = true;
-    }
     else
 	{
 		ups::msgDebug("CGame", "Oops... Invalid game mode!");
 		return false;
 	}
-
-    if (needLoadMap)
-    {
-    	unsigned long fileSize = 0;
-    	const unsigned char *pData = Storage().getFileData("data/map.tmx", &fileSize);
-        if (!MapRender().loadMap(Zpg::toString(pData, fileSize).c_str()))
-        {
-        	ups::msgDebug("CGame", "Oops... Error loading map!");
-        	return false;
-        }
-
-		if (MapRender().isMapLoaded())
-		{
-			// Analizar Game Layer
-			const Tmx::TileLayer *pGameLayer = MapRender().getGameLayer();
-			const Tmx::TileLayer *pGameModifiersLayer = MapRender().getGameModifiersLayer();
-			if (pGameLayer)
-			{
-				ups::msgDebug("CGame", "Analyzing map entities (%dx%d)...", pGameLayer->GetWidth(), pGameLayer->GetHeight());
-				for (int i=0; i<pGameLayer->GetHeight(); i++)
-				{
-					for (int e=0; e<pGameLayer->GetWidth(); e++)
-					{
-						const Tmx::MapTile &curTile = pGameLayer->GetTile(e, i);
-						if (curTile.tilesetId < 0)
-							continue;
-
-						const Tmx::Tileset *pTileset = MapRender().getMap()->GetTileset(curTile.tilesetId);
-						const int tileIndex = (curTile.gid - pTileset->GetFirstGid());
-						if (tileIndex<=0)
-							continue;
-
-						sf::Vector2f worldPos(
-							e*MapRender().getMap()->GetTileWidth()+MapRender().getMap()->GetTileWidth()/2.0f,
-							i*MapRender().getMap()->GetTileHeight()+MapRender().getMap()->GetTileHeight()/2.0f
-						);
-
-						unsigned int modifierId = 0;
-						if (pGameModifiersLayer)
-						{
-							const Tmx::MapTile &curModifierTile = pGameModifiersLayer->GetTile(e, i);
-							if (curModifierTile.tilesetId >= 0)
-							{
-								const Tmx::Tileset *pTilesetModifiers = MapRender().getMap()->GetTileset(curModifierTile.tilesetId);
-								modifierId = (curModifierTile.gid - pTilesetModifiers->GetFirstGid());
-							}
-						}
-
-						m_pGameController->onMapTile(tileIndex, worldPos, MapRender().getTileDirection(sf::Vector2i(e, i)), modifierId);
-					}
-				}
-			}
-
-			// Map Objects
-			std::list<CMapRenderObject*> vObjects = MapRender().getObjects()->queryAll();
-			std::list<CMapRenderObject*>::const_iterator itob = vObjects.cbegin();
-			while (itob != vObjects.cend())
-			{
-				CMapRenderObject *pMapObj = (*itob);
-				if (!pMapObj || (pMapObj && !pMapObj->m_pObject))
-				{
-					++itob;
-					continue;
-				}
-
-				const sf::FloatRect globalBounds(
-					pMapObj->m_pObject->GetX(), pMapObj->m_pObject->GetY(),
-					pMapObj->m_pObject->GetWidth(), pMapObj->m_pObject->GetHeight()
-				);
-				const sf::Vector2f worldPosObj(globalBounds.left+pMapObj->m_pObject->GetWidth()/2.0f, globalBounds.top+pMapObj->m_pObject->GetHeight()/2.0f);
-				const sf::Vector2f sizeObj(globalBounds.width, globalBounds.height);
-				const int objId = pMapObj->m_pObject->GetId();
-
-				m_pGameController->onMapObject(pMapObj, objId, worldPosObj, sizeObj);
-				++itob;
-			}
-		}
-    }
+    m_pGameController->onInit();
 
 	ups::msgDebug("CGame", "Starting game mode...");
 	m_pGameController->onStart();
