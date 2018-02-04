@@ -1,6 +1,11 @@
 #!/usr/bin/python
 # Alexandre Díaz - 2018 - GPL
 # Generate language file
+#
+# Working Directory: Project Dir
+# Usage:
+#   generate_lang_file.py mylang.txt
+#
 from os import walk
 from os.path import join
 import re
@@ -12,7 +17,7 @@ def _analize_file(fname):
     
     translate = []
     for line in content:
-        matches = re.findall(r'_\("([^"]+)"\)', line, re.MULTILINE)
+        matches = re.findall(r'_\("([^"]+)"\)', line)
         translate.extend(matches)
     return translate
 
