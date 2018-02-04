@@ -29,10 +29,10 @@ void CSign::tick() noexcept
 void CSign::onSensorIn(CEntity *pEntity) noexcept
 {
 	CGame *pGame = CGame::getInstance();
-	pGame->Client()->showHelpMessage(m_aText);
+	pGame->Client()->UI().showHelpMessage(m_aText);
 }
 void CSign::onSensorOut(CEntity *pEntity) noexcept
 {
 	CGame *pGame = CGame::getInstance();
-	pGame->Client()->showHelpMessage("");
+	pGame->Client()->UI().showHelpMessage("");
 }

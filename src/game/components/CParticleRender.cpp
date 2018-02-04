@@ -17,7 +17,9 @@ CParticleRender::~CParticleRender() noexcept
 
 void CParticleRender::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
 {
-	std::vector<CParticle*> &lParticles = Client()->Controller()->Context()->getAllParticles();
+	Client()->setView(Client()->Camera());
+
+	std::vector<CParticle*> &lParticles = Client()->Controller()->Context()->getParticles();
     std::vector<CParticle*>::const_iterator itPar = lParticles.cbegin();
 	while (itPar != lParticles.cend())
 	{

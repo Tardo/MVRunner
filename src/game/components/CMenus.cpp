@@ -31,6 +31,8 @@ void CMenus::setActive(int mid, CEntity *pEnt) noexcept
 
 void CMenus::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
 {
+	Client()->setView(Client()->getHudView());
+
 	if (m_ActiveMenu == MAIN)
 		renderMenuMain(target, states);
 	else if (m_ActiveMenu == CREDITS)

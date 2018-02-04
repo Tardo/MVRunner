@@ -20,6 +20,8 @@ void CPlayerRender::draw(sf::RenderTarget& target, sf::RenderStates states) cons
 	if (!Client()->Controller() || !Client()->Controller()->Context() || !Client()->Controller()->Context()->getPlayer() || !Client()->Controller()->Context()->getPlayer()->getCharacter())
 		return;
 
+	Client()->setView(Client()->Camera());
+
 	renderPlayer(target, states, Client()->Controller()->Context()->getPlayer()->getCharacter());
 }
 

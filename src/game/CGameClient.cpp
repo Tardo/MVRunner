@@ -25,13 +25,8 @@ CGameClient::CGameClient() noexcept
 	m_Debug = false;
 	m_Paused = false;
 	m_FPS = 0;
-	m_MousePosition = sf::Vector2i(0, 0);
 	m_ViewHud = getDefaultView();
-	m_TimerBroadcast = ups::timeGet();
-	m_BroadcastDuration = 0.0f;
 	m_DeltaTime = 0.0f;
-	m_aHelpMsg[0] = 0;
-	m_aBroadcastMsg[0] = 0;
 	m_MinFPS = 9999;
 
 	m_TimerGame = ups::timeGet();
@@ -105,8 +100,6 @@ void CGameClient::run() noexcept
 				Controller()->onSystemEvent(&event);
         }
 
-        m_MousePosition = sf::Mouse::getPosition(*this);
-
         // Update Systems
     	std::deque<CSystem*>::const_iterator itSys = m_vpSystems.cbegin();
     	while (itSys != m_vpSystems.cend())
@@ -120,29 +113,15 @@ void CGameClient::run() noexcept
 
         // Update Controller
         if (Controller())
-        {
-        	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         	Controller()->tick();
-        }
-        //else
-        clear(sf::Color::Black);
+        else
+        	clear(sf::Color::Black);
 
         // Render
-        setView(m_Camera);
         // Update Components
         std::deque<CComponent*>::const_iterator itComp = m_vpComponents.cbegin();
     	while (itComp != m_vpComponents.cend())
         	draw(*reinterpret_cast<sf::Drawable*>((*itComp++)));
-
-        // HUD
-    	setView(m_ViewHud);
-    	drawHUD();
-        if (m_Debug)
-        	drawDebugInfo();
-        draw(m_Menus);
-
-        // Cursor
-        drawCursor();
 
         // Magia!
         display();
@@ -164,151 +143,11 @@ void CGameClient::run() noexcept
     }
 }
 
-void CGameClient::drawHUD() noexcept
-{
-	if (Menus().getActive() != CMenus::NONE)
-		return;
-
-	sf::FloatRect rectArea;
-	getViewportGlobalBounds(&rectArea, getHudView());
-
-	sf::Text sfStr;
-	sfStr.setFont(Assets().getDefaultFont());
-
-	char aBuff[128];
-	sfStr.setCharacterSize(62);
-	snprintf(aBuff, sizeof(aBuff), "FPS: %u [Min: %u] [%.2fms]", m_FPS, m_MinFPS, m_DeltaTime*1000.0f);
-	sfStr.setString(aBuff);
-	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 0.0f);
-	sfStr.setFillColor(sf::Color::Red);
-	draw(sfStr);
-
-	if (ups::timeGet() - m_TimerBroadcast < ups::timeFreq()*m_BroadcastDuration)
-	{
-		sfStr.setCharacterSize(128);
-		sfStr.setString(m_aBroadcastMsg);
-		sfStr.setPosition(rectArea.width/2.0f-sfStr.getLocalBounds().width/2.0f+2.0f, 2.0f);
-		sfStr.setFillColor(sf::Color::Yellow);
-		draw(sfStr);
-
-		sfStr.setPosition(rectArea.width/2.0f-sfStr.getLocalBounds().width/2.0f, 0.0f);
-		sfStr.setFillColor(sf::Color::Red);
-		draw(sfStr);
-	}
-
-	if (m_aHelpMsg[0] != 0)
-	{
-		sfStr.setCharacterSize(92);
-		sfStr.setString(m_aHelpMsg);
-		sfStr.setPosition(rectArea.width/2.0f-sfStr.getLocalBounds().width/2.0f+2.0f, 78.0f+2.0f);
-		sfStr.setFillColor(sf::Color::Black);
-		draw(sfStr);
-
-		sfStr.setPosition(rectArea.width/2.0f-sfStr.getLocalBounds().width/2.0f, 78.0f);
-		sfStr.setFillColor(sf::Color::White);
-		draw(sfStr);
-	}
-}
-
-void CGameClient::showBroadcastMessage(const char *pMsg, float duration) noexcept
-{
-	m_TimerBroadcast = ups::timeGet();
-	m_BroadcastDuration = duration;
-	strncpy(m_aBroadcastMsg, pMsg, BROADCAST_MAX_LENGTH);
-}
-
-void CGameClient::showHelpMessage(const char *pMsg) noexcept
-{
-	strncpy(m_aHelpMsg, pMsg, HELP_TEXT_MAX_LENGTH);
-}
-
-void CGameClient::drawDebugInfo() noexcept
-{
-	if (!Controller() || !Controller()->Context())
-		return;
-
-	CSystemLight *pSystemLight = getSystem<CSystemLight>();
-	CSystemSound *pSystemSound = getSystem<CSystemSound>();
-	CSystemWeather *pSystemWeather = getSystem<CSystemWeather>();
-
-	sf::FloatRect rectArea;
-	getViewportGlobalBounds(&rectArea, getHudView());
-
-	char aBuff[128];
-	sf::Text sfStr;
-	sfStr.setFont(Assets().getDefaultFont());
-	sfStr.setCharacterSize(62);
-
-	#ifdef __LP64__
-	snprintf(aBuff, sizeof(aBuff), "Entidades: %lu", Controller()->Context()->getNumEntities());
-	#else
-	snprintf(aBuff, sizeof(aBuff), "Entidades: %u", Controller()->Context()->getNumEntities());
-	#endif
-	sfStr.setString(aBuff);
-	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 30.0f);
-	sfStr.setFillColor(sf::Color::Red);
-	draw(sfStr);
-
-	#ifdef __LP64__
-	snprintf(aBuff, sizeof(aBuff), "Particulas: %lu", Controller()->Context()->getNumParticles());
-	#else
-	snprintf(aBuff, sizeof(aBuff), "Particulas: %u", Controller()->Context()->getNumParticles());
-	#endif
-	sfStr.setString(aBuff);
-	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 60.0f);
-	sfStr.setFillColor(sf::Color::Red);
-	draw(sfStr);
-
-	#ifdef __LP64__
-	snprintf(aBuff, sizeof(aBuff), "Luces: %lu", pSystemLight->getLights().size());
-	#else
-	snprintf(aBuff, sizeof(aBuff), "Luces: %u", m_SystemLight.getLights().size());
-	#endif
-	sfStr.setString(aBuff);
-	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 90.0f);
-	sfStr.setFillColor(sf::Color::Red);
-	draw(sfStr);
-
-	#ifdef __LP64__
-	snprintf(aBuff, sizeof(aBuff), "Sonidos: %d", pSystemSound->getNumPlayingSound());
-	#else
-	snprintf(aBuff, sizeof(aBuff), "Sonidos: %d", m_SystemSound.getNumPlayingSound());
-	#endif
-	sfStr.setString(aBuff);
-	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 120.0f);
-	sfStr.setFillColor(sf::Color::Red);
-	draw(sfStr);
-
-	if (pSystemWeather->getWeather() == CSystemWeather::WEATHER_RAIN)
-			snprintf(aBuff, sizeof(aBuff), "Clima: Lluvia");
-	else
-		snprintf(aBuff, sizeof(aBuff), "Clima: Soleado");
-	sfStr.setString(aBuff);
-	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 150.0f);
-	sfStr.setFillColor(sf::Color::Red);
-	draw(sfStr);
-}
-
-void CGameClient::drawCursor() noexcept
-{
-	sf::Vertex line[] =
-	{
-		sf::Vertex(sf::Vector2f(m_MousePosition.x-10.0f, m_MousePosition.y), sf::Color::White),
-		sf::Vertex(sf::Vector2f(m_MousePosition.x+10.0f, m_MousePosition.y), sf::Color::White),
-		sf::Vertex(sf::Vector2f(m_MousePosition.x, m_MousePosition.y-10.0f), sf::Color::White),
-		sf::Vertex(sf::Vector2f(m_MousePosition.x, m_MousePosition.y+10.0f), sf::Color::White)
-	};
-
-	draw(line, 4, sf::Lines);
-}
-
 void CGameClient::reset() noexcept
 {
 	if (m_pGameController != nullptr)
 		delete m_pGameController;
 	m_pGameController = nullptr;
-	m_TimerBroadcast = ups::timeGet();
-	m_BroadcastDuration = 0.0f;
 }
 
 bool CGameClient::init() noexcept
@@ -343,7 +182,6 @@ bool CGameClient::init() noexcept
 			return false;
 		}
 
-		m_MousePosition = sf::Mouse::getPosition(*this);
 		clear(sf::Color::Black);
 		setView(getHudView());
 
@@ -390,8 +228,8 @@ bool CGameClient::init() noexcept
 	m_vpComponents.push_back(&m_ParticleRenderFront);
 	m_vpComponents.push_back(&m_ItemRender);
 	m_vpComponents.push_back(&m_MapRenderFront);
-	m_vpComponents.push_back(&m_UI);
 	m_vpComponents.push_back(&m_Menus);
+	m_vpComponents.push_back(&m_UI);
 
 	std::deque<CComponent*>::iterator itComp = m_vpComponents.begin();
 	while (itComp != m_vpComponents.end())

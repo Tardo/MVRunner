@@ -22,39 +22,18 @@ public:
 
 	CEntity* getEntity(std::size_t index) const noexcept
 	{
-		std::vector<CEntity*>::const_iterator ite = m_vpEntities.begin()+index;
-		if (ite != m_vpEntities.end())
-			return (*ite);
-		return nullptr;
+		if (index < 0 || index >= m_vpEntities.size())
+			return nullptr;
+		return m_vpEntities[index];
 	}
-	std::vector<CEntity*>& getAllEntities() noexcept { return m_vpEntities; }
-	std::list<CEntity*> getEntitiesByType(int type) noexcept
-	{
-		std::list<CEntity*> res;
-		std::vector<CEntity*>::const_iterator ite = m_vpEntities.begin();
-		while (ite != m_vpEntities.end())
-		{
-			CEntity *pEnt = (*ite++);
-			if (pEnt && pEnt->getType() == type)
-				res.push_back(pEnt);
-		}
-		return res;
-	}
-
-	std::vector<CParticle*>& getAllParticles() noexcept { return m_vpParticles; }
-
-	std::size_t getNumEntities() noexcept { return m_vpEntities.size(); }
-	std::size_t getNumParticles() noexcept { return m_vpParticles.size(); }
+	std::vector<CEntity*>& getEntities() noexcept { return m_vpEntities; }
+	std::vector<CParticle*>& getParticles() noexcept { return m_vpParticles; }
 
 	CPlayer* getPlayer() noexcept { return m_pPlayer; }
-
-protected:
-	bool m_MapLoaded;
 
 private:
 	std::vector<CParticle*> m_vpParticles;
 	std::vector<CEntity*> m_vpEntities;
-	std::size_t m_NumParticles;
 
 	CPlayer *m_pPlayer;
 	CMap m_Map;

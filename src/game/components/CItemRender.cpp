@@ -21,7 +21,9 @@ void CItemRender::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 	if (!Client()->Controller() || !Client()->Controller()->Context())
 		return;
 
-	std::vector<CEntity*> &vEntities = Client()->Controller()->Context()->getAllEntities();
+	Client()->setView(Client()->Camera());
+
+	std::vector<CEntity*> &vEntities = Client()->Controller()->Context()->getEntities();
 	std::vector<CEntity*>::const_iterator cit = vEntities.cbegin();
 	while (cit != vEntities.cend())
 	{

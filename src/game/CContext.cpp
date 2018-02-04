@@ -7,8 +7,6 @@
 CContext::CContext() noexcept
 {
 	m_pPlayer = new CPlayer();
-	m_NumParticles = 0;
-	m_MapLoaded = false;
 }
 CContext::~CContext() noexcept
 {
@@ -76,7 +74,7 @@ int CContext::addParticle(CParticle *pParticle) noexcept
 	if (pParticle)
 	{
 		m_vpParticles.push_back(pParticle);
-		return m_NumParticles;
+		return m_vpParticles.size() - 1;
 	}
 	return -1;
 }

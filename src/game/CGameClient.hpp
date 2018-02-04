@@ -29,9 +29,6 @@
 
 #define SCREEN_MARGIN_SPAWN_BOT	255.0f
 
-#define BROADCAST_MAX_LENGTH	64
-#define HELP_TEXT_MAX_LENGTH	128
-
 
 class CGameClient final : public sf::RenderWindow
 {
@@ -70,23 +67,17 @@ public:
 	bool isClipped(const std::vector<sf::Vector2f> &points, float margin=0.0f) noexcept;
 	bool isClipped(const sf::FloatRect &worldRect, float margin) noexcept;
 
-	void showBroadcastMessage(const char *pMsg, float duration) noexcept;
-	void showHelpMessage(const char *pMsg) noexcept;
-
 	unsigned int getFPS() const noexcept { return m_FPS; }
 	float getDeltaTime() const noexcept { return m_DeltaTime; }
 	const float getElapsedTime() const noexcept { return (ups::timeGet()-m_TimerGame)/(float)ups::timeFreq(); }
 
-	sf::Vector2i m_MousePosition;
 	bool m_Debug;
 	bool m_Paused;
+	unsigned int m_FPS;
+	unsigned int m_MinFPS;
 
 private:
 	bool init() noexcept;
-
-	void drawHUD() noexcept;
-	void drawCursor() noexcept;
-	void drawDebugInfo() noexcept;
 
 	std::deque<CComponent*> m_vpComponents;
 	std::deque<CSystem*> m_vpSystems;
@@ -97,12 +88,12 @@ private:
 	CAssetManager m_AssetManager;
 
 	CController *m_pGameController;
+	CCamera m_Camera;
 
 	CMapRender m_MapRenderBack;
 	CMapRender m_MapRenderFront;
 	CMenus m_Menus;
 	CUI m_UI;
-	CCamera m_Camera;
 	CPlayerRender m_PlayerRender;
 	CItemRender m_ItemRender;
 	CParticleRender m_ParticleRenderBack;
@@ -116,13 +107,6 @@ private:
 
 	sf::Int64 m_TimerGame;
 
-	sf::Int64 m_TimerBroadcast;
-	float m_BroadcastDuration;
-	char m_aBroadcastMsg[BROADCAST_MAX_LENGTH];
-	char m_aHelpMsg[HELP_TEXT_MAX_LENGTH];
-
-	unsigned int m_FPS;
-	unsigned int m_MinFPS;
 	float m_DeltaTime;
 };
 

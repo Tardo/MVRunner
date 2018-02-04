@@ -145,7 +145,7 @@ void CControllerMain::tick() noexcept
 				// If the camera is in travel not execute player commands
 				if (!(Game()->Client()->Camera().getStatus()&CCamera::TRAVEL))
 				{
-					const sf::Vector2f dir = upm::vectorNormalize(Game()->Client()->mapPixelToCoords(Game()->Client()->m_MousePosition, Game()->Client()->Camera()) - charPos);
+					const sf::Vector2f dir = upm::vectorNormalize(Game()->Client()->mapPixelToCoords(Game()->Client()->UI().getMousePos(), Game()->Client()->Camera()) - charPos);
 					if (pChar->getBody()->IsFixedRotation())
 						pChar->getBody()->SetTransform(pChar->getBody()->GetPosition(), upm::degToRad(upm::vectorAngle(dir)+90.0f));
 

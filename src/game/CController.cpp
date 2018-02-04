@@ -313,8 +313,8 @@ void CController::tick() noexcept
 	}
 
 
-	std::vector<CEntity*> &vpEntities = Context()->getAllEntities();
-	std::vector<CParticle*> &vpParticles = Context()->getAllParticles();
+	std::vector<CEntity*> &vpEntities = Context()->getEntities();
+	std::vector<CParticle*> &vpParticles = Context()->getParticles();
 
 	// Entities
     std::vector<CEntity*>::iterator itE = vpEntities.begin();

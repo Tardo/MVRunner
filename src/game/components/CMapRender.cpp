@@ -26,6 +26,8 @@ void CMapRender::draw(sf::RenderTarget& target, sf::RenderStates states) const n
 	if (!Client()->Controller() || !Client()->Controller()->Context())
 		return;
 
+	Client()->setView(Client()->Camera());
+
 	CMap &Map = Client()->Controller()->Context()->Map();
 	if (!Map.isMapLoaded())
 		return;
