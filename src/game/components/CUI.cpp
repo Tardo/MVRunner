@@ -141,7 +141,6 @@ void CUI::drawDebugInfo(sf::RenderTarget& target, sf::RenderStates states) const
 
 	CSystemLight *pSystemLight = Client()->getSystem<CSystemLight>();
 	CSystemSound *pSystemSound = Client()->getSystem<CSystemSound>();
-	CSystemWeather *pSystemWeather = Client()->getSystem<CSystemWeather>();
 
 	sf::FloatRect rectArea;
 	Client()->getViewportGlobalBounds(&rectArea, Client()->getHudView());
@@ -164,7 +163,7 @@ void CUI::drawDebugInfo(sf::RenderTarget& target, sf::RenderStates states) const
 	#ifdef __LP64__
 	snprintf(aBuff, sizeof(aBuff), "Particulas: %lu", Client()->Controller()->Context()->getParticles().size());
 	#else
-	snprintf(aBuff, sizeof(aBuff), "Particulas: %u", Controller()->Context()->getParticles().size());
+	snprintf(aBuff, sizeof(aBuff), "Particulas: %u", Client()->Controller()->Context()->getParticles().size());
 	#endif
 	sfStr.setString(aBuff);
 	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 60.0f);
@@ -174,27 +173,20 @@ void CUI::drawDebugInfo(sf::RenderTarget& target, sf::RenderStates states) const
 	#ifdef __LP64__
 	snprintf(aBuff, sizeof(aBuff), "Luces: %lu", pSystemLight->getLights().size());
 	#else
-	snprintf(aBuff, sizeof(aBuff), "Luces: %u", m_SystemLight.getLights().size());
+	snprintf(aBuff, sizeof(aBuff), "Luces: %u", pSystemLight->getLights().size());
 	#endif
 	sfStr.setString(aBuff);
 	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 90.0f);
 	sfStr.setFillColor(sf::Color::Red);
 	target.draw(sfStr, states);
 
-	#ifdef __LP64__
 	snprintf(aBuff, sizeof(aBuff), "Sonidos: %d", pSystemSound->getNumPlayingSound());
-	#else
-	snprintf(aBuff, sizeof(aBuff), "Sonidos: %d", m_SystemSound.getNumPlayingSound());
-	#endif
+
 	sfStr.setString(aBuff);
 	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 120.0f);
 	sfStr.setFillColor(sf::Color::Red);
 	target.draw(sfStr, states);
 
-	if (pSystemWeather->getWeather() == CSystemWeather::WEATHER_RAIN)
-			snprintf(aBuff, sizeof(aBuff), "Clima: Lluvia");
-	else
-		snprintf(aBuff, sizeof(aBuff), "Clima: Soleado");
 	sfStr.setString(aBuff);
 	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 150.0f);
 	sfStr.setFillColor(sf::Color::Red);

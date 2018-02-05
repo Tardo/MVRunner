@@ -8,6 +8,12 @@
 #include "CMap.hpp"
 #include <vector>
 
+enum
+{
+	WEATHER_NORMAL=0,
+	WEATHER_RAIN,
+};
+
 class CContext final
 {
 public:
@@ -29,6 +35,9 @@ public:
 	std::vector<CEntity*>& getEntities() noexcept { return m_vpEntities; }
 	std::vector<CParticle*>& getParticles() noexcept { return m_vpParticles; }
 
+	void setWeather(int weather) { m_Weather = weather; }
+	int getWeather() const { return m_Weather; }
+
 	CPlayer* getPlayer() noexcept { return m_pPlayer; }
 
 private:
@@ -37,6 +46,7 @@ private:
 
 	CPlayer *m_pPlayer;
 	CMap m_Map;
+	int m_Weather;
 };
 
 #endif

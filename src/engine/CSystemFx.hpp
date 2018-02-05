@@ -11,6 +11,12 @@
 class CParticle final : sf::Drawable
 {
 public:
+	enum
+	{
+		VEL_LINEAL=0,
+		VEL_INCREASE,
+	};
+
     CParticle(sf::BlendMode blendMode = sf::BlendAlpha, int render = RENDER_FRONT, bool Light = false, int shader = -1) noexcept;
     virtual ~CParticle() noexcept;
 
@@ -41,6 +47,7 @@ public:
     bool m_Light;
     bool m_FixedPos;
     bool m_OnlyLight;
+    int m_VelType;
     sf::Int32 m_ShaderId;
     sf::Int64 m_Timer;
     class CEntity *m_pTarget;
@@ -69,6 +76,8 @@ public:
 	void createBlood(const sf::Vector2f &worldPos) noexcept;
 	void createPoints(const sf::Vector2f &worldPos, int points) noexcept;
 	void createSmokeImpact(const sf::Vector2f &worldPos, const sf::Vector2f &dir, float vel) noexcept;
+	void createRainBack(const sf::Vector2f &worldPos, float rainVel) noexcept;
+	void createRainFront(const sf::Vector2f &worldPos, float rainVel) noexcept;
 
 	void createSmokeCarDamaged(const sf::Vector2f &worldPos, bool fire) noexcept;
 	void createSpitFireCarDamaged(const sf::Vector2f &worldPos, const sf::Vector2f &dir = VECTOR_ZERO) noexcept;
@@ -78,7 +87,6 @@ public:
 	void createPointLight(const sf::Vector2f &worldPos, float radius, float duration, sf::Color colorI, sf::Color colorE) noexcept;
 	void createMarkWheel(const sf::Vector2f &worldPos, float angle) noexcept;
 	void createWaterSplash(const sf::Vector2f &worldPos) noexcept;
-	void createRain(const sf::Vector2f &worldPos, float rainVel) noexcept;
 	void createStorm() noexcept;
 	void createSnow(const sf::Vector2f &worldPos, float snowVel) noexcept;
 	void createSnowSplash(const sf::Vector2f &worldPos) noexcept;

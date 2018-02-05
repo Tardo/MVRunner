@@ -7,6 +7,7 @@
 CContext::CContext() noexcept
 {
 	m_pPlayer = new CPlayer();
+	m_Weather = WEATHER_NORMAL;
 }
 CContext::~CContext() noexcept
 {

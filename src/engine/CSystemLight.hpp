@@ -71,7 +71,6 @@ private:
 
 	sf::RenderTexture m_LightMapTexture;
 	sf::Sprite m_Lightmap;
-	class CSystemWeather *m_pWeatherEngine;
 };
 
 #endif

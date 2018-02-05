@@ -27,6 +27,7 @@ CParticle::CParticle(sf::BlendMode blendMode, int render, bool light, int shader
     m_Light = light;
     m_FixedPos = false;
     m_OnlyLight = false;
+    m_VelType = VEL_INCREASE;
 
     CGame *pGame = CGame::getInstance();
     m_String.setFont(pGame->Client()->Assets().getDefaultFont());
@@ -73,7 +74,10 @@ void CParticle::update() noexcept
     	}
     }
 
-	m_Disp += (m_Dir*m_Vel)*elapsedSeconds;
+    if (m_VelType == VEL_LINEAL)
+    	m_Disp += m_Dir*m_Vel;
+    else if (m_VelType == VEL_INCREASE)
+    	m_Disp += (m_Dir*m_Vel)*elapsedSeconds;
 	m_Pos += m_Disp + m_Offset;
 
     if (m_Light)
@@ -454,7 +458,7 @@ void CSystemFx::createSmokeImpact(const sf::Vector2f &worldPos, const sf::Vector
 
 	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_FRONT);
 	pParticle->m_Pos = worldPos;
-	pParticle->m_SizeInit = sf::Vector2f(12.0f, 12.0f);
+	pParticle->m_SizeInit = sf::Vector2f(8.0f, 8.0f);
 	pParticle->m_SizeEnd = sf::Vector2f(92.0f, 92.0f);
 	pParticle->m_ColorInit = sf::Color(200, 200, 200, 200);
 	pParticle->m_ColorEnd = sf::Color::White;
@@ -462,8 +466,79 @@ void CSystemFx::createSmokeImpact(const sf::Vector2f &worldPos, const sf::Vector
 	pParticle->m_VelRot = upm::randInt(0, 2) == 1?-0.3f:0.3f;
 	pParticle->m_Dir = dir;
 	pParticle->m_Vel = vel;
+	pParticle->m_VelType = CParticle::VEL_LINEAL;
 	pParticle->m_Duration = upm::floatRand(0.25f, 0.5f);
 	pParticle->m_Shape.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_SMOKE_WHITE));
+	Client()->Controller()->Context()->addParticle(pParticle);
+}
+
+void CSystemFx::createRainBack(const sf::Vector2f &worldPos, float rainVel) noexcept
+{
+	if (!m_Add100Hz)
+		return;
+
+	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_BACK);
+	pParticle->m_Pos = worldPos;
+	pParticle->m_SizeInit = sf::Vector2f(6.0f, 6.0f);
+	pParticle->m_SizeEnd = sf::Vector2f(1.0f, 1.0f);
+	pParticle->m_ColorInit = pParticle->m_ColorEnd = sf::Color(230,120,255,220);
+	pParticle->m_ColorEnd.a = 0;
+	pParticle->m_Duration = 10.0f;
+	pParticle->m_Vel = rainVel;
+	pParticle->m_VelType = CParticle::VEL_LINEAL;
+	pParticle->m_Dir = sf::Vector2f(upm::floatRand(0.35f, 0.4f), 1.0f);
+	pParticle->m_Shape.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_POINT_LIGHT));
+	Client()->Controller()->Context()->addParticle(pParticle);
+}
+
+void CSystemFx::createRainFront(const sf::Vector2f &worldPos, float rainVel) noexcept
+{
+	if (!m_Add50Hz)
+		return;
+
+	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_FOREGROUND);
+	pParticle->m_Pos = worldPos;
+	pParticle->m_SizeInit = sf::Vector2f(18.0f, 18.0f);
+	pParticle->m_SizeEnd = sf::Vector2f(1.0f, 1.0f);
+	pParticle->m_ColorInit = pParticle->m_ColorEnd = sf::Color(230,120,255,220);
+	pParticle->m_ColorEnd.a = 0;
+	pParticle->m_Duration = 10.0f;
+	pParticle->m_Vel = rainVel;
+	pParticle->m_Dir = sf::Vector2f(upm::floatRand(0.35f, 0.4f), 1.0f);
+	pParticle->m_Shape.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_POINT_LIGHT));
+	Client()->Controller()->Context()->addParticle(pParticle);
+}
+
+void CSystemFx::createStorm() noexcept
+{
+	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_FOREGROUND);
+	pParticle->m_Pos = sf::Vector2f(0.0f,0.0f);
+	const sf::Vector2f size = sf::Vector2f(Client()->getView().getSize().x, Client()->getView().getSize().y);
+	pParticle->m_SizeInit = size;
+	pParticle->m_SizeEnd = size;
+	pParticle->m_ColorInit.a = 80;
+	pParticle->m_ColorEnd.a = 0;
+	pParticle->m_FixedPos = true;
+	pParticle->m_Duration = 0.8f;
+	pParticle->m_Shape.setFillColor(sf::Color::Red);
+	Client()->Controller()->Context()->addParticle(pParticle);
+}
+
+void CSystemFx::createSnow(const sf::Vector2f &worldPos, float snowVel) noexcept
+{
+	if (!m_Add100Hz || Client()->isClipped(worldPos, 128.0f))
+		return;
+
+	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_FOREGROUND);
+	pParticle->m_Pos = worldPos;
+	pParticle->m_SizeInit = sf::Vector2f(2.0f, 2.0f);
+	pParticle->m_SizeEnd = sf::Vector2f(1.0f, 1.0f);
+	pParticle->m_ColorInit = pParticle->m_ColorEnd = sf::Color(255,255,255,220);
+	pParticle->m_ColorEnd.a = 0;
+	pParticle->m_Duration = 2.0f;
+	pParticle->m_Vel = snowVel;
+	pParticle->m_Dir = sf::Vector2f(1.0f,1.0f);
+	pParticle->m_Shape.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_POINT_LIGHT));
 	Client()->Controller()->Context()->addParticle(pParticle);
 }
 
@@ -664,57 +739,6 @@ void CSystemFx::createWaterSplash(const sf::Vector2f &worldPos) noexcept
 	pParticle->m_Duration = 0.7f;
 	pParticle->m_Shape.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_EXPLOSION_RING));
 	pParticle->m_Vel = 0.0f;
-	Client()->Controller()->Context()->addParticle(pParticle);
-}
-
-void CSystemFx::createRain(const sf::Vector2f &worldPos, float rainVel) noexcept
-{
-	if (!m_Add100Hz || Client()->isClipped(worldPos, 128.0f))
-		return;
-
-	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_FOREGROUND);
-	pParticle->m_Pos = worldPos;
-	pParticle->m_SizeInit = sf::Vector2f(2.0f, 2.0f);
-	pParticle->m_SizeEnd = sf::Vector2f(1.0f, 1.0f);
-	pParticle->m_ColorInit = pParticle->m_ColorEnd = sf::Color(230,120,255,220);
-	pParticle->m_ColorEnd.a = 0;
-	pParticle->m_Duration = 1.0f;
-	pParticle->m_Vel = rainVel;
-	pParticle->m_Dir = sf::Vector2f(1.0f,1.0f);
-	pParticle->m_Shape.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_POINT_LIGHT));
-	Client()->Controller()->Context()->addParticle(pParticle);
-}
-
-void CSystemFx::createStorm() noexcept
-{
-	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_FOREGROUND);
-	pParticle->m_Pos = sf::Vector2f(0.0f,0.0f);
-	pParticle->m_FixedPos = true;
-	const sf::Vector2f size = sf::Vector2f(Client()->getView().getSize().x, Client()->getView().getSize().y);
-	pParticle->m_SizeInit = size;
-	pParticle->m_SizeEnd = size;
-	pParticle->m_ColorInit.a = 80;
-	pParticle->m_ColorEnd.a = 0;
-	pParticle->m_Duration = 0.8f;
-	pParticle->m_Shape.setFillColor(sf::Color::Red);
-	Client()->Controller()->Context()->addParticle(pParticle);
-}
-
-void CSystemFx::createSnow(const sf::Vector2f &worldPos, float snowVel) noexcept
-{
-	if (!m_Add100Hz || Client()->isClipped(worldPos, 128.0f))
-		return;
-
-	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_FOREGROUND);
-	pParticle->m_Pos = worldPos;
-	pParticle->m_SizeInit = sf::Vector2f(2.0f, 2.0f);
-	pParticle->m_SizeEnd = sf::Vector2f(1.0f, 1.0f);
-	pParticle->m_ColorInit = pParticle->m_ColorEnd = sf::Color(255,255,255,220);
-	pParticle->m_ColorEnd.a = 0;
-	pParticle->m_Duration = 2.0f;
-	pParticle->m_Vel = snowVel;
-	pParticle->m_Dir = sf::Vector2f(1.0f,1.0f);
-	pParticle->m_Shape.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_POINT_LIGHT));
 	Client()->Controller()->Context()->addParticle(pParticle);
 }
 

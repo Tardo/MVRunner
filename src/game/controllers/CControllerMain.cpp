@@ -265,6 +265,8 @@ void CControllerMain::onStart() noexcept
 
 	Game()->Client()->Camera().setTarget(Context()->getPlayer()->getCharacter());
 	Game()->Client()->getSystem<CSystemSound>()->playBackgroundMusic(CAssetManager::MUSIC_FIRST_FLOOR);
+
+	Context()->setWeather(WEATHER_RAIN);
 }
 
 bool CControllerMain::onMapTile(unsigned int tileId, const sf::Vector2f &pos, unsigned int tileDir, unsigned int modifierId) noexcept

@@ -141,8 +141,7 @@ set(ENGINE_SRC  src/engine/CAssetManager.cpp
                 src/engine/CSystemBox2D.cpp
                 src/engine/CSystemFx.cpp
                 src/engine/CSystemLight.cpp
-                src/engine/CSystemSound.cpp
-                src/engine/CSystemWeather.cpp)
+                src/engine/CSystemSound.cpp)
 set(GAME_SRC    src/game/components/CMapRender.cpp
                 src/game/components/CMenus.cpp
                 src/game/components/CUI.cpp

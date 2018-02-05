@@ -38,6 +38,7 @@
     #include <windows.h>
     #include <direct.h>
 #endif
+#include <string>
 
 struct ZpgPackerOptions
 {
@@ -158,7 +159,7 @@ bool addDirectory(Zpg &zpg, const char *pFromFullPath, const char *pToFullPath, 
 
 	while ((pDirent = readdir(pDir)))
 	{
-		if (strncmp(pDirent->d_name, ".", sizeof(pDirent->d_name)) == 0 || strncmp(pDirent->d_name, "..", sizeof(pDirent->d_name)) == 0)
+		if (pDirent->d_name[0] == '.' || pDirent->d_name[0] == '$')
 			continue;
 
 		if (pDirent->d_type == DT_DIR)
@@ -198,7 +199,7 @@ bool addDirectory(Zpg &zpg, const char *pFromFullPath, const char *pToFullPath, 
     else
     {
         do {
-            if (strncmp(data.cFileName, ".", sizeof(data.cFileName)) == 0 || strncmp(data.cFileName, "..", sizeof(data.cFileName)) == 0)
+        	if (data.cFileName[0] == '.' || data.cFileName[0] == '$')
                 continue;
 
             if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
@@ -377,9 +378,8 @@ int main(int argc, char *argv[])
 		std::map<std::string, ZpgFile*>::const_iterator It = mFiles.begin();
 		while (It != mFiles.end())
 		{
-			ZpgFile *pZpgFile = (*It).second;
-			const float pc = (pZpgFile->m_Header.m_FileSize - pZpgFile->m_Header.m_FileSizeComp) * 100.0f / pZpgFile->m_Header.m_FileSize;
-			std::cout << std::dec << (*It).first << " [CSize: " << pZpgFile->m_Header.m_FileSizeComp << "][Size: " << pZpgFile->m_Header.m_FileSize << "]" << "[" << std::fixed << std::setprecision(2) << pc << "%]" << std::endl;
+			const float pc = ((*It).second->m_Header.m_FileSize - (*It).second->m_Header.m_FileSizeComp) * 100.0f / (*It).second->m_Header.m_FileSize;
+			std::cout << std::dec << (*It).first << " [CSize: " << (*It).second->m_Header.m_FileSizeComp << "][Size: " << (*It).second->m_Header.m_FileSize << "]" << "[" << std::fixed << std::setprecision(2) << pc << "%]" << std::endl;
 			++It;
 		}
 	}

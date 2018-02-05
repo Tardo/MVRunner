@@ -1,13 +1,11 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
 #include <engine/CSystemLight.hpp>
-#include <engine/CSystemWeather.hpp>
 #include "CGame.hpp"
 #include <cstring>
 
 CSystemLight::CSystemLight() noexcept
 {
-	m_pWeatherEngine = nullptr;
 	m_ShadowOffset = sf::Vector2f(2.5f, 1.25f);
 	m_ColorClear = sf::Color(128, 128, 128);
 	m_ShadowColor = sf::Color(0, 0, 0, 95);
@@ -30,7 +28,6 @@ CSystemLight::~CSystemLight() noexcept
 bool CSystemLight::init(class CGameClient *pGameClient) noexcept
 {
 	CSystem::init(pGameClient);
-	m_pWeatherEngine = Client()->getSystem<CSystemWeather>();
 
 	if (!m_LightMapTexture.create(g_Config.m_ScreenWidth, g_Config.m_ScreenHeight))
 		return false;

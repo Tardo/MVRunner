@@ -18,7 +18,8 @@ CGameClient::CGameClient() noexcept
   m_MapRenderBack(RENDER_BACK),
   m_MapRenderFront(RENDER_FRONT),
   m_ParticleRenderBack(RENDER_BACK),
-  m_ParticleRenderFront(RENDER_FRONT)
+  m_ParticleRenderFront(RENDER_FRONT),
+  m_ParticleRenderForeground(RENDER_FOREGROUND)
 {
 	setFramerateLimit(60);
 	m_pGameController = nullptr;
@@ -86,14 +87,6 @@ void CGameClient::run() noexcept
             	{
             		initializeGameMode("main");
             	}
-            	else if (event.key.code == sf::Keyboard::B)
-				{
-            		CSystemWeather *pSystemWeather = getSystem<CSystemWeather>();
-            		int nextWeather = pSystemWeather->getWeather()+1;
-            		if (nextWeather >= CSystemWeather::NUM_WEATHERS)
-            			nextWeather = 0;
-            		pSystemWeather->setWeather(nextWeather);
-				}
             }
 
 			if (Controller())
@@ -113,7 +106,10 @@ void CGameClient::run() noexcept
 
         // Update Controller
         if (Controller())
+        {
+        	clear(CMap::tmxToSf(Controller()->Context()->Map().GetBackgroundColor()));
         	Controller()->tick();
+        }
         else
         	clear(sf::Color::Black);
 
@@ -228,6 +224,7 @@ bool CGameClient::init() noexcept
 	m_vpComponents.push_back(&m_ParticleRenderFront);
 	m_vpComponents.push_back(&m_ItemRender);
 	m_vpComponents.push_back(&m_MapRenderFront);
+	m_vpComponents.push_back(&m_ParticleRenderForeground);
 	m_vpComponents.push_back(&m_Menus);
 	m_vpComponents.push_back(&m_UI);
 
@@ -238,7 +235,6 @@ bool CGameClient::init() noexcept
 	m_vpSystems.push_back(&m_SystemSound); 		// Sound: sound spatialization
 	m_vpSystems.push_back(&m_SystemBox2D); 		// Box2D: for realistic physics
 	m_vpSystems.push_back(&m_SystemFx); 		// Effects: Particle System
-	m_vpSystems.push_back(&m_SystemWeather);	// Weather: Weather System
 	m_vpSystems.push_back(&m_SystemLight);		// Lights: Light System
 
 	std::deque<CSystem*>::iterator itEng = m_vpSystems.begin();

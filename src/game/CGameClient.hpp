@@ -11,7 +11,6 @@
 #include <engine/CSystemBox2D.hpp>
 #include <engine/CSystemLight.hpp>
 #include <engine/CSystemSound.hpp>
-#include <engine/CSystemWeather.hpp>
 #include <engine/CSystem.hpp>
 #include <game/components/CMapRender.hpp>
 #include <game/components/CMenus.hpp>
@@ -98,11 +97,11 @@ private:
 	CItemRender m_ItemRender;
 	CParticleRender m_ParticleRenderBack;
 	CParticleRender m_ParticleRenderFront;
+	CParticleRender m_ParticleRenderForeground;
 
 	CSystemBox2D m_SystemBox2D;
 	CSystemFx m_SystemFx;
 	CSystemLight m_SystemLight;
-	CSystemWeather m_SystemWeather;
 	CSystemSound m_SystemSound;
 
 	sf::Int64 m_TimerGame;

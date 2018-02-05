@@ -13,7 +13,6 @@
 #include <tmxparser/TmxPoint.h>
 #include <Box2D/Box2D.h>
 #include <engine/CSystemLight.hpp>
-#include <engine/CSystemWeather.hpp>
 #include <engine/CGame.hpp>
 #include <engine/CSystemBox2D.hpp>
 #include <game/components/CMapRender.hpp>
@@ -108,6 +107,13 @@ void CController::tick() noexcept
 		// Create Map Objects
 		sf::FloatRect screenArea;
 		Game()->Client()->getViewportGlobalBounds(&screenArea, Game()->Client()->Camera(), 0.0f); // MARGIN_CREATE_OBJECTS
+
+		sf::RectangleShape Shape(sf::Vector2f(screenArea.width-screenArea.left, screenArea.height-screenArea.top));
+		Shape.setPosition(sf::Vector2f(screenArea.left, screenArea.top));
+		Shape.setFillColor(sf::Color::White);
+		Shape.setOutlineThickness(4.0f);
+		Shape.setOutlineColor(sf::Color::Red);
+		Game()->Client()->draw(Shape);
 
 		std::list<CMapRenderObject*> vObjects = Context()->Map().getObjects()->queryAABB(screenArea);
 		//ups::msgDebug("CONTEXT", "Num: %d", vObjects.size());
@@ -350,6 +356,21 @@ void CController::tick() noexcept
 			(*itP)->update();
 			++itP;
 		}
+	}
+
+	// Weather
+	if (Context()->getWeather() == WEATHER_RAIN)
+	{
+		sf::FloatRect screenArea;
+		Game()->Client()->getViewportGlobalBounds(&screenArea, Game()->Client()->Camera());
+		const int startX = screenArea.left - 128;
+		const int endX = screenArea.width + 128;
+		const int startY = screenArea.top - 16;
+		const int endY = screenArea.top - 15;
+
+		CSystemFx *pFxEngine = Game()->Client()->getSystem<CSystemFx>();
+		pFxEngine->createRainBack(sf::Vector2f(startX+rand()%(endX-startX), startY+rand()%(endY-startY)), 0.4f);
+		pFxEngine->createRainFront(sf::Vector2f(startX+rand()%(endX-startX), startY+rand()%(endY-startY)), 0.4f);
 	}
 }
 

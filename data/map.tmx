@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.0" orientation="orthogonal" renderorder="right-up" width="50" height="50" tilewidth="64" tileheight="64" infinite="0" nextobjectid="29">
+<map version="1.0" tiledversion="1.1.0" orientation="orthogonal" renderorder="right-up" width="96" height="80" tilewidth="64" tileheight="64" infinite="0" backgroundcolor="#000058" nextobjectid="29">
  <tileset firstgid="1" name="mario" tilewidth="64" tileheight="64" tilecount="256" columns="16">
   <image source="mapres/mario_oldscool.png" width="1024" height="1024"/>
   <tile id="51">
@@ -49,56 +49,56 @@
  <tileset firstgid="513" name="race" tilewidth="64" tileheight="64" tilecount="256" columns="16">
   <image source="mapres/race.png" width="1024" height="1024"/>
  </tileset>
- <layer name="Background" width="50" height="50">
+ <layer name="Background" width="96" height="80">
   <data encoding="base64" compression="zlib">
-   eJztz8EJACAQA0ELs/+6LOFAUOI5A3nmsWP0MR+fjqxVdj436NBxwq8dqXRk0ZFFRxYdWTo0AAAAAAAAVBZ/fTSB
+   eJzt08EJhDAURdH0YwsWY2mWMqU5i1EUnOzkxeQc+IvAXyQXUgoAAAAAAAC9mSszlfLZp7aXnLertF/Pe9/zkm6tf753b/3/ueufucnVKP1/f+CYVt46Uv8W39rinZ6gf5b+3NE/S/8s/bP0z9I/S/8s/bP0z9IeAAAAAAAAAAAAAAAAAAAAAOjBBinHNtk=
   </data>
  </layer>
- <layer name="Game" width="50" height="50">
+ <layer name="Game" width="96" height="80">
   <data encoding="base64" compression="zlib">
-   eJztml0ORTAQRlve5G7B27UQO7E0W7EzGrdJI+jP1c50fCeZRKqYkwwjqtFKNUKCO19PjtI9lkC3Uav5GNFJBhDqEVNv1PfAWV53NXU1n7oOn/DwHVMCc/3uF+7Y3XzfNgX/eISMlyKlrjj2m1gPrtic3dqq2cNgXWr3MGy9d5LgcTXGndo9+i3XQe91dNwHj/K4/at1gkNPS4FbXwYAAAAAAO9ByrsnPHghxQMAS6ufjVzn9UWutTvqNUMAQD7sfw2f/ZvyTJ1PKpw9Sj9Dcz1fqXN/U59YAXUGEbg=
+   eJzt21FqwkAQBuBE36RX6Ft7kN7Eo3mV3qyKBrbB2BSSnWzm+2BfEjAzvzBkxe06AAAAAACAZR36faxWtVD7xx81ttDDlBZqz5b/98x+vvruMl6LFvew9/z/M1Oj5/yzulrOf8pUn9G9Zs7/1fVabs8/PVZ5bW8OE/1F95ox/znXa8k0f7a418mS/1YNWZczSP71lFkP34H86xlnfd3zneVfj/kfS/4x3q8Zf/b3eTO+J//1yT9Wuf84FmsLe5JMtrYfBAAAAABy8FtkLPnHkn8s+QO049gvu9b63LnPbc1aZ7Oiz4QBQCbDOfi3+39lL9H1ZCP/5dV+l/Se+Vt05tnzBwAAAACgPT8HthG4
   </data>
  </layer>
- <layer name="Animated" width="50" height="50">
+ <layer name="Animated" width="96" height="80">
   <data encoding="base64" compression="zlib">
-   eJztxbEJACAMAMEsmBFc1dliYZkyIMgdPB8BALN2EwDwVp7WPQAAAAAAwK8KnEcErg==
+   eJztxbENACAIAEEWZARXdTYsLClpjHfJ5yMAAAAAAAAAAADm7SYAAAD+kad1DwAAAAAAAAAAAAAAAAAAAADwqgK96ASu
   </data>
  </layer>
- <layer name="Foreground" width="50" height="50">
+ <layer name="Foreground" width="96" height="80">
   <data encoding="base64" compression="zlib">
-   eJztlUsKwjAQhgdRoUtX3kAPoOgNfCzc+lh4F0+gN/AsHs0pJdCFTTQZOpP4f/DTEtJ0PjplKiKqCknuwINoKVlIIjH9pv0PfKrL9y269mv3oYRH6Jk+qN//GDRpr/n2h+41SPH4Zr0vYvrK4rz51cMqruZ2b+XsUeNccvfwrVkHHra5UxkeT8rLo2t+WZhpMViczQAAAAAA4D+YahcgBDxsUYpHSayJXiuOdh2pzNlhpuBx5RwEr85D+tzQdSEc5yF9bijSaPWVNPCwRSkee6LbjrPlbDja9cRy4drPnBPnaMxjyBkZyDjRY2IopfMGQjA89g==
+   eJztlMtNw0AURS0ESCxZ0QEUAIIOCCzY8lnQCxVAB9RCaUwUWUKRsD2e9+bOy5wjXTkbj+89STwMAAAAALCUM7I4Hqg3RYoH6k2R4oF6U6R4oN4UKR6oN0WKB+pNkeKBelOkeKDeFCkeqDdFigfqTZHiQcvdaoJ/LT36vykpbkx0/zmdvZ+5plcv/r2fhf/5zorf+36+jnbJ6eRBLf/7n9XpzX/NZ67pVbKnBLUH/PeZLX/fQfiv73/L+B3gX+M/14Mlagf47zdrXFijdlDD6xI+Hc+eQu2qFf/fjmdPodys4L/Oqp29+R9paWcv/lvd2WovS1r+n7fayxL867Byj/914F8L/nVYusd/PvjXgn8t+Ndh7R7/eeBfh4f7XvxfFNzr5R3/y8B/OfjHf8/+S8C/DXfD8HObknsf/m24Su4vV/gvJar/95Qnw+vo3/rcuWtU/9fGGf1bnzuXqP6t31E9vX8seuFf2wv/2l741/ay9v84DB8PKZuU+xSLDUvA/4635Pw15SXl2cF/jQ0Kprofp5w0kNOZnofq/7yh9Oi/JQ7VfxTwrwX/AAAAAAAAAACQwy8eSp4Z
   </data>
  </layer>
  <objectgroup name="Collisions">
-  <object id="18" type="static" x="2689.33" y="1089.33">
+  <object id="18" type="static" x="4737.33" y="2113.33">
    <properties>
     <property name="color" type="color" value="#ffffff7f"/>
    </properties>
    <polyline points="0,0 -80,66.6667 -150.667,194.667 -180,285.333 -329.333,761.333 -365.333,830.667 -434.667,910.667 -524,961.333 -590.667,981.333 -670.667,989.333 -729.333,976 -776,960 -806.667,921.333 -825.333,893.333 -845.333,874.667"/>
   </object>
-  <object id="20" type="dynamic" x="1580.66" y="2969.56" width="24.3333" height="38">
+  <object id="20" type="dynamic" x="3628.66" y="3993.56" width="24.3333" height="38">
    <properties>
     <property name="color" type="color" value="#ffffaa00"/>
    </properties>
   </object>
-  <object id="21" type="dynamic" x="1564.29" y="2946.74" width="54.3333" height="22.3333">
+  <object id="21" type="dynamic" x="3612.29" y="3970.74" width="54.3333" height="22.3333">
    <properties>
     <property name="color" type="color" value="#ffffaa00"/>
    </properties>
   </object>
-  <object id="24" type="static" x="1287.67" y="2373.33">
+  <object id="24" type="static" x="3335.67" y="3397.33">
    <polyline points="0,0 4,504 4.5,624.833 245.333,624"/>
   </object>
-  <object id="25" type="static" x="1395.67" y="2372">
+  <object id="25" type="static" x="3443.67" y="3396">
    <polyline points="0,0 2.66667,445.333 1.33333,518.667 136,517.333"/>
   </object>
-  <object id="26" type="static" x="3073.33" y="960.667" width="62" height="126.667"/>
-  <object id="27" type="dynamic" x="1585.38" y="2900.29" width="15.3333" height="46">
+  <object id="26" type="static" x="5121.33" y="1984.67" width="62" height="126.667"/>
+  <object id="27" type="dynamic" x="3633.38" y="3924.29" width="15.3333" height="46">
    <properties>
     <property name="color" type="color" value="#ffffaa00"/>
    </properties>
   </object>
-  <object id="28" type="static" x="2815" y="833">
+  <object id="28" type="static" x="4863" y="1857">
    <properties>
     <property name="color" type="color" value="#ffffff7f"/>
    </properties>
@@ -106,22 +106,22 @@
   </object>
  </objectgroup>
  <objectgroup name="Boxes">
-  <object id="14" type="dynamic" x="183.917" y="66.8333" width="61" height="62">
+  <object id="14" type="dynamic" x="2231.92" y="1090.83" width="61" height="62">
    <properties>
     <property name="color" type="color" value="#ffffaa00"/>
    </properties>
   </object>
-  <object id="16" type="dynamic" x="183.917" y="191.833" width="61" height="62">
+  <object id="16" type="dynamic" x="2231.92" y="1215.83" width="61" height="62">
    <properties>
     <property name="color" type="color" value="#ff5500ff"/>
    </properties>
   </object>
-  <object id="17" type="dynamic" x="183.917" y="129.333" width="61" height="62">
+  <object id="17" type="dynamic" x="2231.92" y="1153.33" width="61" height="62">
    <properties>
     <property name="color" type="color" value="#ff00ffff"/>
    </properties>
   </object>
-  <object id="22" type="dynamic" x="2007.33" y="2745.5">
+  <object id="22" type="dynamic" x="4055.33" y="3769.5">
    <properties>
     <property name="color" type="color" value="#ffaa5500"/>
    </properties>

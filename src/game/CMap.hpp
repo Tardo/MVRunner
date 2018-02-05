@@ -175,6 +175,9 @@ public:
 		return sf::Vector2f(mapPos.x*GetTileWidth(), mapPos.y*GetTileHeight());
 	}
 
+	static inline Tmx::Color sfToTmx(const sf::Color &color) noexcept { return Tmx::Color(color.r, color.g, color.b, color.a); }
+	static inline sf::Color tmxToSf(const Tmx::Color &color) noexcept { return sf::Color(color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha()); }
+
 	int **m_pSkipCount;
 	std::map<int, std::map<int, CTileAnimInfo>> m_mmTileAnims;
 	std::vector<sf::Texture*> m_vpTextures;

@@ -3,7 +3,6 @@
 #include <SFML/OpenGL.hpp>
 #include <base/math.hpp>
 #include <engine/CGame.hpp>
-#include <engine/CSystemWeather.hpp>
 #include <tmxparser/TmxTile.h>
 #include "CMapRender.hpp"
 #include <game/CController.hpp>
@@ -43,7 +42,7 @@ void CMapRender::draw(sf::RenderTarget& target, sf::RenderStates states) const n
 		while (it != eit)
 		{
 			if ((*it)->IsVisible() && (*it)->GetLayerType() == Tmx::TMX_LAYERTYPE_TILE)
-				renderTilemap(target, states, mapBounds, layerIndex, sf::Color::White);
+				renderTilemap(target, states, mapBounds, layerIndex, Client()->getSystem<CSystemLight>()->getTimeColor());
 
 			++layerIndex;
 			++it;
@@ -57,7 +56,7 @@ void CMapRender::draw(sf::RenderTarget& target, sf::RenderStates states) const n
 		while (it != eit)
 		{
 			if ((*it)->IsVisible() && (*it)->GetLayerType() == Tmx::TMX_LAYERTYPE_TILE)
-				renderTilemap(target, states, mapBounds, layerIndex, Client()->getSystem<CSystemLight>()->getTimeColor());
+				renderTilemap(target, states, mapBounds, layerIndex, sf::Color::White);
 
 			++layerIndex;
 			++it;
