@@ -181,7 +181,11 @@ endif()
 
 # CREATE ZPG
 if (TARGET_COMPILER STREQUAL "cl")
-	add_custom_target(create_zpg COMMAND zpg_packer.exe ${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/assets.zpg -C -A ${CMAKE_SOURCE_DIR}/data/)
+	if (TARGET_BITS STREQUAL "32")
+		add_custom_target(create_zpg COMMAND "C:\Program Files (x86)\libZpg\zpg_packer.exe" ${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/assets.zpg -C -A ${CMAKE_SOURCE_DIR}/data/)
+	else()
+		add_custom_target(create_zpg COMMAND "C:\Program Files\libZpg\zpg_packer.exe" ${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/assets.zpg -C -A ${CMAKE_SOURCE_DIR}/data/)
+	endif()
 else()
 	add_custom_target(create_zpg COMMAND zpg_packer assets.zpg -C -A ${CMAKE_SOURCE_DIR}/data/)
 endif()
