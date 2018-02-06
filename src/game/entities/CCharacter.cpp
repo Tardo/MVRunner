@@ -141,6 +141,11 @@ void CCharacter::doFire() noexcept
 	m_Fire = true;
 }
 
+void CCharacter::doHook() noexcept
+{
+
+}
+
 void CCharacter::setVisible(bool visible) noexcept
 {
 	m_Visible = visible;

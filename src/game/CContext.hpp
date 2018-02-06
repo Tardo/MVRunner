@@ -12,6 +12,7 @@ enum
 {
 	WEATHER_NORMAL=0,
 	WEATHER_RAIN,
+	WEATHER_SNOW,
 };
 
 class CContext final

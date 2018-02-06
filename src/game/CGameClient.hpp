@@ -18,9 +18,10 @@
 #include <game/components/CPlayerRender.hpp>
 #include <game/components/CItemRender.hpp>
 #include <game/components/CParticleRender.hpp>
+#include <game/components/CControls.hpp>
+#include <game/components/CCamera.hpp>
 #include <game/CController.hpp>
 #include <game/CEntity.hpp>
-#include <game/CCamera.hpp>
 #include <Zpg/Zpg.hpp>
 #include <cstdlib>
 #include <list>
@@ -38,6 +39,7 @@ public:
 	CController* Controller() const noexcept { return m_pGameController; }
 	CAssetManager& Assets() noexcept { return m_AssetManager; }
 	CMenus& Menus() noexcept { return m_Menus; }
+	CControls& Controls() noexcept { return m_Controls; }
 	CUI& UI() noexcept { return m_UI; }
 	CCamera& Camera() noexcept { return m_Camera; }
 	Zpg& Storage() noexcept { return m_Zpg; }
@@ -98,6 +100,7 @@ private:
 	CParticleRender m_ParticleRenderBack;
 	CParticleRender m_ParticleRenderFront;
 	CParticleRender m_ParticleRenderForeground;
+	CControls m_Controls;
 
 	CSystemBox2D m_SystemBox2D;
 	CSystemFx m_SystemFx;

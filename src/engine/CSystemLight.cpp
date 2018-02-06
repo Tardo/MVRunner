@@ -8,7 +8,7 @@ CSystemLight::CSystemLight() noexcept
 {
 	m_ShadowOffset = sf::Vector2f(2.5f, 1.25f);
 	m_ColorClear = sf::Color(128, 128, 128);
-	m_ShadowColor = sf::Color(0, 0, 0, 95);
+	m_ShadowColor = sf::Color(64, 64, 64);
 }
 CSystemLight::~CSystemLight() noexcept
 {

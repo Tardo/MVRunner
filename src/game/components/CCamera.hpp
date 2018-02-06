@@ -1,13 +1,13 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
-#ifndef H_GAME_CAMERA
-#define H_GAME_CAMERA
+#ifndef H_GAME_COMPONENT_CAMERA
+#define H_GAME_COMPONENT_CAMERA
 
 #include <SFML/Graphics.hpp>
 
 #define CAMERA_ZOOM_FACTOR 0.75f
 
-class CCamera final : public sf::View
+class CCamera final : public CComponent, public sf::View
 {
 	friend class CGameClient;
 public:
@@ -22,9 +22,7 @@ public:
 	CCamera() noexcept;
 	virtual ~CCamera() noexcept;
 
-	class CGameClient* Client() const noexcept { return m_pGameClient; }
-
-	virtual void update(float deltaTime) noexcept final;
+	void update(float deltaTime) noexcept;
 
 	void setTarget(class CEntity *pEntity) noexcept
 	{
@@ -44,8 +42,12 @@ public:
 	void vibrateCam(float time, float intensity) noexcept;
 	int getStatus() const { return m_Status; }
 
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept final
+	{
+		// Not Used
+	}
+
 private:
-	class CGameClient *m_pGameClient;
 	class CEntity *m_pTarget;
 
 	float m_VibrateCamTime;

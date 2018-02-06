@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.0" orientation="orthogonal" renderorder="right-up" width="96" height="80" tilewidth="64" tileheight="64" infinite="0" backgroundcolor="#000058" nextobjectid="29">
+<map version="1.0" tiledversion="1.1.0" orientation="orthogonal" renderorder="right-up" width="96" height="80" tilewidth="64" tileheight="64" infinite="0" backgroundcolor="#00002c" nextobjectid="29">
  <tileset firstgid="1" name="mario" tilewidth="64" tileheight="64" tilecount="256" columns="16">
   <image source="mapres/mario_oldscool.png" width="1024" height="1024"/>
   <tile id="51">
@@ -56,7 +56,7 @@
  </layer>
  <layer name="Game" width="96" height="80">
   <data encoding="base64" compression="zlib">
-   eJzt21FqwkAQBuBE36RX6Ft7kN7Eo3mV3qyKBrbB2BSSnWzm+2BfEjAzvzBkxe06AAAAAACAZR36faxWtVD7xx81ttDDlBZqz5b/98x+vvruMl6LFvew9/z/M1Oj5/yzulrOf8pUn9G9Zs7/1fVabs8/PVZ5bW8OE/1F95ox/znXa8k0f7a418mS/1YNWZczSP71lFkP34H86xlnfd3zneVfj/kfS/4x3q8Zf/b3eTO+J//1yT9Wuf84FmsLe5JMtrYfBAAAAABy8FtkLPnHkn8s+QO049gvu9b63LnPbc1aZ7Oiz4QBQCbDOfi3+39lL9H1ZCP/5dV+l/Se+Vt05tnzBwAAAACgPT8HthG4
+   eJzt29FtwjAURuEE3qqu0Ld2EDZhNFZhs4KSSFaEm6TY/u/1PZ9kqQoq2IfKTdowDAAAAAAAAAAAAGWdxj6GVx7m/r0xRw9ryPEw92j97zvXcxmH23oUndys9/5H9lT1Pv9qXp775+TWqV5r5P5/HW/l+fof80iP9eaUWZ96rRH77zneSqT9x+K1TpT+Vi2t0z2I/u2krZf3gP7trFs/rvmu9G+H/b+Ovb/v6V/HVsOvx+M/47TfHP1eq9R/xzlyXttrfy/S9+mcDAvXJP/lcd7Wrgff4XnuPaC/Fv216K9Ffy36a9Ffi/5a9Neivxb9teivRX+t0v3feb6IPwv016K/Fv21LK3Z0lxasbTm2v+/t8jjnHM8rmV9L0GJsSj9vFvDa/9a9/BYu38IddFfi/5a9Nei/2T5HPznOH3d6nXpP6ndP+L5j+JcMmLnHHXv6P0BAAAAAAAAAP78AvoIEvk=
   </data>
  </layer>
  <layer name="Animated" width="96" height="80">
@@ -66,7 +66,7 @@
  </layer>
  <layer name="Foreground" width="96" height="80">
   <data encoding="base64" compression="zlib">
-   eJztlMtNw0AURS0ESCxZ0QEUAIIOCCzY8lnQCxVAB9RCaUwUWUKRsD2e9+bOy5wjXTkbj+89STwMAAAAALCUM7I4Hqg3RYoH6k2R4oF6U6R4oN4UKR6oN0WKB+pNkeKBelOkeKDeFCkeqDdFigfqTZHiQcvdaoJ/LT36vykpbkx0/zmdvZ+5plcv/r2fhf/5zorf+36+jnbJ6eRBLf/7n9XpzX/NZ67pVbKnBLUH/PeZLX/fQfiv73/L+B3gX+M/14Mlagf47zdrXFijdlDD6xI+Hc+eQu2qFf/fjmdPodys4L/Oqp29+R9paWcv/lvd2WovS1r+n7fayxL867Byj/914F8L/nVYusd/PvjXgn8t+Ndh7R7/eeBfh4f7XvxfFNzr5R3/y8B/OfjHf8/+S8C/DXfD8HObknsf/m24Su4vV/gvJar/95Qnw+vo3/rcuWtU/9fGGf1bnzuXqP6t31E9vX8seuFf2wv/2l741/ay9v84DB8PKZuU+xSLDUvA/4635Pw15SXl2cF/jQ0Kprofp5w0kNOZnofq/7yh9Oi/JQ7VfxTwrwX/AAAAAAAAAACQwy8eSp4Z
+   eJztlEtKxEAURYOo4NCRO9AFKLoDPwOnfgbuxRXoDhy6DpdmNU1AhE5Sqffq1us6By7JJJV7T9MZBgAAAABYyglZHA/UmyLFA/WmSPFAvSlSPFBvihQP1JsixQP1pkjxQL0pUjxQb4oUD9SbIsUD9aZI8aDlbjXBvw3fK5/r0f9VSfEd9Oo/p7P3O9f06sW/2nvv/mu8c0k+D7bJ6eRBLf//79XpzX/Nd67pVbKnBLUH/PeZDX+/Qfiv73/D+BvgX+M/14Mlagf47zdrXFijdlDD6xI+HM+eQu2qFf9fjmdPodysYFdn1c7e/I+0tLMX/63ubLWXJS3/z1vtZQn+dVi5x/868K8F/zos3eM/H/xrwb8W/Ouwdo//PPCvw8N9L/7PCp718o7/ZeC/HPzjv2f/JeDfhpth+LlOyX0O/zZcJPfnK/yXEtX/W8qj4XX0b33u3DWq/0vjjP6tz51LVP/W36ievj8WvfCv7YV/bS/8a3tZ+38Yhvf7lLuU2xSLDUvA/5bX5Pwl5TnlycF/jQ0Kprofphw1kOOZnvvq/7Sh9Oi/JfbVfxTwrwX/AAAAAAAAAACQwy+ACZ9u
   </data>
  </layer>
  <objectgroup name="Collisions">
@@ -121,7 +121,7 @@
     <property name="color" type="color" value="#ff00ffff"/>
    </properties>
   </object>
-  <object id="22" type="dynamic" x="4055.33" y="3769.5">
+  <object id="22" type="static" x="4016" y="3908.17">
    <properties>
     <property name="color" type="color" value="#ffaa5500"/>
    </properties>

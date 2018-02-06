@@ -78,6 +78,9 @@ public:
 	void createSmokeImpact(const sf::Vector2f &worldPos, const sf::Vector2f &dir, float vel) noexcept;
 	void createRainBack(const sf::Vector2f &worldPos, float rainVel) noexcept;
 	void createRainFront(const sf::Vector2f &worldPos, float rainVel) noexcept;
+	void createStorm() noexcept;
+	void createSnowBack(const sf::Vector2f &worldPos, float snowVel) noexcept;
+	void createSnowFront(const sf::Vector2f &worldPos, float snowVel) noexcept;
 
 	void createSmokeCarDamaged(const sf::Vector2f &worldPos, bool fire) noexcept;
 	void createSpitFireCarDamaged(const sf::Vector2f &worldPos, const sf::Vector2f &dir = VECTOR_ZERO) noexcept;
@@ -87,8 +90,6 @@ public:
 	void createPointLight(const sf::Vector2f &worldPos, float radius, float duration, sf::Color colorI, sf::Color colorE) noexcept;
 	void createMarkWheel(const sf::Vector2f &worldPos, float angle) noexcept;
 	void createWaterSplash(const sf::Vector2f &worldPos) noexcept;
-	void createStorm() noexcept;
-	void createSnow(const sf::Vector2f &worldPos, float snowVel) noexcept;
 	void createSnowSplash(const sf::Vector2f &worldPos) noexcept;
 	void createSnowTrail(const sf::Vector2f &worldPos) noexcept;
 	void createGasolineFire(const sf::Vector2f &worldPos) noexcept;

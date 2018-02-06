@@ -24,23 +24,19 @@ CController::CController() noexcept
 {
 	m_pGame = CGame::getInstance();
 	m_pGameContext = new CContext();
-	m_pPlayerLight = nullptr;
+	m_TimerStorm = 0;
 }
 CController::CController(class CContext *pContext) noexcept
 {
 	m_pGame = CGame::getInstance();
 	m_pGameContext = pContext;
-	m_pPlayerLight = nullptr;
+	m_TimerStorm = 0;
 }
 CController::~CController() noexcept
 {
 	if (m_pGameContext)
 		delete m_pGameContext;
 	m_pGameContext = nullptr;
-
-	if (m_pPlayerLight)
-		m_pPlayerLight->destroy();
-	m_pPlayerLight = nullptr;
 }
 
 bool CController::onInit() noexcept
@@ -66,9 +62,6 @@ bool CController::onMapTile(unsigned int tileId, const sf::Vector2f &pos, unsign
 void CController::onMapObject(CMapRenderObject *pMapObj, int objId, const sf::Vector2f &worldPos, const sf::Vector2f &size) noexcept
 {
 }
-
-void CController::onSystemEvent(sf::Event *pEvent) noexcept
-{ }
 
 void CController::updateCamera(float deltaTime) noexcept
 {
@@ -107,13 +100,6 @@ void CController::tick() noexcept
 		// Create Map Objects
 		sf::FloatRect screenArea;
 		Game()->Client()->getViewportGlobalBounds(&screenArea, Game()->Client()->Camera(), 0.0f); // MARGIN_CREATE_OBJECTS
-
-		sf::RectangleShape Shape(sf::Vector2f(screenArea.width-screenArea.left, screenArea.height-screenArea.top));
-		Shape.setPosition(sf::Vector2f(screenArea.left, screenArea.top));
-		Shape.setFillColor(sf::Color::White);
-		Shape.setOutlineThickness(4.0f);
-		Shape.setOutlineColor(sf::Color::Red);
-		Game()->Client()->draw(Shape);
 
 		std::list<CMapRenderObject*> vObjects = Context()->Map().getObjects()->queryAABB(screenArea);
 		//ups::msgDebug("CONTEXT", "Num: %d", vObjects.size());
@@ -363,14 +349,33 @@ void CController::tick() noexcept
 	{
 		sf::FloatRect screenArea;
 		Game()->Client()->getViewportGlobalBounds(&screenArea, Game()->Client()->Camera());
-		const int startX = screenArea.left - 128;
-		const int endX = screenArea.width + 128;
-		const int startY = screenArea.top - 16;
-		const int endY = screenArea.top - 15;
+		const int startX = screenArea.left - 64;
+		const int endX = screenArea.width + 64;
+		const int startY = screenArea.top - 5;
+		const int endY = screenArea.height;
 
 		CSystemFx *pFxEngine = Game()->Client()->getSystem<CSystemFx>();
-		pFxEngine->createRainBack(sf::Vector2f(startX+rand()%(endX-startX), startY+rand()%(endY-startY)), 0.4f);
-		pFxEngine->createRainFront(sf::Vector2f(startX+rand()%(endX-startX), startY+rand()%(endY-startY)), 0.4f);
+		pFxEngine->createRainBack(sf::Vector2f(startX+rand()%(endX-startX), startY+rand()%(endY-startY)), 20.0f);
+		pFxEngine->createRainFront(sf::Vector2f(startX+rand()%(endX-startX), startY+rand()%(endY-startY)), 15.0f);
+
+		if (ups::timeGet()-m_TimerStorm > ups::timeFreq()*upm::randInt(5, 15))
+		{
+			pFxEngine->createStorm();
+			m_TimerStorm = ups::timeGet();
+		}
+	}
+	else if (Context()->getWeather() == WEATHER_SNOW)
+	{
+		sf::FloatRect screenArea;
+		Game()->Client()->getViewportGlobalBounds(&screenArea, Game()->Client()->Camera());
+		const int startX = screenArea.left - 64;
+		const int endX = screenArea.width + 64;
+		const int startY = screenArea.top - 5;
+		const int endY = screenArea.height;
+
+		CSystemFx *pFxEngine = Game()->Client()->getSystem<CSystemFx>();
+		pFxEngine->createSnowBack(sf::Vector2f(startX+rand()%(endX-startX), startY+rand()%(endY-startY)), 5.0f);
+		pFxEngine->createSnowFront(sf::Vector2f(startX+rand()%(endX-startX), startY+rand()%(endY-startY)), 2.0f);
 	}
 }
 

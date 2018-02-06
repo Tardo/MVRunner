@@ -145,7 +145,7 @@ void CControllerMain::tick() noexcept
 				// If the camera is in travel not execute player commands
 				if (!(Game()->Client()->Camera().getStatus()&CCamera::TRAVEL))
 				{
-					const sf::Vector2f dir = upm::vectorNormalize(Game()->Client()->mapPixelToCoords(Game()->Client()->UI().getMousePos(), Game()->Client()->Camera()) - charPos);
+					const sf::Vector2f dir = upm::vectorNormalize(Game()->Client()->mapPixelToCoords(Game()->Client()->Controls().getMousePos(), Game()->Client()->Camera()) - charPos);
 					if (pChar->getBody()->IsFixedRotation())
 						pChar->getBody()->SetTransform(pChar->getBody()->GetPosition(), upm::degToRad(upm::vectorAngle(dir)+90.0f));
 
@@ -153,27 +153,27 @@ void CControllerMain::tick() noexcept
 					if (!(charState&CCharacter::STATE_FREEZED))
 					{
 						int moveState = CCharacter::MOVE_STATE_STOP;
-						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+						if (Game()->Client()->Controls().isKeyPressed("jump"))
 							moveState = CCharacter::MOVE_STATE_UP;
-						if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+						if (Game()->Client()->Controls().isKeyPressed("left"))
 							moveState |= CCharacter::MOVE_STATE_LEFT;
-						else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+						else if (Game()->Client()->Controls().isKeyPressed("right"))
 							moveState |= CCharacter::MOVE_STATE_RIGHT;
 
 						pChar->move(moveState);
 
-						// Player Select Weapon
-						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num0))
-							pChar->setActiveWeapon(-1);
-						else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
-						{
-							pChar->giveWeapon(WEAPON_GRENADE_LAUNCHER, 10, 10);
-							pChar->setActiveWeapon(WEAPON_GRENADE_LAUNCHER);
-						}
-
 						// Player Shoot
-						if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+						if (Game()->Client()->Controls().isMousePressed("fire") && !(charState&CCharacter::STATE_ROTATE))
 							pChar->doFire();
+					}
+
+					// Player Select Weapon
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num0))
+						pChar->setActiveWeapon(-1);
+					else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
+					{
+						pChar->giveWeapon(WEAPON_GRENADE_LAUNCHER, 10, 10);
+						pChar->setActiveWeapon(WEAPON_GRENADE_LAUNCHER);
 					}
 
 					// Player Use Action
@@ -189,10 +189,6 @@ void CControllerMain::tick() noexcept
 					}
 					else if (!sf::Keyboard::isKeyPressed(sf::Keyboard::E))
 						pressedButtonUse = false;
-
-					// Player Light
-					if (m_pPlayerLight)
-						m_pPlayerLight->m_Position = charPos;
 				}
 
 				// Unfreeze

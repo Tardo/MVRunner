@@ -42,7 +42,7 @@ void CMapRender::draw(sf::RenderTarget& target, sf::RenderStates states) const n
 		while (it != eit)
 		{
 			if ((*it)->IsVisible() && (*it)->GetLayerType() == Tmx::TMX_LAYERTYPE_TILE)
-				renderTilemap(target, states, mapBounds, layerIndex, Client()->getSystem<CSystemLight>()->getTimeColor());
+				renderTilemap(target, states, mapBounds, layerIndex, Client()->getSystem<CSystemLight>()->getShadowColor());
 
 			++layerIndex;
 			++it;
@@ -56,7 +56,7 @@ void CMapRender::draw(sf::RenderTarget& target, sf::RenderStates states) const n
 		while (it != eit)
 		{
 			if ((*it)->IsVisible() && (*it)->GetLayerType() == Tmx::TMX_LAYERTYPE_TILE)
-				renderTilemap(target, states, mapBounds, layerIndex, sf::Color::White);
+				renderTilemap(target, states, mapBounds, layerIndex, Client()->getSystem<CSystemLight>()->getTimeColor());
 
 			++layerIndex;
 			++it;

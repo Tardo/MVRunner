@@ -148,6 +148,8 @@ set(GAME_SRC    src/game/components/CMapRender.cpp
                 src/game/components/CPlayerRender.cpp
                 src/game/components/CItemRender.cpp
                 src/game/components/CParticleRender.cpp
+                src/game/components/CControls.cpp
+                src/game/components/CCamera.cpp
                 src/game/controllers/CControllerMain.cpp
                 src/game/controllers/CControllerMenu.cpp
                 src/game/entities/primitives/CB2Circle.cpp
@@ -162,7 +164,6 @@ set(GAME_SRC    src/game/components/CMapRender.cpp
                 src/game/CContext.cpp
                 src/game/CController.cpp
                 src/game/CGameClient.cpp
-                src/game/CCamera.cpp
                 src/game/CPlayer.cpp
                 src/game/CEntity.cpp
                 src/game/CMap.cpp)

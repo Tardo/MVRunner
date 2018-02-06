@@ -75,6 +75,7 @@ public:
     bool isVisible() const { return m_Visible; }
     void giveHealth(int amount) noexcept;
     void doFire() noexcept;
+    void doHook() noexcept;
     void setVisible(bool visible) noexcept;
 
     void move(int moveState) noexcept;

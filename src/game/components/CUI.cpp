@@ -6,8 +6,6 @@
 CUI::CUI() noexcept
 : CComponent()
 {
-	m_MouseLeftClicked = false;
-	m_MousePosition = sf::Vector2i(0, 0);
 	m_TimerBroadcast = ups::timeGet();
 	m_BroadcastDuration = 0.0f;
 	m_aHelpMsg[0] = 0;
@@ -18,20 +16,6 @@ CUI::~CUI() noexcept
 	#ifdef DEBUG_DESTRUCTORS
 	ups::msgDebug("CUI", "Deleted");
 	#endif
-}
-
-void CUI::update() noexcept
-{
-	m_MousePosition = sf::Mouse::getPosition(*Client());
-	m_MouseLeftClicked = false;
-	static bool s_MouseLeftPressed = false;
-	if (!s_MouseLeftPressed && sf::Mouse::isButtonPressed(sf::Mouse::Left))
-		s_MouseLeftPressed = true;
-	else if (s_MouseLeftPressed && !sf::Mouse::isButtonPressed(sf::Mouse::Left))
-	{
-		s_MouseLeftPressed = false;
-		m_MouseLeftClicked = true;
-	}
 }
 
 void CUI::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
@@ -69,20 +53,20 @@ bool CUI::doButton(const char* pText, const sf::FloatRect &bounds, unsigned int 
 		text.setPosition(bounds.left+bounds.width/2.0f-textW/2.0f, bounds.top+bounds.height/2.0f-fontSize);
 	else
 		text.setPosition(bounds.left, bounds.top+bounds.height/2.0f-fontSize);
-	text.setFillColor((text.getGlobalBounds().contains((sf::Vector2f)m_MousePosition))?sf::Color::Red:sf::Color::White);
+	text.setFillColor((text.getGlobalBounds().contains((sf::Vector2f)Client()->Controls().getMousePos()))?sf::Color::Red:sf::Color::White);
 	Client()->draw(text);
 
-	return (m_MouseLeftClicked && text.getGlobalBounds().contains((sf::Vector2f)m_MousePosition));
+	return (Client()->Controls().isMouseLeftClicked() && text.getGlobalBounds().contains((sf::Vector2f)Client()->Controls().getMousePos()));
 }
 
 void CUI::drawCursor(sf::RenderTarget& target, sf::RenderStates states) const noexcept
 {
 	sf::Vertex line[] =
 	{
-		sf::Vertex(sf::Vector2f(m_MousePosition.x-10.0f, m_MousePosition.y), sf::Color::White),
-		sf::Vertex(sf::Vector2f(m_MousePosition.x+10.0f, m_MousePosition.y), sf::Color::White),
-		sf::Vertex(sf::Vector2f(m_MousePosition.x, m_MousePosition.y-10.0f), sf::Color::White),
-		sf::Vertex(sf::Vector2f(m_MousePosition.x, m_MousePosition.y+10.0f), sf::Color::White)
+		sf::Vertex(sf::Vector2f(Client()->Controls().getMousePos().x-10.0f, Client()->Controls().getMousePos().y), sf::Color::White),
+		sf::Vertex(sf::Vector2f(Client()->Controls().getMousePos().x+10.0f, Client()->Controls().getMousePos().y), sf::Color::White),
+		sf::Vertex(sf::Vector2f(Client()->Controls().getMousePos().x, Client()->Controls().getMousePos().y-10.0f), sf::Color::White),
+		sf::Vertex(sf::Vector2f(Client()->Controls().getMousePos().x, Client()->Controls().getMousePos().y+10.0f), sf::Color::White)
 	};
 
 	target.draw(line, 4, sf::Lines);

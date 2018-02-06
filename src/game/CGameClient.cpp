@@ -65,32 +65,10 @@ void CGameClient::run() noexcept
         sf::Event event;
         while (pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
-                close();
-            else if (event.type == sf::Event::KeyPressed)
-            {
-            	if (event.key.code == sf::Keyboard::Escape)
-            	{
-					if (Controller() && !dynamic_cast<CControllerMenu*>(Controller()))
-					{
-						if (Menus().getActive() != CMenus::NONE)
-							Menus().setActive(CMenus::NONE);
-						else
-							Menus().setActive(CMenus::MAIN);
-					}
-					else if (Menus().getActive() != CMenus::MAIN)
-						Menus().setActive(CMenus::MAIN);
-            	}
-            	else if (event.key.code == sf::Keyboard::F7)
-            		m_Debug = !m_Debug;
-            	else if (event.key.code == sf::Keyboard::R)
-            	{
-            		initializeGameMode("main");
-            	}
-            }
-
-			if (Controller())
-				Controller()->onSystemEvent(&event);
+        	if (event.type == sf::Event::Closed)
+        		close();
+        	else
+        		m_Controls.processEvent(event);
         }
 
         // Update Systems
@@ -100,9 +78,6 @@ void CGameClient::run() noexcept
 
     	// Update Camera
     	m_Camera.update(m_DeltaTime);
-
-    	// Update UI
-    	m_UI.update();
 
         // Update Controller
         if (Controller())
@@ -217,6 +192,7 @@ bool CGameClient::init() noexcept
 	/**/
 
 	m_Camera.m_pGameClient = this;
+	m_Controls.m_pGameClient = this;
 
 	m_vpComponents.push_back(&m_MapRenderBack);
 	m_vpComponents.push_back(&m_ParticleRenderBack);
