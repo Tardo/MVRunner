@@ -13,7 +13,7 @@ dependencies:
         
         # libZpg (Too old gcc compiler)
         wget -O ~/zpgv1.0.0.zip https://github.com/Tardo/Zpg/archive/master.zip && unzip ~/zpgv1.0.0.zip -d ~/
-        cd ~/Zpg-master; cmake -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr . && make && sudo make install
+        cd ~/Zpg-master; cmake -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr . && make Zpg && make zpg_packer && sudo make install
   cache_directories:
     - "~/SFML-2.4.2/"
     #- "~/ZPG-1.0.0/"
@@ -30,7 +30,7 @@ test:
   override:
     - |
         mkdir build-release/ && cd build-release/
-        cmake -DCMAKE_BUILD_TYPE:STRING=Release .. && make
+        cmake -DCMAKE_BUILD_TYPE:STRING=Release .. && make && make create_zpg
         cpack --debug --verbose -C CPackConfig.cmake
     - |
         mkdir build-debug/ && cd build-debug/

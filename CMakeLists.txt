@@ -179,13 +179,11 @@ if (TARGET_OS STREQUAL "windows")
 	add_custom_command(TARGET ${BINARY_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SFML_INCLUDE_DIR}/../bin/openal32.dll ${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
 endif()
 
-# TOOLS (ZPG Packer)
-add_executable(zpg_packer tools/zpg_packer.cpp)
-target_link_libraries(zpg_packer ${ZPG_LIBRARIES} ${ZPG_DEPENDENCIES})
+# CREATE ZPG
 if (TARGET_COMPILER STREQUAL "cl")
-	add_custom_command(TARGET zpg_packer POST_BUILD COMMAND ${CMAKE_BUILD_TYPE}/zpg_packer.exe ${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/assets.zpg -C -A ${CMAKE_SOURCE_DIR}/data/)
+	add_custom_target(create_zpg COMMAND zpg_packer.exe ${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/assets.zpg -C -A ${CMAKE_SOURCE_DIR}/data/)
 else()
-	add_custom_command(TARGET zpg_packer POST_BUILD COMMAND ./zpg_packer assets.zpg -C -A ${CMAKE_SOURCE_DIR}/data/)
+	add_custom_target(create_zpg COMMAND zpg_packer assets.zpg -C -A ${CMAKE_SOURCE_DIR}/data/)
 endif()
 
 # CREATE ZIP FILE
@@ -200,6 +198,7 @@ else()
 	       								 "${PROJECT_BINARY_DIR}/assets.zpg"
 	       								 "${PROJECT_BINARY_DIR}/${BINARY_NAME}")
 endif()
+add_dependencies(create_zip ${BINARY_NAME} create_zpg)
                         
 # INSTALL
 install(TARGETS ${BINARY_NAME} RUNTIME DESTINATION ${BIN_DIR} COMPONENT binaries)
@@ -218,7 +217,12 @@ endif()
 include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "MVRunner A Reto Game")
 set(CPACK_PACKAGE_VENDOR "Alexandre Díaz")
-set(CPACK_NSIS_DISPLAY_NAME "MVRunner")
+if (TARGET_OS STREQUAL "windows")
+	SET(CPACK_GENERATOR "NSIS ZIP")
+	SET(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} MVRunner")
+	SET(CPACK_NSIS_CONTACT "dev@redneboa.es")
+	SET(CPACK_NSIS_MODIFY_PATH ON)
+endif()
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING")
 set(CPACK_PACKAGE_VERSION_MAJOR "${MVRUNNER_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${MVRUNNER_VERSION_MINOR}")
