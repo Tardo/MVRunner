@@ -181,18 +181,6 @@ if (TARGET_OS STREQUAL "windows")
 	add_custom_command(TARGET ${BINARY_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${ZLIB_INCLUDE_DIR}/../bin/zlib.dll ${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
 	add_custom_command(TARGET ${BINARY_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SFML_INCLUDE_DIR}/../bin/openal32.dll ${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
 endif()
-if (TARGET_COMPILER STREQUAL "cl")
- 	target_compile_options(${BINARY_NAME} PRIVATE /wd4244) # Possible loss of data (float -> int, int -> float, etc.).
-    target_compile_options(${BINARY_NAME} PRIVATE /wd4267) # Possible loss of data (size_t - int on win64).
-	target_compile_options(${BINARY_NAME} PRIVATE /wd4800) # Implicit conversion of int to bool.
-	target_compile_options(${BINARY_NAME} PRIVATE /wd4996) # Use of non-_s functions.
-	if (IS_DEBUG)
-		target_compile_options(${BINARY_NAME} PRIVATE /MTd) # Use static CRT
-		set_property(TARGET ${BINARY_NAME} APPEND PROPERTY LINK_FLAGS /SAFESEH:NO) # Disable SafeSEH because the shipped libraries don't support it.
-	else()
-		target_compile_options(${BINARY_NAME} PRIVATE /MT) # Use static CRT
-	endif()
-endif()
 
 # CREATE ZPG
 if (TARGET_OS STREQUAL "windows")

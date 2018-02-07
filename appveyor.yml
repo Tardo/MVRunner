@@ -41,6 +41,8 @@ install:
     cmake --build build32 --config Release --target Zpg &&
     cmake --build build32 --config Release --target zpg_packer &&
     cmake --build build32 --config Release --target install &&
+    cmake --build build32 --config Debug --target Zpg &&
+    cmake --build build32 --config Debug --target install &&
     cd ..)
   - cd c:\projects\MVRunner
 
