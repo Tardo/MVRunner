@@ -86,8 +86,15 @@ if (TARGET_COMPILER STREQUAL "gcc" OR
     set(cxx_flags "${CMAKE_CXX_FLAGS} -Wall")
     set(c_flags "${CMAKE_C_FLAGS} -Wall")
 elseif (TARGET_COMPILER STREQUAL "cl")
-    set(cxx_flags "${CMAKE_CXX_FLAGS} /W4 /EHsc")
-    set(c_flags "${CMAKE_C_FLAGS} /W4")
+    set(cxx_flags "${CMAKE_CXX_FLAGS} /W4 /EHsc /MP /GS")
+    set(c_flags "${CMAKE_C_FLAGS} /W4 /MP /GS")
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
+ 	target_compile_options(${BINARY_NAME} PRIVATE /wd4244) # Possible loss of data (float -> int, int -> float, etc.).
+    target_compile_options(${BINARY_NAME} PRIVATE /wd4267) # Possible loss of data (size_t - int on win64).
+	target_compile_options(${BINARY_NAME} PRIVATE /wd4800) # Implicit conversion of int to bool.
+	target_compile_options(${BINARY_NAME} PRIVATE /wd4996) # Use of non-_s functions.
+	target_compile_options(${BINARY_NAME} PRIVATE $<$<NOT:${IS_DEBUG}>:/MT> $<${IS_DEBUG}:/MTd>) # Use static CRT
+	set_property(TARGET ${BINARY_NAME} APPEND PROPERTY LINK_FLAGS /SAFESEH:$<$<NOT:${IS_DEBUG}>:YES> $<${IS_DEBUG}:NO>) # Disable SafeSEH because the shipped libraries don't support it.
 endif()
 
 set(CMAKE_CXX_FLAGS "${cxx_flags} -std=c++0x"

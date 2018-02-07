@@ -16,13 +16,30 @@ find_path(ZPG_INCLUDE_DIR Zpg/Zpg.hpp
 set(ZPG_FOUND FALSE)
 if(ZPG_INCLUDE_DIR)
     # release library
-    find_library(ZPG_LIBRARIES
+    find_library(ZPG_LIBRARY_RELEASE
                  NAMES Zpg
                  PATH_SUFFIXES lib64 lib
                  PATHS ${FIND_ZPG_PATHS})
-    if (ZPG_LIBRARIES)
+    # release library
+    find_library(ZPG_LIBRARY_DEBUG
+                 NAMES Zpg_d
+                 PATH_SUFFIXES lib64 lib
+                 PATHS ${FIND_ZPG_PATHS})
+    if (ZPG_LIBRARY_RELEASE OR ZPG_LIBRARY_DEBUG)
         set(ZPG_FOUND TRUE)   
     endif()
+endif()
+
+# if both are found, set SFML_XXX_LIBRARY to contain both
+if (ZPG_LIBRARY_RELEASE AND ZPG_LIBRARY_DEBUG)
+    set(ZPG_LIBRARIES   debug     ${ZPG_LIBRARY_DEBUG}
+                        optimized ${ZPG_LIBRARY_RELEASE})
+endif()
+if (ZPG_LIBRARY_RELEASE AND NOT ZPG_LIBRARY_DEBUG)
+    set(ZPG_LIBRARIES ${ZPG_LIBRARY_RELEASE})
+endif()
+if (ZPG_LIBRARY_DEBUG AND NOT ZPG_LIBRARY_RELEASE)
+    set(ZPG_LIBRARIES ${ZPG_LIBRARY_DEBUG})
 endif()
 
 # Search Dependencies (From FindSFML)
