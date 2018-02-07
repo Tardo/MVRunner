@@ -54,13 +54,11 @@ build_script:
   - cmd: cmake --build build32 --config Release --target MVRunner
   - cmd: cmake --build build32 --config Release --target create_zpg
   - cmd: cmake --build build32 --config Release --target package
-  - cmd: cmake --build build32 --config Release --target create_zip
   - cmd: cmake --build build32 --config Debug --target MVRunner
 
 artifacts:
   - path: build32/Release/MVRunner.exe
           build32/Debug/MVRunner_d.exe
-          build32/*.exe
           build32/*.zip
           #build32/Release/assets.zpg
     name: MVRunner
