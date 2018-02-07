@@ -89,12 +89,6 @@ elseif (TARGET_COMPILER STREQUAL "cl")
     set(cxx_flags "${CMAKE_CXX_FLAGS} /W4 /EHsc /MP /GS")
     set(c_flags "${CMAKE_C_FLAGS} /W4 /MP /GS")
     add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
- 	target_compile_options(${BINARY_NAME} PRIVATE /wd4244) # Possible loss of data (float -> int, int -> float, etc.).
-    target_compile_options(${BINARY_NAME} PRIVATE /wd4267) # Possible loss of data (size_t - int on win64).
-	target_compile_options(${BINARY_NAME} PRIVATE /wd4800) # Implicit conversion of int to bool.
-	target_compile_options(${BINARY_NAME} PRIVATE /wd4996) # Use of non-_s functions.
-	target_compile_options(${BINARY_NAME} PRIVATE $<$<NOT:${IS_DEBUG}>:/MT> $<${IS_DEBUG}:/MTd>) # Use static CRT
-	set_property(TARGET ${BINARY_NAME} APPEND PROPERTY LINK_FLAGS /SAFESEH:$<$<NOT:${IS_DEBUG}>:YES> $<${IS_DEBUG}:NO>) # Disable SafeSEH because the shipped libraries don't support it.
 endif()
 
 set(CMAKE_CXX_FLAGS "${cxx_flags} -std=c++0x"
@@ -185,9 +179,17 @@ if (TARGET_OS STREQUAL "windows")
 	add_custom_command(TARGET ${BINARY_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${ZLIB_INCLUDE_DIR}/../bin/zlib.dll ${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
 	add_custom_command(TARGET ${BINARY_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SFML_INCLUDE_DIR}/../bin/openal32.dll ${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
 endif()
+if (TARGET_COMPILER STREQUAL "cl")
+ 	target_compile_options(${BINARY_NAME} PRIVATE /wd4244) # Possible loss of data (float -> int, int -> float, etc.).
+    target_compile_options(${BINARY_NAME} PRIVATE /wd4267) # Possible loss of data (size_t - int on win64).
+	target_compile_options(${BINARY_NAME} PRIVATE /wd4800) # Implicit conversion of int to bool.
+	target_compile_options(${BINARY_NAME} PRIVATE /wd4996) # Use of non-_s functions.
+	target_compile_options(${BINARY_NAME} PRIVATE $<$<NOT:${IS_DEBUG}>:/MT> $<${IS_DEBUG}:/MTd>) # Use static CRT
+	set_property(TARGET ${BINARY_NAME} APPEND PROPERTY LINK_FLAGS /SAFESEH:$<$<NOT:${IS_DEBUG}>:YES> $<${IS_DEBUG}:NO>) # Disable SafeSEH because the shipped libraries don't support it.
+endif()
 
 # CREATE ZPG
-if (TARGET_COMPILER STREQUAL "cl")
+if (TARGET_OS STREQUAL "windows")
 	if (TARGET_BITS STREQUAL "32")
 		add_custom_target(create_zpg COMMAND "C:/Program Files (x86)/libZpg/bin/zpg_packer.exe" ${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/assets.zpg -C -A ${CMAKE_SOURCE_DIR}/data/)
 	else()
