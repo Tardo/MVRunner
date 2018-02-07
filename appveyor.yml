@@ -35,14 +35,18 @@ install:
     curl -LfsS -o libzpg.zip https://github.com/Tardo/Zpg/archive/master.zip &&
     7z x libzpg.zip &&
     cd Zpg-master &&
-    md build32 & cd build32 &&
-    cmake -Werror=dev -G"Visual Studio 14 2015" .. &&
+    md build32-release & cd build32-release &&
+    cmake -Werror=dev -G"Visual Studio 14 2015" -DCMAKE_BUILD_TYPE=Release .. &&
     cd .. &&
-    cmake --build build32 --config Release --target Zpg &&
-    cmake --build build32 --config Release --target zpg_packer &&
-    cmake --build build32 --config Release --target install &&
-    cmake --build build32 --config Debug --target Zpg &&
-    cmake --build build32 --config Debug --target install &&
+    cmake --build build32-release --config Release --target Zpg &&
+    cmake --build build32-release --config Release --target zpg_packer &&
+    cmake --build build32-release --config Release --target install &&
+    md build32-debug & cd build32-debug &&
+    cmake -Werror=dev -G"Visual Studio 14 2015" -DCMAKE_BUILD_TYPE=Debug .. &&
+    cd .. &&
+    cmake --build build32-debug --config Debug --target Zpg &&
+    cd build32-debug &&
+    cmake -DCOMPONENT=library -P cmake_install.cmake &&
     cd ..)
   - cd c:\projects\MVRunner
 
