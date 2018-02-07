@@ -101,6 +101,7 @@ set(SFML_STATIC_LIBRARIES TRUE)
 
 
 # FIND LIBRARIES
+find_package(ZLIB REQUIRED)
 find_package(SFML 2.4 COMPONENTS graphics window audio system REQUIRED)
 find_package(Zpg REQUIRED)
 include (FindOpenGL)
@@ -117,7 +118,8 @@ set(CLIENT_LIBS Box2D
 
 
 # INCLUDES
-set(CLIENT_INCLUDES ${SFML_INCLUDE_DIR}
+set(CLIENT_INCLUDES ${ZLIB_INCLUDE_DIR}
+                    ${SFML_INCLUDE_DIR}
                     ${ZPG_INCLUDE_DIR}
                     ${EXTERNAL_DIR}
                     ${EXTERNAL_DIR}/tinyxml2
@@ -173,7 +175,8 @@ add_executable(${BINARY_NAME} ${CLIENT_SRC})
 target_link_libraries(${BINARY_NAME} ${CLIENT_LIBS})
 set_property(TARGET ${BINARY_NAME} PROPERTY CXX_STANDARD 11)
 if (TARGET_OS STREQUAL "windows")
-	add_custom_command(TARGET ${BINARY_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SFML_INCLUDE_DIR}/../bin/openal32.dll ${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+	add_custom_command(TARGET ${BINARY_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${ZLIB_INCLUDE_DIR}/../bin/zlib.dll ${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+	add_custom_command(TARGET ${BINARY_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SFML_INCLUDE_DIR}/../bin/openal32.dll ${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
 endif()
 
 # CREATE ZPG
@@ -191,6 +194,7 @@ endif()
 if (TARGET_OS STREQUAL "windows")
 	add_custom_target(create_zip COMMAND ${CMAKE_COMMAND} -E tar "cfv" "${BINARY_NAME}-${MVRUNNER_VERSION_MAJOR}.${MVRUNNER_VERSION_MINOR}.${MVRUNNER_VERSION_PATCH}-win${TARGET_BITS}.zip" --format=zip
 	       								 "${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/openal32.dll"
+	       								 "${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/zlib.dll"
 	       								 "${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/assets.zpg"
 	       								 "${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${BINARY_NAME}.exe")
 else()
@@ -203,6 +207,7 @@ add_dependencies(create_zip ${BINARY_NAME} create_zpg)
 # INSTALL
 install(TARGETS ${BINARY_NAME} RUNTIME DESTINATION ${BIN_DIR} COMPONENT binaries)
 if (TARGET_OS STREQUAL "windows")
+	install(FILES ${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/zlib.dll DESTINATION ${BIN_DIR} COMPONENT binaries)
 	install(FILES ${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/openal32.dll DESTINATION ${BIN_DIR} COMPONENT binaries)
 endif()
 if (TARGET_COMPILER STREQUAL "cl")

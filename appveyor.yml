@@ -8,6 +8,7 @@ environment:
 cache:
   - c:\projects\SFML-2.4.2
   - C:\Program Files (x86)\libZpg
+  - C:\Program Files (x86)\zlib
 
 install:
   - cd c:\projects
@@ -16,6 +17,18 @@ install:
     md "%SFML_ROOT%" &&
     curl -LfsS -o sfml.zip https://www.sfml-dev.org/files/SFML-2.4.2-windows-vc14-32-bit.zip &&
     7z x sfml.zip)
+  # Download ZLib Source
+  - IF NOT EXIST "%ZLIB_ROOT%" (
+    md "%ZLIB_ROOT%" &&
+    curl -LfsS -o zlib-1.2.11.tar.gz http://zlib.net/zlib-1.2.11.tar.gz &&
+    7z x zlib-1.2.11.tar.gz &&
+    7z x zlib-1.2.11.tar &&
+    cd zlib-1.2.11 &&
+    md build32 & cd build32 &&
+    cmake -Werror=dev -G"Visual Studio 14 2015" .. &&
+    cd .. &&
+    cmake --build build32 --config Release --target install &&
+    cd ..)
   # Download libZpg Source
   - IF NOT EXIST "%ZPG_ROOT%" (
     md "%ZPG_ROOT%" &&

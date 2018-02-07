@@ -25,6 +25,26 @@ if(ZPG_INCLUDE_DIR)
     endif()
 endif()
 
+# Search Dependencies (From FindSFML)
+# start with an empty list
+set(FIND_ZPG_DEPENDENCIES_NOTFOUND)
+
+# macro that searches for a 3rd-party library
+macro(find_zpg_dependency output friendlyname)
+    # No lookup in environment variables (PATH on Windows), as they may contain wrong library versions
+    find_library(${output} NAMES ${ARGN} PATHS ${FIND_ZPG_PATHS} PATH_SUFFIXES lib NO_SYSTEM_ENVIRONMENT_PATH)
+    if(${${output}} STREQUAL "${output}-NOTFOUND")
+        unset(output)
+        set(FIND_ZPG_DEPENDENCIES_NOTFOUND "${FIND_ZPG_DEPENDENCIES_NOTFOUND} ${friendlyname}")
+    endif()
+endmacro()
+
+# find libraries
+find_zpg_dependency(ZLIB_LIBRARY "libz" zlib)
+
+# update the list
+set(ZPG_DEPENDENCIES ${ZLIB_LIBRARY})
+
 # handle success
 if(ZPG_FOUND)
     message(STATUS "Found LibZpg in ${ZPG_INCLUDE_DIR}")
