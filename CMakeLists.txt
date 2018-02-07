@@ -44,12 +44,18 @@ if(POLICY CMP0054)
 endif()
 project("MVRunner")
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-	set(IS_DEBUG TRUE)
-	set(BINARY_NAME "MVRunner_d")
-else()
-	set(IS_DEBUG FALSE)
-	set(BINARY_NAME "MVRunner")
+set(BINARY_NAME "MVRunner")
+
+# Set the default build type to Release
+if(NOT(CMAKE_BUILD_TYPE))
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
+set(IS_DEBUG $<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>)
+
+if (IS_DEBUG)
+	set(CMAKE_DEBUG_POSTFIX "_d")
+	set(CMAKE_EXECUTABLE_SUFFIX "_d")
 endif()
 
 # MODULES
@@ -185,7 +191,7 @@ if (TARGET_COMPILER STREQUAL "cl")
 	target_compile_options(${BINARY_NAME} PRIVATE /wd4800) # Implicit conversion of int to bool.
 	target_compile_options(${BINARY_NAME} PRIVATE /wd4996) # Use of non-_s functions.
 	target_compile_options(${BINARY_NAME} PRIVATE $<$<NOT:${IS_DEBUG}>:/MT> $<${IS_DEBUG}:/MTd>) # Use static CRT
-	set_property(TARGET ${BINARY_NAME} APPEND PROPERTY LINK_FLAGS /SAFESEH:$<$<NOT:${IS_DEBUG}>:YES> $<${IS_DEBUG}:NO>) # Disable SafeSEH because the shipped libraries don't support it.
+	#set_property(TARGET ${BINARY_NAME} APPEND PROPERTY LINK_FLAGS /SAFESEH:$<$<NOT:${IS_DEBUG}>:YES> $<${IS_DEBUG}:NO>) # Disable SafeSEH because the shipped libraries don't support it.
 endif()
 
 # CREATE ZPG
