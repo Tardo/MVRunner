@@ -46,16 +46,12 @@ project("MVRunner")
 
 set(BINARY_NAME "MVRunner")
 
-# Set the default build type to Release
-if(NOT(CMAKE_BUILD_TYPE))
-  set(CMAKE_BUILD_TYPE Release)
-endif()
-
-set(IS_DEBUG $<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>)
-
-if (IS_DEBUG)
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+	set(IS_DEBUG TRUE)
 	set(CMAKE_DEBUG_POSTFIX "_d")
 	set(CMAKE_EXECUTABLE_SUFFIX "_d")
+else()
+	set(IS_DEBUG FALSE)
 endif()
 
 # MODULES
