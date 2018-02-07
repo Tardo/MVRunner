@@ -46,7 +46,7 @@ install:
     cd .. &&
     cmake --build build32-debug --config Debug --target Zpg &&
     cd build32-debug &&
-    cmake -DCOMPONENT=library -P cmake_install.cmake &&
+    cmake -DCMAKE_BUILD_TYPE=Debug -DCOMPONENT=library -P cmake_install.cmake &&
     cd ..)
   - cd c:\projects\MVRunner
 
