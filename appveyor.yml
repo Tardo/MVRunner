@@ -45,8 +45,8 @@ install:
     cmake -Werror=dev -G"Visual Studio 14 2015" -DCMAKE_BUILD_TYPE=Debug .. &&
     cd .. &&
     cmake --build build32-debug --config Debug --target Zpg &&
-    cd build32-debug &&
-    cmake -DCMAKE_BUILD_TYPE=Debug -DCOMPONENT=library -P cmake_install.cmake &&
+    cmake --build build32-debug --config Debug --target zpg_packer &&
+    cmake --build build32-debug --config Debug --target install &&
     cd ..)
   - cd c:\projects\MVRunner
 
