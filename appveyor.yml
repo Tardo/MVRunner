@@ -82,7 +82,7 @@ install:
 before_build:
 - cmd: |
     md build & cd build
-    cmake -Werror=dev -G "%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE=%CMAKE_BUILD_TYPE% ..
+    cmake -Werror=dev -G "%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE=%CMAKE_BUILD_TYPE% -DZPG_PACKER_BIN="%ZPG_ROOT%\bin\%ZPG_PACKER_NAME%.exe" ..
     cd ..
     
 build_script:
