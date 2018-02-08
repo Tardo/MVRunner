@@ -1,9 +1,46 @@
 image: Visual Studio 2015
 
 environment:
-  SFML_ROOT: c:\projects\SFML-2.4.2
-  ZPG_ROOT: C:\Program Files (x86)\libZpg
-  ZLIB_ROOT: C:\Program Files (x86)\zlib
+  matrix:
+    - ZLIB_ROOT: C:\Program Files (x86)\zlib
+      ZPG_ROOT: C:\Program Files (x86)\libZpg
+      SFML_ROOT: c:\projects\SFML-2.4.2_win32
+      SFML_PACKAGE: SFML-2.4.2-windows-vc14-32-bit.zip
+      CMAKE_GENERATOR: Visual Studio 14 2015
+      CMAKE_BUILD_TYPE: Debug
+      ZPG_PACKER_NAME: zpg_packer_d
+    - ZLIB_ROOT: C:\Program Files (x86)\zlib
+      ZPG_ROOT: C:\Program Files (x86)\libZpg
+      SFML_ROOT: c:\projects\SFML-2.4.2_win32
+      SFML_PACKAGE: SFML-2.4.2-windows-vc14-32-bit.zip
+      CMAKE_GENERATOR: Visual Studio 14 2015
+      CMAKE_BUILD_TYPE: Release
+      ZPG_PACKER_NAME: zpg_packer
+    - ZLIB_ROOT: C:\Program Files\zlib
+      ZPG_ROOT: C:\Program Files\libZpg
+      SFML_ROOT: c:\projects\SFML-2.4.2_win64
+      SFML_PACKAGE: SFML-2.4.2-windows-vc14-64-bit.zip
+      CMAKE_GENERATOR: Visual Studio 14 2015 Win64
+      CMAKE_BUILD_TYPE: Debug
+      ZPG_PACKER_NAME: zpg_packer_d
+    - ZLIB_ROOT: C:\Program Files\zlib
+      ZPG_ROOT: C:\Program Files\libZpg
+      SFML_ROOT: c:\projects\SFML-2.4.2_win64
+      SFML_PACKAGE: SFML-2.4.2-windows-vc14-64-bit.zip
+      CMAKE_GENERATOR: Visual Studio 14 2015 Win64
+      CMAKE_BUILD_TYPE: Release
+      ZPG_PACKER_NAME: zpg_packer
+
+matrix:
+  allow_failures:
+    - platform: x86
+      configuration: Debug
+    - platform: x86
+      configuration: Release
+    - platform: x64
+      configuration: Debug
+    - platform: x64
+      configuration: Release
   
 cache:
   - c:\projects\SFML-2.4.2
@@ -15,8 +52,9 @@ install:
   # Download SFML 2.4.2 binaries
   - IF NOT EXIST "%SFML_ROOT%" (
     md "%SFML_ROOT%" &&
-    curl -LfsS -o sfml.zip https://www.sfml-dev.org/files/SFML-2.4.2-windows-vc14-32-bit.zip &&
-    7z x sfml.zip)
+    curl -LfsS -o sfml.zip https://www.sfml-dev.org/files/%SFML_PACKAGE% &&
+    7z x sfml.zip &&
+    ren SFML-2.4.2 %SFML_ROOT%)
   # Download ZLib Source
   - IF NOT EXIST "%ZLIB_ROOT%" (
     md "%ZLIB_ROOT%" &&
@@ -24,10 +62,10 @@ install:
     7z x zlib-1.2.11.tar.gz &&
     7z x zlib-1.2.11.tar &&
     cd zlib-1.2.11 &&
-    md build32 & cd build32 &&
-    cmake -Werror=dev -G"Visual Studio 14 2015" .. &&
+    md build & cd build &&
+    cmake -Werror=dev -G"%CMAKE_GENERATOR%" .. &&
     cd .. &&
-    cmake --build build32 --config Release --target install &&
+    cmake --build build --config %CMAKE_BUILD_TYPE% --target install &&
     cd ..)
   # Download libZpg Source
   - IF NOT EXIST "%ZPG_ROOT%" (
@@ -35,38 +73,30 @@ install:
     curl -LfsS -o libzpg.zip https://github.com/Tardo/Zpg/archive/master.zip &&
     7z x libzpg.zip &&
     cd Zpg-master &&
-    md build32-release & cd build32-release &&
-    cmake -Werror=dev -G"Visual Studio 14 2015" -DCMAKE_BUILD_TYPE=Release .. &&
+    md build & cd build &&
+    cmake -Werror=dev -G"%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE=%CMAKE_BUILD_TYPE% .. &&
     cd .. &&
-    cmake --build build32-release --config Release --target Zpg &&
-    cmake --build build32-release --config Release --target zpg_packer &&
-    cmake --build build32-release --config Release --target install &&
-    md build32-debug & cd build32-debug &&
-    cmake -Werror=dev -G"Visual Studio 14 2015" -DCMAKE_BUILD_TYPE=Debug .. &&
-    cd .. &&
-    cmake --build build32-debug --config Debug --target Zpg &&
-    cmake --build build32-debug --config Debug --target zpg_packer &&
-    cmake --build build32-debug --config Debug --target install &&
+    cmake --build build --config %CMAKE_BUILD_TYPE% --target Zpg &&
+    cmake --build build --config %CMAKE_BUILD_TYPE% --target zpg_packer &&
+    cmake --build build --config %CMAKE_BUILD_TYPE% --target install &&
     cd ..)
   - cd c:\projects\MVRunner
 
 before_build:
 - cmd: |
-    md build32 & cd build32
-    cmake -Werror=dev -G "Visual Studio 14 2015" ..
+    md build & cd build
+    cmake -Werror=dev -G "%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE=%CMAKE_BUILD_TYPE% ..
     cd ..
     
 build_script:
-  - cmd: cmake --build build32 --config Release --target MVRunner
-  - cmd: cmake --build build32 --config Release --target create_zpg
-  - cmd: cmake --build build32 --config Release --target package
-  - cmd: cmake --build build32 --config Debug --target MVRunner
+  - cmd: cmake --build build --config %CMAKE_BUILD_TYPE% --target MVRunner
+  - cmd: cmake --build build --config %CMAKE_BUILD_TYPE% --target create_zpg
+  - cmd: cmake --build build --config %CMAKE_BUILD_TYPE% --target package
 
 artifacts:
-  - path: build32/Release/MVRunner.exe
-          build32/Debug/MVRunner_d.exe
-          build32/*.zip
-          #build32/Release/assets.zpg
+  - path: build/Release/MVRunner.exe
+          build/Debug/MVRunner_d.exe
+          build/*.zip
     name: MVRunner
 
 branches:

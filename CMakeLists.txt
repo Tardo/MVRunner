@@ -211,6 +211,7 @@ endif()
 
 # CPACK
 include(InstallRequiredSystemLibraries)
+set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "MVRunner A Reto Game")
 set(CPACK_PACKAGE_VENDOR "Alexandre Díaz")
 if (TARGET_OS STREQUAL "windows")
