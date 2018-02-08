@@ -54,7 +54,7 @@ install:
     md "%SFML_ROOT%" &&
     curl -LfsS -o sfml.zip https://www.sfml-dev.org/files/%SFML_PACKAGE% &&
     7z x sfml.zip &&
-    ren SFML-2.4.2 %SFML_ROOT%)
+    rename SFML-2.4.2 %SFML_ROOT%)
   # Download ZLib Source
   - IF NOT EXIST "%ZLIB_ROOT%" (
     md "%ZLIB_ROOT%" &&
