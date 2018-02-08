@@ -66,7 +66,7 @@ install:
     md build & cd build &&
     cmake -Werror=dev -G"%CMAKE_GENERATOR%" .. &&
     cd .. &&
-    cmake --build build --config %CMAKE_BUILD_TYPE% --target install &&
+    cmake --build build --config Release --target install &&
     cd ..)
   # Download libZpg Source
   - IF NOT EXIST "%ZPG_ROOT%" (
@@ -74,11 +74,11 @@ install:
     7z x libzpg.zip &&
     cd Zpg-master &&
     md build & cd build &&
-    cmake -Werror=dev -G"%CMAKE_GENERATOR%" -DZLIB_ROOT="%ZLIB_ROOT%" -DCMAKE_BUILD_TYPE=%CMAKE_BUILD_TYPE% .. &&
+    cmake -Werror=dev -G"%CMAKE_GENERATOR%" -DZLIB_ROOT="%ZLIB_ROOT%" -DCMAKE_BUILD_TYPE=Release .. &&
     cd .. &&
-    cmake --build build --config %CMAKE_BUILD_TYPE% --target Zpg &&
-    cmake --build build --config %CMAKE_BUILD_TYPE% --target zpg_packer &&
-    cmake --build build --config %CMAKE_BUILD_TYPE% --target install &&
+    cmake --build build --config Release --target Zpg &&
+    cmake --build build --config Release --target zpg_packer &&
+    cmake --build build --config Release --target install &&
     cd ..)
   - cd c:\projects\MVRunner
 
