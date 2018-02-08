@@ -74,7 +74,7 @@ install:
     7z x libzpg.zip &&
     cd Zpg-master &&
     md build & cd build &&
-    cmake -Werror=dev -G"%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE=%CMAKE_BUILD_TYPE% .. &&
+    cmake -Werror=dev -G"%CMAKE_GENERATOR%" -DZLIB_ROOT="%ZLIB_ROOT%" -DCMAKE_BUILD_TYPE=%CMAKE_BUILD_TYPE% .. &&
     cd .. &&
     cmake --build build --config %CMAKE_BUILD_TYPE% --target Zpg &&
     cmake --build build --config %CMAKE_BUILD_TYPE% --target zpg_packer &&
@@ -85,7 +85,7 @@ install:
 before_build:
 - cmd: |
     md build & cd build
-    cmake -Werror=dev -G "%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE=%CMAKE_BUILD_TYPE% -DZPG_PACKER_BIN="%ZPG_ROOT%\bin\%ZPG_PACKER_NAME%.exe" ..
+    cmake -Werror=dev -G "%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE=%CMAKE_BUILD_TYPE% -DZLIB_ROOT="%ZLIB_ROOT%" -DZPG_PACKER_BIN="%ZPG_ROOT%\bin\%ZPG_PACKER_NAME%.exe" ..
     cd ..
     
 build_script:
