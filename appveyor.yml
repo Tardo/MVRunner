@@ -51,13 +51,11 @@ install:
   - cd c:\projects
   # Download SFML 2.4.2 binaries
   - IF NOT EXIST "%SFML_ROOT%" (
-    md "%SFML_ROOT%" &&
     curl -LfsS -o sfml.zip https://www.sfml-dev.org/files/%SFML_PACKAGE% &&
     7z x sfml.zip &&
-    rename c:\projects\SFML-2.4.2 %SFML_ROOT%)
+    move SFML-2.4.2 %SFML_ROOT%)
   # Download ZLib Source
   - IF NOT EXIST "%ZLIB_ROOT%" (
-    md "%ZLIB_ROOT%" &&
     curl -LfsS -o zlib-1.2.11.tar.gz http://zlib.net/zlib-1.2.11.tar.gz &&
     7z x zlib-1.2.11.tar.gz &&
     7z x zlib-1.2.11.tar &&
@@ -69,7 +67,6 @@ install:
     cd ..)
   # Download libZpg Source
   - IF NOT EXIST "%ZPG_ROOT%" (
-    md "%ZPG_ROOT%" &&
     curl -LfsS -o libzpg.zip https://github.com/Tardo/Zpg/archive/master.zip &&
     7z x libzpg.zip &&
     cd Zpg-master &&
