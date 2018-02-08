@@ -8,24 +8,28 @@ environment:
       SFML_PACKAGE: SFML-2.4.2-windows-vc14-32-bit.zip
       CMAKE_GENERATOR: Visual Studio 14 2015
       CMAKE_BUILD_TYPE: Debug
+      ZPG_PACKER_NAME: zpg_packer_d
     - ZLIB_ROOT: C:\Program Files (x86)\zlib
       ZPG_ROOT: C:\Program Files (x86)\libZpg
       SFML_ROOT: c:\projects\SFML-2.4.2_win32
       SFML_PACKAGE: SFML-2.4.2-windows-vc14-32-bit.zip
       CMAKE_GENERATOR: Visual Studio 14 2015
       CMAKE_BUILD_TYPE: Release
+      ZPG_PACKER_NAME: zpg_packer
     - ZLIB_ROOT: C:\Program Files\zlib
       ZPG_ROOT: C:\Program Files\libZpg
       SFML_ROOT: c:\projects\SFML-2.4.2_win64
       SFML_PACKAGE: SFML-2.4.2-windows-vc14-64-bit.zip
       CMAKE_GENERATOR: Visual Studio 14 2015 Win64
       CMAKE_BUILD_TYPE: Debug
+      ZPG_PACKER_NAME: zpg_packer_d
     - ZLIB_ROOT: C:\Program Files\zlib
       ZPG_ROOT: C:\Program Files\libZpg
       SFML_ROOT: c:\projects\SFML-2.4.2_win64
       SFML_PACKAGE: SFML-2.4.2-windows-vc14-64-bit.zip
       CMAKE_GENERATOR: Visual Studio 14 2015 Win64
       CMAKE_BUILD_TYPE: Release
+      ZPG_PACKER_NAME: zpg_packer
 
 matrix:
   allow_failures:
@@ -62,7 +66,7 @@ install:
     md build & cd build &&
     cmake -Werror=dev -G"%CMAKE_GENERATOR%" .. &&
     cd .. &&
-    cmake --build build --config Release --target install &&
+    cmake --build build --config %CMAKE_BUILD_TYPE% --target install &&
     cd ..)
   # Download libZpg Source
   - IF NOT EXIST "%ZPG_ROOT%" (
@@ -70,18 +74,18 @@ install:
     7z x libzpg.zip &&
     cd Zpg-master &&
     md build & cd build &&
-    cmake -Werror=dev -G"%CMAKE_GENERATOR%" -DZLIB_ROOT="%ZLIB_ROOT%" -DCMAKE_BUILD_TYPE=Release .. &&
+    cmake -Werror=dev -G"%CMAKE_GENERATOR%" -DZLIB_ROOT="%ZLIB_ROOT%" -DCMAKE_BUILD_TYPE=%CMAKE_BUILD_TYPE% .. &&
     cd .. &&
-    cmake --build build --config Release --target Zpg &&
-    cmake --build build --config Release --target zpg_packer &&
-    cmake --build build --config Release --target install &&
+    cmake --build build --config %CMAKE_BUILD_TYPE% --target Zpg &&
+    cmake --build build --config %CMAKE_BUILD_TYPE% --target zpg_packer &&
+    cmake --build build --config %CMAKE_BUILD_TYPE% --target install &&
     cd ..)
   - cd c:\projects\MVRunner
 
 before_build:
 - cmd: |
     md build & cd build
-    cmake -Werror=dev -G "%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE=%CMAKE_BUILD_TYPE% -DZLIB_ROOT="%ZLIB_ROOT%" -DZPG_PACKER_BIN="%ZPG_ROOT%\bin\zpg_packer.exe" ..
+    cmake -Werror=dev -G "%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE=%CMAKE_BUILD_TYPE% -DZLIB_ROOT="%ZLIB_ROOT%" -DZPG_PACKER_BIN="%ZPG_ROOT%\bin\%ZPG_PACKER_NAME%.exe" ..
     cd ..
     
 build_script:
