@@ -2,6 +2,6 @@
 #ifndef GAME_VERSION_H
 #define GAME_VERSION_H
 
-#define GAME_RELEASE_VERSION "0.1.0a"
+#define GAME_RELEASE_VERSION "0.1.2a"
 
 #endif
