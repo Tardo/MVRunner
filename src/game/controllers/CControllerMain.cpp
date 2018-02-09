@@ -256,6 +256,7 @@ void CControllerMain::onStart() noexcept
 {
 	CController::onStart();
 	// Spawn Player
+	m_LastCheckPoint = m_PlayerSpawnPos.m_Pos;
 	Context()->getPlayer()->createCharacter(m_PlayerSpawnPos.m_Pos);
 	Game()->Client()->Camera().setZoom(g_Config.m_ZoomCharacter);
 
