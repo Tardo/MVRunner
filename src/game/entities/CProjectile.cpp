@@ -48,6 +48,8 @@ void CProjectile::tick() noexcept
 
 void CProjectile::onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexcept
 {
+	CB2Polygon::onContact(pEntity, worldPos);
+
 	if (pEntity->getType() == CEntity::FIRE)
 		return;
 

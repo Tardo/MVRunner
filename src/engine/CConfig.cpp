@@ -52,6 +52,8 @@ bool CConfig::load() noexcept
 void CConfig::loadGameInfo() noexcept
 {
 	g_Config.m_aWeaponsInfo[WEAPON_GRENADE_LAUNCHER] = {g_Config.m_WeaponGrenadeLauncherFireDelay, g_Config.m_WeaponGrenadeLauncherEnergy, g_Config.m_WeaponGrenadeLauncherLifeTime, g_Config.m_WeaponGrenadeLauncherRadius, g_Config.m_WeaponGrenadeLauncherSpeed};
+	g_Config.m_aWeaponsInfo[WEAPON_JET_PACK] = {g_Config.m_WeaponJetPackFireDelay, g_Config.m_WeaponJetPackEnergy, 0.0f, 0.0f, 0.0f};
+
 }
 
 void CConfig::reset() noexcept

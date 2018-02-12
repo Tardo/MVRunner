@@ -28,11 +28,13 @@ void CSign::tick() noexcept
 /**  SENSOR **/
 void CSign::onSensorIn(CEntity *pEntity) noexcept
 {
+	CB2Polygon::onSensorIn(pEntity);
 	CGame *pGame = CGame::getInstance();
 	pGame->Client()->UI().showHelpMessage(m_aText);
 }
 void CSign::onSensorOut(CEntity *pEntity) noexcept
 {
+	CB2Polygon::onSensorOut(pEntity);
 	CGame *pGame = CGame::getInstance();
 	pGame->Client()->UI().showHelpMessage("");
 }

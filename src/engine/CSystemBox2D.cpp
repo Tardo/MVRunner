@@ -180,6 +180,19 @@ void CSystemBox2D::createExplosion(const sf::Vector2f &worldPos, float energy, f
 	}
 }
 
+b2Fixture* CSystemBox2D::createFixture(b2Body *pBody, const b2Shape &Shape, bool sensor, const b2Filter &filter, void *pUserData, float density, float friction, float restitution) noexcept
+{
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &Shape;
+	fixtureDef.isSensor = sensor;
+	fixtureDef.filter = filter;
+	fixtureDef.density = density;
+	fixtureDef.friction = friction;
+	fixtureDef.restitution = restitution;
+	fixtureDef.userData = pUserData;
+	return pBody->CreateFixture(&fixtureDef);
+}
+
 std::vector<b2Body*> CSystemBox2D::getBodiesNear(const sf::Vector2f &worldPos, float margin, sf::Uint16 categoryBits, b2Body *pNotThis) noexcept
 {
 	std::vector<b2Body*> vpBodies;
@@ -224,12 +237,12 @@ b2Fixture* CSystemBox2D::getFixtureAt(const sf::Vector2f &worldPos) noexcept
 	return queryCallBack.m_pFixture;
 }
 
-CEntity* CSystemBox2D::checkIntersectLine(const sf::Vector2f &worlPosInit, const sf::Vector2f &worldPosEnd, sf::Vector2f *pPoint, b2Body *pNotThis) noexcept
+CEntity* CSystemBox2D::checkIntersectLine(const sf::Vector2f &worlPosInit, const sf::Vector2f &worldPosEnd, sf::Vector2f *pPoint, b2Body *pNotThis, uint16 maskBits) noexcept
 {
 	if (upm::vectorLength(worldPosEnd-worlPosInit) == 0.0f)
 		return nullptr;
 
-	RaysCastCallback callback(pNotThis);
+	RaysCastCallback callback(pNotThis, maskBits);
 	getWorld()->RayCast(&callback, sfToB2(worlPosInit), sfToB2(worldPosEnd));
 	if (callback.m_Hit)
 	{

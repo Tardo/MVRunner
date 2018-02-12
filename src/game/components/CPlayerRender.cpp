@@ -35,24 +35,59 @@ void CPlayerRender::renderPlayer(sf::RenderTarget& target, sf::RenderStates stat
 	sf::Color bodyOutColor = sf::Color::Black;
 	if (pChar->getCharacterState()&CCharacter::STATE_ROTATE)
 	{
-		bodyInColor = sf::Color::Black;
+		bodyInColor = sf::Color::Blue;
 		bodyOutColor = sf::Color::White;
 	}
 
 	const sf::Vector2f CharPos = CSystemBox2D::b2ToSf(pChar->getBody()->GetPosition());
 	const float CharRot = pChar->getBody()->GetAngle();
-	sf::CircleShape Shape(CCharacter::SIZE, 10); // Low Definition
-	Shape.setFillColor(bodyInColor);
-	Shape.setOutlineColor(bodyOutColor);
-	Shape.setOrigin(CCharacter::SIZE, CCharacter::SIZE);
-	Shape.setOutlineThickness(3.0f);
-	Shape.setPosition(CharPos);
-	Shape.setRotation(upm::radToDeg(CharRot));
-	target.draw(Shape, states);
+	const sf::Vector2f CharDir = upm::vectorNormalize(Client()->mapPixelToCoords(Client()->Controls().getMousePos(), Client()->Camera()) - CharPos);
+
+	// Render Body
+	sf::CircleShape ShapeBody(CCharacter::SIZE, 10); // Low Definition
+	ShapeBody.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_SKIN_DEFAULT));
+	ShapeBody.setTextureRect(sf::IntRect(0, 0, 32, 32));
+	ShapeBody.setFillColor(bodyInColor);
+	ShapeBody.setOutlineColor(bodyOutColor);
+	ShapeBody.setOrigin(CCharacter::SIZE, CCharacter::SIZE);
+	ShapeBody.setOutlineThickness(3.0f);
+	ShapeBody.setPosition(CharPos);
+	ShapeBody.setRotation(upm::radToDeg(CharRot));
+	target.draw(ShapeBody, states);
+
+	// Render Body Light
+	const float CharAngVel = abs(pChar->getBody()->GetAngularVelocity());
+	const float MaxAngVel = 30;
+	sf::Color Rgb;
+	if (CharAngVel > MaxAngVel)
+		Rgb = ups::hslToRgb(sf::Vector3f(1.0f, 1.0f, 0.5f));
+	else
+		Rgb = ups::hslToRgb(sf::Vector3f(((CharAngVel * 0.35f) / MaxAngVel), 1.0f, 0.5f));
+	sf::CircleShape ShapeBodyLight(CCharacter::SIZE, 10); // Low Definition
+	ShapeBodyLight.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_SKIN_DEFAULT));
+	ShapeBodyLight.setTextureRect(sf::IntRect(0, 32, 32, 32));
+	ShapeBodyLight.setFillColor(Rgb);
+	ShapeBodyLight.setOrigin(CCharacter::SIZE, CCharacter::SIZE);
+	ShapeBodyLight.setPosition(CharPos);
+	ShapeBodyLight.setRotation(upm::radToDeg(CharRot));
+	//target.draw(ShapeBodyLight, states);
+	sf::Shader *pShader = Client()->Assets().getShader(CAssetManager::SHADER_BLOOM);
+	if (pShader)
+	{
+		sf::RenderStates orgStates = states;
+		pShader->setUniform("texture", sf::Shader::CurrentTexture);
+		pShader->setUniform("blur_radius", upm::floatRand(0.01f, 0.05f));
+		states.blendMode = sf::BlendAlpha;
+		states.shader = pShader;
+		target.draw(ShapeBodyLight, states);
+		states = orgStates;
+	}
+	else
+		target.draw(ShapeBodyLight, states);
 
 	if (pChar->getCharacterState()&CCharacter::STATE_FREEZED)
 	{
-		sf::CircleShape ShapeTimerIndicator = Shape;
+		sf::CircleShape ShapeTimerIndicator = ShapeBody;
 		ShapeTimerIndicator.setFillColor(sf::Color::Red);
 		ShapeTimerIndicator.setOutlineColor(sf::Color::White);
 		const float crad = ShapeTimerIndicator.getRadius();
@@ -61,16 +96,39 @@ void CPlayerRender::renderPlayer(sf::RenderTarget& target, sf::RenderStates stat
 		target.draw(ShapeTimerIndicator);
 	}
 
-	sf::Vector2f point = CharPos+sf::Vector2f(0.0f, -1.0f)*(CCharacter::SIZE);
-	upm::vectorRotate(CharPos, &point, CharRot);
-	// Direction
-	sf::Color lineColor = pChar->getBody()->IsFixedRotation()?sf::Color::Black:sf::Color::White;
-	const sf::Vertex lineDir[] =
+	// Weapon Movement
+	static sf::Int64 TimerShoot = 0;
+	static bool LastFire = false;
+	static float OffsetWeapon = 0.0f;
+	static int State = 0;
+	const bool Fire = Client()->Controls().isMousePressed("fire");
+	const int ActiveWeapon = pChar->getActiveWeapon();
+	if ((!LastFire || (LastFire && ups::timeGet() - TimerShoot >= ups::timeFreq()*g_Config.m_aWeaponsInfo[ActiveWeapon].m_FireDelay)) && Fire)
 	{
-		sf::Vertex(CharPos, lineColor),
-		sf::Vertex(point, lineColor)
-	};
-	target.draw(lineDir, 2, sf::Lines, states);
+		OffsetWeapon = 12.0f;
+		TimerShoot = ups::timeGet();
+		State = 0;
+	}
+
+	if (!Fire || (State == 0 && ups::timeGet() - TimerShoot >= ups::timeFreq()*0.05f))
+	{
+		OffsetWeapon = 0.0f;
+		TimerShoot = ups::timeGet();
+		State = 1;
+	}
+	LastFire = Fire;
+
+	// Render Weapon
+	if (!(pChar->getCharacterState()&CCharacter::STATE_ROTATE))
+	{
+		sf::CircleShape ShapeWeapon(CCharacter::SIZE, 10); // Low Definition
+		ShapeWeapon.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_SKIN_DEFAULT));
+		ShapeWeapon.setTextureRect(sf::IntRect(32, 0, 28, 28));
+		ShapeWeapon.setOrigin(CCharacter::SIZE, CCharacter::SIZE);
+		ShapeWeapon.setPosition(CharPos-CharDir*OffsetWeapon);
+		ShapeWeapon.setRotation(upm::vectorAngle(CharDir));
+		target.draw(ShapeWeapon, states);
+	}
 
 	if (Client()->m_Debug)
 	{

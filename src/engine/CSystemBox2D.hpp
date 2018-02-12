@@ -72,11 +72,12 @@ public:
 	b2Body* createPolygonBody(const sf::Vector2f &worldPos, const std::vector<sf::Vector2f> points, const CB2BodyInfo &bodyInfo) noexcept;
 	b2Body* createPolyLineBody(const sf::Vector2f &worldPos, const std::vector<sf::Vector2f> points, const CB2BodyInfo &bodyInfo) noexcept;
 
+	b2Fixture* createFixture(b2Body *pBody, const b2Shape &Shape, bool sensor, const b2Filter &filter, void *pUserData = nullptr, float density = 0.0f, float friction = 0.0f, float restitution = 0.0f) noexcept;
 
 	std::vector<b2Body*> getBodiesNear(const sf::Vector2f &worldPos, float margin, sf::Uint16 categoryBits, b2Body *pNotThis = nullptr) noexcept;
 	b2Fixture* getFixtureAt(const sf::Vector2f &worldPos) noexcept;
 
-	class CEntity* checkIntersectLine(const sf::Vector2f &worlPosInit, const sf::Vector2f &worldPosEnd, sf::Vector2f *pPoint = nullptr, b2Body *pNotThis = nullptr) noexcept;
+	class CEntity* checkIntersectLine(const sf::Vector2f &worlPosInit, const sf::Vector2f &worldPosEnd, sf::Vector2f *pPoint = nullptr, b2Body *pNotThis = nullptr, uint16 maskBits = 0xFFF) noexcept;
 	void createExplosion(const sf::Vector2f &worldPos, float energy, float radius, b2Body *pNotThis = nullptr) noexcept;
 
 	void destroyBody(b2Body *pBody) noexcept;
@@ -93,19 +94,20 @@ private:
 class RaysCastCallback final : public b2RayCastCallback
 {
 public:
-	RaysCastCallback(b2Body *pNotThis = nullptr) noexcept
+	RaysCastCallback(b2Body *pNotThis = nullptr, uint16 maskBits=0xFFF) noexcept
 	{
 		m_Hit = false;
 		m_Fraction = 1.0f;
 		m_Point = VECTOR_ZERO;
 		m_pEntity = nullptr;
 		m_pNotThis = pNotThis;
+		m_MaskBits = maskBits;
 	}
 
 	float32 ReportFixture(b2Fixture *pFixture, const b2Vec2& point, const b2Vec2& normal, float32 fraction) noexcept
 	{
 		class CEntity *pEnt = static_cast<class CEntity*>(pFixture->GetBody()->GetUserData());
-		if(!pFixture->IsSensor() && fraction < this->m_Fraction && pEnt && pFixture->GetBody() != m_pNotThis)
+		if(!pFixture->IsSensor() && fraction < this->m_Fraction && pEnt && pFixture->GetBody() != m_pNotThis && (pFixture->GetFilterData().maskBits&m_MaskBits))
 		{
 			m_pEntity = static_cast<class CEntity*>(pFixture->GetBody()->GetUserData());
 			m_Point = CSystemBox2D::b2ToSf(point);
@@ -120,6 +122,7 @@ public:
 	float32 m_Fraction;
 	class CEntity *m_pEntity;
 	b2Body *m_pNotThis;
+	uint16 m_MaskBits;
 };
 
 class SimpleQueryCallBack final : public b2QueryCallback

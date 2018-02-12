@@ -102,12 +102,14 @@
   <object id="18" type="static" x="2331.27" y="4200.72">
    <properties>
     <property name="color" type="color" value="#ffffff7f"/>
+    <property name="on_contact_fx" type="int" value="1"/>
    </properties>
    <polyline points="33.3636,-41.2727 41.3333,28.9394 65.333,208.667 106,409.333 208,674.666 393.334,1025.33 649.333,1266.67 1139.64,1597.7 1876,1996.48 2617.21,2283.27 3004,2418.42 4077.33,2610.55 4905.94,2681.82 5596,2711.15 5618,2718.77"/>
   </object>
   <object id="29" type="static" x="8045.33" y="6721.33">
    <properties>
     <property name="color" type="color" value="#ffffff00"/>
+    <property name="on_contact_fx" type="int" value="1"/>
    </properties>
    <polyline points="38.6667,2.66667 92,-38.6667 122.667,-85.3333 162.667,-156 176,-274.667 140,-365.333 68,-438.667 -21.3333,-469.333 -129.333,-460 -230.667,-421.333 -286.667,-362.667 -322.667,-300 -337.333,-245.333 -328,-184 -298.667,-130.667 -260,-90.6667"/>
   </object>

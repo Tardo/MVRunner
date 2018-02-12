@@ -5,8 +5,8 @@
 #include <engine/CAssetManager.hpp>
 #include <engine/CSystemBox2D.hpp>
 
-const float CFire::SIZE = 2.5f;
-const CB2BodyInfo CFire::ms_BodyInfo = CB2BodyInfo(0.2f, 0.7f, 0.1f, b2_dynamicBody, CAT_FIRE, false, CAT_CHARACTER_PLAYER|CAT_FIRE|CAT_BUILD|CAT_PROJECTILE|CAT_GENERIC);
+const float CFire::SIZE = 8.0f;
+const CB2BodyInfo CFire::ms_BodyInfo = CB2BodyInfo(0.2f, 0.7f, 0.1f, b2_dynamicBody, CAT_FIRE, false, CAT_FIRE|CAT_BUILD|CAT_GENERIC);
 CFire::CFire(const sf::Vector2f &pos, const sf::Vector2f &dir, float force, float lifeTime) noexcept
 : CB2Circle(pos, SIZE, sf::Color::Transparent, ms_BodyInfo, CEntity::FIRE)
 {
@@ -59,10 +59,10 @@ void CFire::tick() noexcept
 
 void CFire::onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexcept
 {
+	CB2Circle::onContact(pEntity, worldPos);
+
 	if (pEntity->getType() == CEntity::FIRE)
 		return;
-
-	pEntity->takeHealth(1, nullptr);
 
 	CGame *pGame = CGame::getInstance();
 	pGame->Client()->getSystem<CSystemFx>()->createFireTrailLarge(worldPos);

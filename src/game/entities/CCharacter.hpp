@@ -92,7 +92,6 @@ public:
 	sf::Int64 m_TimerCharacterState;
 
 protected:
-	b2Body *m_pBody;
 	class CPlayer *m_pPlayer;
 	int m_CharacterState;
 	sf::CircleShape m_ShapeTimerIndicator;

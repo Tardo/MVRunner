@@ -15,26 +15,49 @@
 namespace ups
 {
 	/* TOOL FUNCS */
-	inline sf::Color hsvToRgb(float h, float s, float v) noexcept
+	sf::Color hsvToRgb(const sf::Vector3f &hsv) noexcept
 	{
 		sf::Color color;
-		const int i = static_cast<const int>(std::floor(h * 6));
-		const sf::Uint8 f = static_cast<const sf::Uint8>(h * 6.0f - i);
-		const sf::Uint8 p = static_cast<const sf::Uint8>(v * (1.0f - s));
-		const sf::Uint8 q = static_cast<const sf::Uint8>(v * (1.0f - f * s));
-		const sf::Uint8 t = static_cast<const sf::Uint8>(v * (1.0f - (1.0f - f) * s));
+		const int i = static_cast<const int>(std::floor(hsv.x * 6));
+		const sf::Uint8 f = static_cast<const sf::Uint8>(hsv.x * 6.0f - i);
+		const sf::Uint8 p = static_cast<const sf::Uint8>(hsv.z * (1.0f - hsv.y));
+		const sf::Uint8 q = static_cast<const sf::Uint8>(hsv.z * (1.0f - f * hsv.y));
+		const sf::Uint8 t = static_cast<const sf::Uint8>(hsv.z * (1.0f - (1.0f - f) * hsv.y));
 
 		switch (i % 6)
 		{
-			case 0: color = sf::Color(v, t, p); break;
-			case 1: color = sf::Color(q, v, p); break;
-			case 2: color = sf::Color(p, v, t); break;
-			case 3: color = sf::Color(p, q, v); break;
-			case 4: color = sf::Color(t, p, v); break;
-			case 5: color = sf::Color(v, p, q); break;
+			case 0: color = sf::Color(hsv.z, t, p); break;
+			case 1: color = sf::Color(q, hsv.z, p); break;
+			case 2: color = sf::Color(p, hsv.z, t); break;
+			case 3: color = sf::Color(p, q, hsv.z); break;
+			case 4: color = sf::Color(t, p, hsv.z); break;
+			case 5: color = sf::Color(hsv.z, p, q); break;
 		}
 
 		return color;
+	}
+
+	float hueToRgb(float v1, float v2, float h)
+	{
+		if(h < 0.0f) h += 1;
+		if(h > 1.0f) h -= 1;
+		if((6.0f * h) < 1.0f) return v1 + (v2 - v1) * 6.0f * h;
+		if((2.0f * h) < 1.0f) return v2;
+		if((3.0f * h) < 2.0f) return v1 + (v2 - v1) * ((2.0f/3.0f) - h) * 6.0f;
+		return v1;
+	}
+
+	sf::Color hslToRgb(const sf::Vector3f &hsl)
+	{
+		if(hsl.y == 0.0f)
+			return sf::Color(hsl.z*255.0f, hsl.z*255.0f, hsl.z*255.0f);
+		else
+		{
+			float v2 = hsl.z < 0.5f ? hsl.z * (1.0f + hsl.y) : (hsl.z+hsl.y) - (hsl.y*hsl.z);
+			float v1 = 2.0f * hsl.z - v2;
+
+			return sf::Color(hueToRgb(v1, v2, hsl.x + (1.0f/3.0f))*255.0f, hueToRgb(v1, v2, hsl.x)*255.0f, hueToRgb(v1, v2, hsl.x - (1.0f/3.0f))*255.0f);
+		}
 	}
 
 	// Original Source: https://github.com/SFML/SFML/wiki/Source%3A-cubic-bezier-curve

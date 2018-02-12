@@ -7,13 +7,14 @@
 #include "CCharacter.hpp"
 #include "CProjectile.hpp"
 #include "CHitBox.hpp"
+#include "CFire.hpp"
 #include <game/controllers/CControllerMain.hpp>
 
 
 const float CCharacter::SIZE = 28.0f;
 const long CCharacter::ANIM_TIME = 150;
 const unsigned int CCharacter::ANIM_SUBRECTS = 4;
-const CB2BodyInfo CCharacter::ms_BodyInfo = CB2BodyInfo(1.0f, 0.7f, 0.1f, b2_dynamicBody, CAT_CHARACTER_PLAYER);
+const CB2BodyInfo CCharacter::ms_BodyInfo = CB2BodyInfo(1.5f, 0.7f, 0.1f, b2_dynamicBody, CAT_CHARACTER_PLAYER);
 CCharacter::CCharacter(const sf::Vector2f &pos, class CPlayer *pPlayer) noexcept
 : CB2Circle(pos, SIZE, sf::Color::White, ms_BodyInfo, CEntity::CHARACTER)
 {
@@ -32,21 +33,7 @@ CCharacter::CCharacter(const sf::Vector2f &pos, class CPlayer *pPlayer) noexcept
 
 	//CGame *pGame = CGame::getInstance();
 
-	m_pBody = getBody();
-	if (m_pBody)
-	{
-		m_pBody->SetFixedRotation(true);
-
-		// Crear Sensor
-		b2FixtureDef fixtureDef;
-		b2CircleShape circleShape;
-		circleShape.m_radius = SIZE*15.0f*MPP;
-		fixtureDef.shape = &circleShape;
-		fixtureDef.isSensor = true;
-		fixtureDef.filter.categoryBits = CAT_BOT_SENSOR;
-		fixtureDef.filter.maskBits = CAT_CHARACTER_PLAYER;
-		m_pBody->CreateFixture(&fixtureDef);
-	}
+	//getBody()->SetFixedRotation(true);
 
 	giveWeapon(WEAPON_GRENADE_LAUNCHER, -1, -1);
 	setActiveWeapon(WEAPON_GRENADE_LAUNCHER);
@@ -75,16 +62,23 @@ void CCharacter::tick() noexcept
 		// Check Ground
 		CSystemBox2D *pB2Engine = pGame->Client()->getSystem<CSystemBox2D>();
 		const sf::Vector2f groundColPos = shapePos + sf::Vector2f(0.0f, CCharacter::SIZE+5.0f);
-		const bool isGrounded = (pB2Engine->checkIntersectLine(shapePos, groundColPos, 0x0, getBody()) != 0x0);
+		const bool isGrounded = (pB2Engine->checkIntersectLine(shapePos, groundColPos, 0x0, getBody(), CAT_CHARACTER_PLAYER) != 0x0);
 		if (isGrounded)
 		{
-			if (!getBody()->IsFixedRotation())
+			if (m_CharacterState&STATE_ROTATE)
+			{
 				m_pBody->SetLinearDamping(0.0f);
+				m_pBody->SetAngularDamping(0.0f);
+			}
 			else
+			{
 				m_pBody->SetLinearDamping((m_State == MOVE_STATE_STOP)?15.0f:1.5f);
+				m_pBody->SetAngularDamping((m_State == MOVE_STATE_STOP)?15.0f:1.5f);
+			}
 			m_Jumps = 0;
 		} else {
 			m_pBody->SetLinearDamping(0.0f);
+			m_pBody->SetAngularDamping(0.3f);
 			if (m_Jumps == 0)
 				++m_Jumps;
 		}
@@ -124,14 +118,20 @@ void CCharacter::doFire() noexcept
 		if (m_aWeapons[m_ActiveWeapon].m_Ammo != -1 && m_aWeapons[m_ActiveWeapon].m_Ammo == 0)
 			return;
 
-		const sf::Vector2f charPos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
-		const sf::Vector2f charDir = upm::degToDir(upm::radToDeg(getBody()->GetAngle())-90.0f);
+		CGame *pGame = CGame::getInstance();
+		const sf::Vector2f CharPos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
+		const sf::Vector2f CharDir = upm::vectorNormalize(pGame->Client()->mapPixelToCoords(pGame->Client()->Controls().getMousePos(), pGame->Client()->Camera()) - CharPos);
 
 		switch (m_ActiveWeapon)
 		{
 			case WEAPON_GRENADE_LAUNCHER:
 			{
-				new CProjectile(charPos+charDir*(CCharacter::SIZE), sf::Vector2f(40.0f, 22.6f), charDir, g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_Speed, getOwner(), m_ActiveWeapon, 0);
+				new CProjectile(CharPos+CharDir*(CCharacter::SIZE), sf::Vector2f(30.0f, 22.0f), CharDir, g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_Speed, getOwner(), m_ActiveWeapon, 0);
+			} break;
+			case WEAPON_JET_PACK:
+			{
+				m_pBody->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(-CharDir*g_Config.m_WeaponJetPackEnergy), true);
+				new CFire(CharPos+CharDir*(CCharacter::SIZE), CharDir, 40.f, 1.5f);
 			} break;
 		}
 
@@ -192,8 +192,11 @@ void CCharacter::move(int state) noexcept
 		CSystemBox2D *pB2Engine = pGame->Client()->getSystem<CSystemBox2D>();
 		const sf::Vector2f charPos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
 		const sf::Vector2f groundColPos = charPos + sf::Vector2f(0.0f, CCharacter::SIZE+5.0f);
-		const bool isGrounded = (pB2Engine->checkIntersectLine(charPos, groundColPos, 0x0, getBody()) != 0x0);
-		//if (!isGrounded)
+		const bool isGrounded = (pB2Engine->checkIntersectLine(charPos, groundColPos, 0x0, getBody(), CAT_CHARACTER_PLAYER) != 0x0);
+		if (!isGrounded)
+			m_pBody->ApplyAngularImpulse((m_State&MOVE_STATE_LEFT)?-0.00008:0.00008, true);
+		else
+			m_pBody->ApplyAngularImpulse((m_State&MOVE_STATE_LEFT)?-0.00001:0.00001, true);
 		force.x = (m_State&MOVE_STATE_LEFT)?-v:v;
 
 		const sf::Vector2f endPos = charPos + sf::Vector2f((CCharacter::SIZE+5.0f)*(m_State&MOVE_STATE_LEFT?-1.0f:1.0f), 0.0f);
@@ -219,11 +222,8 @@ void CCharacter::move(int state) noexcept
     	}
     } else
     {
-
-	if (m_pBody->IsFixedRotation())
-		m_pBody->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(force), true);
-	else
-		m_pBody->ApplyAngularImpulse((m_State&MOVE_STATE_LEFT)?-0.0001f:0.0001f, true);
+    	if (!(m_CharacterState&STATE_ROTATE))
+    		m_pBody->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(force), true);
     }
 
     m_LastState = m_State;

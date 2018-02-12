@@ -57,6 +57,7 @@ void CAssetManager::load() noexcept
 	LOAD_TEXTURE(TEXTURE_SFML_LOGO, "data/fx/sfml_logo.png")
 	LOAD_TEXTURE(TEXTURE_WATER_SHADER, "data/fx/water_shader.png")
 	LOAD_TEXTURE(TEXTURE_GRENADE, "data/objects/grenade.png")
+	LOAD_TEXTURE(TEXTURE_SKIN_DEFAULT, "data/skins/default.png")
 
 	LOAD_SOUND(SOUND_MOUSE_CLICK, "data/sfx/mouse_click.wav")
 	LOAD_SOUND(SOUND_GAMEOVER, "data/sfx/gameover.wav")
@@ -79,6 +80,7 @@ void CAssetManager::load() noexcept
 		LOAD_SHADER(SHADER_PIXELATE, "data/shaders/pixelate.frag", sf::Shader::Fragment)
 		LOAD_SHADER(SHADER_CHROMATIC_ABERRATION, "data/shaders/chromatic_aberration.frag", sf::Shader::Fragment)
 		LOAD_SHADER(SHADER_BLUR, "data/shaders/blur.frag", sf::Shader::Fragment)
+		LOAD_SHADER(SHADER_BLOOM, "data/shaders/bloom.frag", sf::Shader::Fragment)
 	}
 
 	s_Mutex.unlock();

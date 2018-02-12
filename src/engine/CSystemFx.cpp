@@ -311,8 +311,8 @@ void CSystemFx::createFireBall(class CEntity *pTarget, const sf::Vector2f &offSe
 
 	CParticle *pParticle = new CParticle(sf::BlendAdd, RENDER_FRONT, true, CAssetManager::SHADER_BLUR);
 	pParticle->m_pTarget = pTarget;
-	pParticle->m_SizeInit = sf::Vector2f(10.0f, 10.0f);
-	pParticle->m_SizeEnd = sf::Vector2f(32.0f, 32.0f);
+	pParticle->m_SizeInit = sf::Vector2f(32.0f, 32.0f);
+	pParticle->m_SizeEnd = sf::Vector2f(64.0f, 64.0f);
 	pParticle->m_ColorInit = sf::Color(10, 75, 205);
 	pParticle->m_ColorEnd = sf::Color(251, 104, 4);
 	pParticle->m_ColorEnd.a = 35;
@@ -498,8 +498,8 @@ void CSystemFx::createRainFront(const sf::Vector2f &worldPos, float rainVel) noe
 
 	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_FOREGROUND);
 	pParticle->m_Pos = worldPos;
-	pParticle->m_SizeInit = sf::Vector2f(18.0f, 18.0f);
-	pParticle->m_SizeEnd = sf::Vector2f(1.0f, 1.0f);
+	pParticle->m_SizeInit = sf::Vector2f(2.0f, 32.0f);
+	pParticle->m_SizeEnd = sf::Vector2f(1.0f, 8.0f);
 	pParticle->m_ColorInit = pParticle->m_ColorEnd = sf::Color(230,120,255,220);
 	pParticle->m_ColorEnd.a = 0;
 	pParticle->m_Duration = 3.0f;

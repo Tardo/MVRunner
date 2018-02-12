@@ -14,13 +14,12 @@ enum _entityCategory
 	CAT_GENERIC = 2<<1,
 	CAT_CHARACTER_PLAYER = 2<<2,
 	CAT_CHARACTER_SENSOR = 2<<3,
-	CAT_BOT_SENSOR = 2<<4,
-	CAT_PROJECTILE = 2<<5,
-	CAT_BUILD = 2<<6,
-	CAT_HITBOX = 2<<7,
-	CAT_FIRE = 2<<8,
-	CAT_SIGN = 2<<9,
-	CAT_CHAIN = 2<<10,
+	CAT_PROJECTILE = 2<<4,
+	CAT_BUILD = 2<<5,
+	CAT_HITBOX = 2<<6,
+	CAT_FIRE = 2<<7,
+	CAT_SIGN = 2<<8,
+	CAT_CHAIN = 2<<9,
 };
 
 class CEntity
@@ -40,7 +39,10 @@ public:
 		AMBIENTSOUND,
 		SIGN,
 
-		NUM_ENTITIES
+		NUM_ENTITIES,
+
+		FX_NONE = 0,
+		FX_SPARKS,
 	};
 
 	CEntity(int type, const sf::Color color = sf::Color::Transparent);
@@ -67,6 +69,7 @@ public:
 	virtual void onPostSolve(CEntity* pEntity, const sf::Vector2f &worldPos, float impulse) noexcept { }
 
 	sf::Color m_Color;
+	int m_ContactFx;
 
 protected:
 	int m_Health;

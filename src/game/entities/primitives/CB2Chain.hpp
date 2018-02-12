@@ -14,6 +14,7 @@ public:
 	virtual ~CB2Chain() noexcept;
 
 	virtual void tick() noexcept;
+	virtual void onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexcept final;
 };
 
 #endif

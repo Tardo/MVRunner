@@ -146,8 +146,6 @@ void CControllerMain::tick() noexcept
 				if (!(Game()->Client()->Camera().getStatus()&CCamera::TRAVEL))
 				{
 					const sf::Vector2f dir = upm::vectorNormalize(Game()->Client()->mapPixelToCoords(Game()->Client()->Controls().getMousePos(), Game()->Client()->Camera()) - charPos);
-					if (pChar->getBody()->IsFixedRotation())
-						pChar->getBody()->SetTransform(pChar->getBody()->GetPosition(), upm::degToRad(upm::vectorAngle(dir)+90.0f));
 
 					// Player Character Movement
 					if (!(charState&CCharacter::STATE_FREEZED))
@@ -172,9 +170,15 @@ void CControllerMain::tick() noexcept
 						pChar->setActiveWeapon(-1);
 					else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
 					{
-						pChar->giveWeapon(WEAPON_GRENADE_LAUNCHER, 10, 10);
+						pChar->giveWeapon(WEAPON_GRENADE_LAUNCHER, -1, -1);
 						pChar->setActiveWeapon(WEAPON_GRENADE_LAUNCHER);
 					}
+					else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
+					{
+						pChar->giveWeapon(WEAPON_JET_PACK, -1, -1);
+						pChar->setActiveWeapon(WEAPON_JET_PACK);
+					}
+
 
 					// Player Use Action
 					if (!pressedButtonUse && sf::Keyboard::isKeyPressed(sf::Keyboard::E))
@@ -192,7 +196,7 @@ void CControllerMain::tick() noexcept
 				}
 
 				// Unfreeze
-				if ((charState&CCharacter::STATE_FREEZED) && ups::timeGet()-m_TimerFreezed > ups::timeFreq()*4.0f)
+				if ((charState&CCharacter::STATE_FREEZED) && ups::timeGet()-m_TimerFreezed > ups::timeFreq()*g_Config.m_TimeFreeze)
 				{
 					charState &= ~CCharacter::STATE_FREEZED;
 					pChar->setCharacterState(charState);
@@ -217,7 +221,7 @@ void CControllerMain::tick() noexcept
 				{
 					charState |= CCharacter::STATE_ROTATE;
 					pChar->setCharacterState(charState);
-					pChar->getBody()->SetFixedRotation(false);
+					//pChar->getBody()->SetFixedRotation(false);
 				}
 				else if (tileId == TILE_STATE_FREEZE)
 				{
@@ -228,7 +232,7 @@ void CControllerMain::tick() noexcept
 				else if (tileId == TILE_STATE_CLEAN)
 				{
 					pChar->setCharacterState(CCharacter::STATE_NORMAL);
-					pChar->getBody()->SetFixedRotation(true);
+					//pChar->getBody()->SetFixedRotation(true);
 				}
 				else if (tileId == TILE_SPEED_SOFT)
 				{
@@ -241,7 +245,7 @@ void CControllerMain::tick() noexcept
 				}
 				else if (tileId == TILE_DEAD)
 				{
-					pChar->getBody()->SetFixedRotation(true);
+					//pChar->getBody()->SetFixedRotation(true);
 					pChar->getBody()->SetLinearVelocity(b2Vec2(0.0f, 0.0f));
 					pChar->getBody()->SetAngularVelocity(0.0f);
 					Game()->Client()->getSystem<CSystemFx>()->createFireBall(pChar);

@@ -201,6 +201,7 @@ bool CGameClient::init() noexcept
 	m_vpComponents.push_back(&m_ItemRender);
 	m_vpComponents.push_back(&m_MapRenderFront);
 	m_vpComponents.push_back(&m_ParticleRenderForeground);
+	m_vpComponents.push_back(&m_DebuggerRender);
 	m_vpComponents.push_back(&m_Menus);
 	m_vpComponents.push_back(&m_UI);
 

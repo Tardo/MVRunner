@@ -162,6 +162,7 @@ set(GAME_SRC    src/game/components/CMapRender.cpp
                 src/game/components/CParticleRender.cpp
                 src/game/components/CControls.cpp
                 src/game/components/CCamera.cpp
+                src/game/components/CDebuggerRender.cpp
                 src/game/controllers/CControllerMain.cpp
                 src/game/controllers/CControllerMenu.cpp
                 src/game/entities/primitives/CB2Circle.cpp

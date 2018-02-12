@@ -5,11 +5,14 @@
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/System/Vector3.hpp>
 #include <SFML/Config.hpp>
 
 namespace ups
 {
-	inline sf::Color hsv2rgb(float h, float s, float v) noexcept;
+	sf::Color hsvToRgb(const sf::Vector3f &hsv) noexcept;
+	float hueToRgb(float v1, float v2, float h);
+	sf::Color hslToRgb(const sf::Vector3f &hsl);
 
 	sf::Int64 timeGet() noexcept;
 	sf::Int64 timeFreq() noexcept;

@@ -23,3 +23,13 @@ CB2Chain::~CB2Chain() noexcept
 
 void CB2Chain::tick() noexcept
 { }
+
+void CB2Chain::onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexcept
+{
+	if (m_ContactFx != CEntity::FX_NONE)
+	{
+		CGame *pGame = CGame::getInstance();
+		if (m_ContactFx == CEntity::FX_SPARKS)
+			pGame->Client()->getSystem<CSystemFx>()->createImpactSparkMetal(worldPos);
+	}
+}

@@ -16,6 +16,7 @@ CEntity::CEntity(int type, const sf::Color color)
 	m_TimerStateAction = 0;
 	m_pBody = nullptr;
 	m_Color = color;
+	m_ContactFx = FX_NONE;
 }
 
 CEntity::~CEntity()

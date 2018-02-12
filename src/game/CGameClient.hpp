@@ -20,6 +20,7 @@
 #include <game/components/CParticleRender.hpp>
 #include <game/components/CControls.hpp>
 #include <game/components/CCamera.hpp>
+#include <game/components/CDebuggerRender.hpp>
 #include <game/CController.hpp>
 #include <game/CEntity.hpp>
 #include <Zpg/Zpg.hpp>
@@ -101,6 +102,7 @@ private:
 	CParticleRender m_ParticleRenderFront;
 	CParticleRender m_ParticleRenderForeground;
 	CControls m_Controls;
+	CDebuggerRender m_DebuggerRender;
 
 	CSystemBox2D m_SystemBox2D;
 	CSystemFx m_SystemFx;

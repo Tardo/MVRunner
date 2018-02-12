@@ -234,6 +234,7 @@ void CController::tick() noexcept
 				const Tmx::PropertySet GeomProps = pMapObj->m_pObject->GetProperties();
 				const Tmx::Color color = GeomProps.GetColorProperty("color", Tmx::Color(255, 255, 255, 0));
 				const sf::Color colorGeom(color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+				const int onContactFx = GeomProps.GetIntProperty("on_contact_fx", CEntity::FX_NONE);
 
 				b2BodyType b2Type = b2_dynamicBody;
 				if (pMapObj->m_pObject->GetType().compare("static") == 0)
@@ -248,12 +249,14 @@ void CController::tick() noexcept
 					for (int i=0; i<pPoly->GetNumPoints(); i++)
 						points.push_back(sf::Vector2f(pPoly->GetPoint(i).x, pPoly->GetPoint(i).y));
 
-					const CB2BodyInfo bodyInfo = CB2BodyInfo(0.1f, 0.5f, 0.1f, b2Type, CAT_BUILD);
+					const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, b2Type, CAT_BUILD);
 					pMapObj->m_pEntity = new CB2Polygon(
 							sf::Vector2f(globalBounds.left, globalBounds.top),
 							points,
 							colorGeom,
 							bodyInfo);
+					pMapObj->m_pEntity->m_ContactFx = onContactFx;
+					pMapObj->m_pEntity->getBody()->SetAwake(false);
 					ups::msgDebug("GameContext", "Polygon Created! [#%d]", objId);
 				}
 				else
@@ -261,12 +264,14 @@ void CController::tick() noexcept
 					const Tmx::Ellipse *pEllipse = pMapObj->m_pObject->GetEllipse();
 					if (pEllipse)
 					{
-						const CB2BodyInfo bodyInfo = CB2BodyInfo(0.1f, 0.5f, 0.1f, b2Type, CAT_BUILD);
+						const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, b2Type, CAT_BUILD);
 						pMapObj->m_pEntity = new CB2Circle(
 								worldPosObj,
 								pEllipse->GetRadiusX(),
 								colorGeom,
 								bodyInfo);
+						pMapObj->m_pEntity->m_ContactFx = onContactFx;
+						pMapObj->m_pEntity->getBody()->SetAwake(false);
 						ups::msgDebug("GameContext", "Ellipse Created: %s [#%d]", pMapObj->m_pObject->GetType().c_str(), objId);
 					}
 					else
@@ -278,22 +283,26 @@ void CController::tick() noexcept
 							for (int i=0; i<pPolyline->GetNumPoints(); ++i)
 								points.push_back(sf::Vector2f(pPolyline->GetPoint(i).x, pPolyline->GetPoint(i).y));
 
-							const CB2BodyInfo bodyInfo = CB2BodyInfo(0.1f, 0.5f, 0.1f, b2Type, CAT_BUILD);
+							const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, b2Type, CAT_BUILD);
 							pMapObj->m_pEntity = new CB2Chain(
 									worldPosObj,
 									points,
 									colorGeom,
 									bodyInfo);
+							pMapObj->m_pEntity->m_ContactFx = onContactFx;
+							pMapObj->m_pEntity->getBody()->SetAwake(false);
 							ups::msgDebug("GameContext", "PolyLine Created! [#%d]", objId);
 						}
 						else
 						{
-							const CB2BodyInfo bodyInfo = CB2BodyInfo(0.1f, 0.5f, 0.1f, b2Type, CAT_BUILD);
+							const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, b2Type, CAT_BUILD);
 							pMapObj->m_pEntity = new CB2Polygon(
 									worldPosObj,
 									sizeObj,
 									colorGeom,
 									bodyInfo);
+							pMapObj->m_pEntity->m_ContactFx = onContactFx;
+							pMapObj->m_pEntity->getBody()->SetAwake(false);
 							ups::msgDebug("GameContext", "Rectangle Created! [#%d]", objId);
 						}
 					}
