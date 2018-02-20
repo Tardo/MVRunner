@@ -18,7 +18,7 @@ public:
 	};
 
 
-	CMenus() noexcept;
+	CMenus(CGameClient *pGameClient) noexcept;
 	~CMenus() noexcept;
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept final;

@@ -10,7 +10,7 @@
 class CControls final : public CComponent
 {
 public:
-	CControls() noexcept;
+	CControls(CGameClient *pGameClient) noexcept;
 	virtual ~CControls() noexcept;
 
 	void init() noexcept;

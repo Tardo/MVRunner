@@ -34,6 +34,11 @@
 class CGameClient final : public sf::RenderWindow
 {
 public:
+	enum {
+		RENDER_NORMAL=0,
+		RENDER_LIGHTING
+	};
+
 	CGameClient() noexcept;
 	~CGameClient() noexcept;
 
@@ -73,6 +78,8 @@ public:
 	float getDeltaTime() const noexcept { return m_DeltaTime; }
 	const float getElapsedTime() const noexcept { return (ups::timeGet()-m_TimerGame)/(float)ups::timeFreq(); }
 
+	int getRenderMode() const { return m_RenderMode; }
+
 	bool m_Debug;
 	bool m_Paused;
 	unsigned int m_FPS;
@@ -88,10 +95,9 @@ private:
 
 	sf::View m_ViewHud;
 	CAssetManager m_AssetManager;
-
 	CController *m_pGameController;
-	CCamera m_Camera;
 
+	CCamera m_Camera;
 	CMapRender m_MapRenderBack;
 	CMapRender m_MapRenderFront;
 	CMenus m_Menus;
@@ -108,6 +114,8 @@ private:
 	CSystemFx m_SystemFx;
 	CSystemLight m_SystemLight;
 	CSystemSound m_SystemSound;
+
+	int m_RenderMode;
 
 	sf::Int64 m_TimerGame;
 

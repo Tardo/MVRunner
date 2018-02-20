@@ -26,6 +26,9 @@ MACRO_CONFIG_FLOAT(CharacterMaxVelocity, character_max_velocity, 480.0f, 0.1f, 9
 MACRO_CONFIG_FLOAT(CharacterImpulse, character_impulse, 1.4f, 0.1f, 99.0f, CConfig::SAVE)
 MACRO_CONFIG_FLOAT(CharacterJumpImpulse, character_jump_impulse, 680.0f, 0.1f, 999.0f, CConfig::SAVE)
 
+MACRO_CONFIG_FLOAT(AimLineLength, aim_line_length, 120.0f, 0.0f, 999.0f, CConfig::SAVE)
+MACRO_CONFIG_COLOR(AimLineColor, aim_line_color, 3357088255, CConfig::SAVE)
+
 MACRO_CONFIG_FLOAT(WeaponGrenadeLauncherEnergy, weapon_grenade_launcher_energy, 12.5f, 0.0f, 999.0f, CConfig::SAVE)
 MACRO_CONFIG_FLOAT(WeaponGrenadeLauncherRadius, weapon_grenade_launcher_radius, 192.0f, 0.0f, 999.0f, CConfig::SAVE)
 MACRO_CONFIG_FLOAT(WeaponGrenadeLauncherFireDelay, weapon_grenade_launcher_fire_delay, 0.45f, 0.0f, 999.0f, CConfig::SAVE)

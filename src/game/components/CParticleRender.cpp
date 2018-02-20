@@ -3,8 +3,8 @@
 #include <game/CGameClient.hpp>
 #include "CParticleRender.hpp"
 
-CParticleRender::CParticleRender(int render) noexcept
-: CComponent()
+CParticleRender::CParticleRender(CGameClient *pGameClient, int render) noexcept
+: CComponent(pGameClient)
 {
 	m_Render = render;
 }
@@ -17,7 +17,10 @@ CParticleRender::~CParticleRender() noexcept
 
 void CParticleRender::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
 {
-	Client()->setView(Client()->Camera());
+	if (Client()->getRenderMode() != CGameClient::RENDER_NORMAL)
+		return;
+
+	target.setView(Client()->Camera());
 
 	std::vector<CParticle*> &lParticles = Client()->Controller()->Context()->getParticles();
     std::vector<CParticle*>::const_iterator itPar = lParticles.cbegin();

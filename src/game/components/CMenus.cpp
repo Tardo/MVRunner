@@ -7,8 +7,8 @@
 #include <SFML/OpenGL.hpp>
 #include "CMenus.hpp"
 
-CMenus::CMenus() noexcept
-: CComponent()
+CMenus::CMenus(CGameClient *pGameClient) noexcept
+: CComponent(pGameClient)
 {
 	m_ActiveMenu = NONE;
 	m_pEntity = nullptr;
@@ -31,7 +31,10 @@ void CMenus::setActive(int mid, CEntity *pEnt) noexcept
 
 void CMenus::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
 {
-	Client()->setView(Client()->getHudView());
+	//if (Client()->getRenderMode() != CGameClient::RENDER_NORMAL)
+	//	return;
+
+	target.setView(Client()->getHudView());
 
 	if (m_ActiveMenu == MAIN)
 		renderMenuMain(target, states);

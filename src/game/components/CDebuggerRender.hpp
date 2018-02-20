@@ -8,7 +8,7 @@
 class CDebuggerRender final : public CComponent
 {
 public:
-	CDebuggerRender() noexcept;
+	CDebuggerRender(CGameClient *pGameClient) noexcept;
 	~CDebuggerRender() noexcept;
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept final;

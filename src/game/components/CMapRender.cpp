@@ -8,8 +8,8 @@
 #include <game/CController.hpp>
 #include <vector>
 
-CMapRender::CMapRender(int render) noexcept
-: CComponent()
+CMapRender::CMapRender(CGameClient *pGameClient, int render) noexcept
+: CComponent(pGameClient)
 {
 	m_Render = render;
 }
@@ -25,7 +25,7 @@ void CMapRender::draw(sf::RenderTarget& target, sf::RenderStates states) const n
 	if (!Client()->Controller() || !Client()->Controller()->Context())
 		return;
 
-	Client()->setView(Client()->Camera());
+	target.setView(Client()->Camera());
 
 	CMap &Map = Client()->Controller()->Context()->Map();
 	if (!Map.isMapLoaded())
@@ -33,33 +33,54 @@ void CMapRender::draw(sf::RenderTarget& target, sf::RenderStates states) const n
 
 	const sf::IntRect mapBounds = Map.getMapBounds(Client()->Camera());
 
-	if (m_Render == RENDER_BACK)
+	if (Client()->getRenderMode() == CGameClient::RENDER_NORMAL)
 	{
-		unsigned int layerIndex = 0u;
-		std::vector<Tmx::Layer*>::const_iterator it, eit;
-		it = Map.GetLayers().cbegin()+layerIndex;
-		eit = Map.GetLayers().cbegin()+Map.getGameLayerIndex();
-		while (it != eit)
+		if (m_Render == RENDER_BACK)
 		{
-			if ((*it)->IsVisible() && (*it)->GetLayerType() == Tmx::TMX_LAYERTYPE_TILE)
-				renderTilemap(target, states, mapBounds, layerIndex, Client()->getSystem<CSystemLight>()->getShadowColor());
+			unsigned int layerIndex = 0u;
+			std::vector<Tmx::Layer*>::const_iterator it, eit;
+			it = Map.GetLayers().cbegin()+layerIndex;
+			eit = Map.GetLayers().cbegin()+Map.getGameLayerIndex();
+			while (it != eit)
+			{
+				if ((*it)->IsVisible() && (*it)->GetLayerType() == Tmx::TMX_LAYERTYPE_TILE)
+					renderTilemap(target, states, mapBounds, layerIndex, Client()->getSystem<CSystemLight>()->getShadowColor());
 
-			++layerIndex;
-			++it;
+				++layerIndex;
+				++it;
+			}
+		} else if (m_Render == RENDER_FRONT)
+		{
+			unsigned int layerIndex = Map.getGameLayerIndex()+1;
+			std::vector<Tmx::Layer*>::const_iterator it, eit;
+			it = Map.GetLayers().cbegin()+layerIndex;
+			eit = Map.GetLayers().cend();
+			while (it != eit)
+			{
+				if ((*it)->IsVisible() && (*it)->GetLayerType() == Tmx::TMX_LAYERTYPE_TILE)
+					renderTilemap(target, states, mapBounds, layerIndex, Client()->getSystem<CSystemLight>()->getTimeColor());
+
+				++layerIndex;
+				++it;
+			}
 		}
-	} else if (m_Render == RENDER_FRONT)
+	}
+	else if (Client()->getRenderMode() == CGameClient::RENDER_LIGHTING)
 	{
-		unsigned int layerIndex = Map.getGameLayerIndex()+1;
-		std::vector<Tmx::Layer*>::const_iterator it, eit;
-		it = Map.GetLayers().cbegin()+layerIndex;
-		eit = Map.GetLayers().cend();
-		while (it != eit)
+		if (m_Render == RENDER_FRONT)
 		{
-			if ((*it)->IsVisible() && (*it)->GetLayerType() == Tmx::TMX_LAYERTYPE_TILE)
-				renderTilemap(target, states, mapBounds, layerIndex, Client()->getSystem<CSystemLight>()->getTimeColor());
+			unsigned int layerIndex = Map.getGameLayerIndex()+1;
+			std::vector<Tmx::Layer*>::const_iterator it, eit;
+			it = Map.GetLayers().cbegin()+layerIndex;
+			eit = Map.GetLayers().cend();
+			while (it != eit)
+			{
+				if ((*it)->IsVisible() && (*it)->GetLayerType() == Tmx::TMX_LAYERTYPE_TILE)
+					renderTilemap(target, states, mapBounds, layerIndex, sf::Color::Black);
 
-			++layerIndex;
-			++it;
+				++layerIndex;
+				++it;
+			}
 		}
 	}
 }

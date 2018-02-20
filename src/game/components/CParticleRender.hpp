@@ -8,7 +8,7 @@
 class CParticleRender final : public CComponent
 {
 public:
-	CParticleRender(int render) noexcept;
+	CParticleRender(CGameClient *pGameClient, int render) noexcept;
 	~CParticleRender() noexcept;
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept final;

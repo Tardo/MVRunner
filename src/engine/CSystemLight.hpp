@@ -61,6 +61,8 @@ public:
 	sf::Vector2f getShadowOffset() const noexcept { return m_ShadowOffset; }
 	sf::Color getShadowColor() const noexcept { return m_ShadowColor; }
 
+	sf::RenderTexture& getRender() { return m_LightMapTexture; }
+
 private:
 	std::list<CLight*> m_vpLights;
 	sf::Vector2f m_CamOffset;

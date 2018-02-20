@@ -19,7 +19,7 @@ public:
 	};
 
 
-	CCamera() noexcept;
+	CCamera(CGameClient *pGameClient) noexcept;
 	virtual ~CCamera() noexcept;
 
 	void update(float deltaTime) noexcept;

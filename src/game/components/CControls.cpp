@@ -4,8 +4,8 @@
 #include <game/controllers/CControllerMenu.hpp>
 #include "CControls.hpp"
 
-CControls::CControls() noexcept
-: CComponent()
+CControls::CControls(CGameClient *pGameClient) noexcept
+: CComponent(pGameClient)
 {
 	m_MouseLeftClicked = false;
 	m_MouseRightClicked = false;

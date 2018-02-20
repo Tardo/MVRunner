@@ -74,8 +74,6 @@ void CAssetManager::load() noexcept
 
 	if (g_Config.m_UseShaders)
 	{
-		LOAD_SHADER(SHADER_WATER, "data/shaders/water.frag", sf::Shader::Fragment)
-		LOAD_SHADERS(SHADER_WAVE, "data/shaders/wave.vert", "data/shaders/wave.frag")
 		LOAD_SHADERS(SHADER_FLAG, "data/shaders/wave.vert", "data/shaders/flag.frag")
 		LOAD_SHADER(SHADER_PIXELATE, "data/shaders/pixelate.frag", sf::Shader::Fragment)
 		LOAD_SHADER(SHADER_CHROMATIC_ABERRATION, "data/shaders/chromatic_aberration.frag", sf::Shader::Fragment)

@@ -15,11 +15,18 @@
 CGameClient::CGameClient() noexcept
 : sf::RenderWindow(sf::VideoMode(g_Config.m_ScreenWidth, g_Config.m_ScreenHeight), "", g_Config.m_FullScreen?sf::Style::Fullscreen:sf::Style::Close),
   m_AssetManager(&m_Zpg),
-  m_MapRenderBack(RENDER_BACK),
-  m_MapRenderFront(RENDER_FRONT),
-  m_ParticleRenderBack(RENDER_BACK),
-  m_ParticleRenderFront(RENDER_FRONT),
-  m_ParticleRenderForeground(RENDER_FOREGROUND)
+  m_Camera(this),
+  m_MapRenderBack(this, RENDER_BACK),
+  m_MapRenderFront(this, RENDER_FRONT),
+  m_Menus(this),
+  m_UI(this),
+  m_PlayerRender(this),
+  m_ItemRender(this),
+  m_ParticleRenderBack(this, RENDER_BACK),
+  m_ParticleRenderFront(this, RENDER_FRONT),
+  m_ParticleRenderForeground(this, RENDER_FOREGROUND),
+  m_Controls(this),
+  m_DebuggerRender(this)
 {
 	setFramerateLimit(60);
 	m_pGameController = nullptr;
@@ -29,6 +36,7 @@ CGameClient::CGameClient() noexcept
 	m_ViewHud = getDefaultView();
 	m_DeltaTime = 0.0f;
 	m_MinFPS = 9999;
+	m_RenderMode = RENDER_NORMAL;
 
 	m_TimerGame = ups::timeGet();
 }
@@ -90,9 +98,34 @@ void CGameClient::run() noexcept
 
         // Render
         // Update Components
+        m_RenderMode = RENDER_NORMAL;
         std::deque<CComponent*>::const_iterator itComp = m_vpComponents.cbegin();
     	while (itComp != m_vpComponents.cend())
         	draw(*reinterpret_cast<sf::Drawable*>((*itComp++)));
+
+    	// Update Lighting
+    	m_RenderMode = RENDER_LIGHTING;
+		itComp = m_vpComponents.cbegin();
+		while (itComp != m_vpComponents.cend())
+			m_SystemLight.getRender().draw(*reinterpret_cast<sf::Drawable*>((*itComp++)));
+
+		sf::Shader *pShader = Assets().getShader(CAssetManager::SHADER_BLOOM);
+		if (pShader)
+		{
+			sf::RenderStates states;
+			states.blendMode = sf::BlendAdd;
+			states.shader = pShader;
+			pShader->setUniform("iChannel0", sf::Shader::CurrentTexture);
+			pShader->setUniform("iResolution", sf::Vector2f(g_Config.m_ScreenWidth, g_Config.m_ScreenHeight));
+			pShader->setUniform("direction", sf::Vector2f(upm::floatRand(0.75f, 1.15f), 0.0f));
+			draw(m_SystemLight.getLightmap(Camera()), states);
+			pShader->setUniform("direction", sf::Vector2f(-upm::floatRand(0.75f, 1.15f), 0.0f));
+			draw(m_SystemLight.getLightmap(Camera()), states);
+			pShader->setUniform("direction", sf::Vector2f(0.0f, upm::floatRand(0.75f, 1.15f)));
+			draw(m_SystemLight.getLightmap(Camera()), states);
+			pShader->setUniform("direction", sf::Vector2f(0.0f, -upm::floatRand(0.75f, 1.15f)));
+			draw(m_SystemLight.getLightmap(Camera()), states);
+		}
 
         // Magia!
         display();
@@ -191,9 +224,6 @@ bool CGameClient::init() noexcept
 	}
 	/**/
 
-	m_Camera.m_pGameClient = this;
-	m_Controls.m_pGameClient = this;
-
 	m_vpComponents.push_back(&m_MapRenderBack);
 	m_vpComponents.push_back(&m_ParticleRenderBack);
 	m_vpComponents.push_back(&m_PlayerRender);
@@ -204,10 +234,6 @@ bool CGameClient::init() noexcept
 	m_vpComponents.push_back(&m_DebuggerRender);
 	m_vpComponents.push_back(&m_Menus);
 	m_vpComponents.push_back(&m_UI);
-
-	std::deque<CComponent*>::iterator itComp = m_vpComponents.begin();
-	while (itComp != m_vpComponents.end())
-    	(*itComp++)->m_pGameClient = this;
 
 	m_vpSystems.push_back(&m_SystemSound); 		// Sound: sound spatialization
 	m_vpSystems.push_back(&m_SystemBox2D); 		// Box2D: for realistic physics

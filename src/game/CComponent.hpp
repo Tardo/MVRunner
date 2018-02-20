@@ -7,8 +7,11 @@
 
 class CComponent : public sf::Drawable
 {
-	friend class CGameClient;
 public:
+	CComponent(CGameClient *pGameClient)
+	{
+		m_pGameClient = pGameClient;
+	}
 	virtual ~CComponent() { }
 
 	class CGameClient* Client() const noexcept { return m_pGameClient; }

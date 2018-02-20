@@ -11,8 +11,10 @@
 namespace ups
 {
 	sf::Color hsvToRgb(const sf::Vector3f &hsv) noexcept;
-	float hueToRgb(float v1, float v2, float h);
-	sf::Color hslToRgb(const sf::Vector3f &hsl);
+	float hueToRgb(float v1, float v2, float h) noexcept;
+	sf::Color hslToRgb(const sf::Vector3f &hsl) noexcept;
+	unsigned int colorToInt(const sf::Color &color) noexcept;
+	sf::Color intToColor(unsigned int color) noexcept;
 
 	sf::Int64 timeGet() noexcept;
 	sf::Int64 timeFreq() noexcept;

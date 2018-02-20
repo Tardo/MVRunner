@@ -5,8 +5,8 @@
 #include <game/CPlayer.hpp>
 #include "CPlayerRender.hpp"
 
-CPlayerRender::CPlayerRender() noexcept
-: CComponent()
+CPlayerRender::CPlayerRender(CGameClient *pGameClient) noexcept
+: CComponent(pGameClient)
 { }
 CPlayerRender::~CPlayerRender() noexcept
 {
@@ -20,9 +20,12 @@ void CPlayerRender::draw(sf::RenderTarget& target, sf::RenderStates states) cons
 	if (!Client()->Controller() || !Client()->Controller()->Context() || !Client()->Controller()->Context()->getPlayer() || !Client()->Controller()->Context()->getPlayer()->getCharacter())
 		return;
 
-	Client()->setView(Client()->Camera());
+	target.setView(Client()->Camera());
 
-	renderPlayer(target, states, Client()->Controller()->Context()->getPlayer()->getCharacter());
+	if (Client()->getRenderMode() == CGameClient::RENDER_NORMAL)
+		renderPlayer(target, states, Client()->Controller()->Context()->getPlayer()->getCharacter());
+	else if (Client()->getRenderMode() == CGameClient::RENDER_LIGHTING)
+		renderPlayerLights(target, states, Client()->Controller()->Context()->getPlayer()->getCharacter());
 }
 
 void CPlayerRender::renderPlayer(sf::RenderTarget& target, sf::RenderStates states, CCharacter *pChar) const noexcept
@@ -54,36 +57,6 @@ void CPlayerRender::renderPlayer(sf::RenderTarget& target, sf::RenderStates stat
 	ShapeBody.setPosition(CharPos);
 	ShapeBody.setRotation(upm::radToDeg(CharRot));
 	target.draw(ShapeBody, states);
-
-	// Render Body Light
-	const float CharAngVel = abs(pChar->getBody()->GetAngularVelocity());
-	const float MaxAngVel = 30;
-	sf::Color Rgb;
-	if (CharAngVel > MaxAngVel)
-		Rgb = ups::hslToRgb(sf::Vector3f(1.0f, 1.0f, 0.5f));
-	else
-		Rgb = ups::hslToRgb(sf::Vector3f(((CharAngVel * 0.35f) / MaxAngVel), 1.0f, 0.5f));
-	sf::CircleShape ShapeBodyLight(CCharacter::SIZE, 10); // Low Definition
-	ShapeBodyLight.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_SKIN_DEFAULT));
-	ShapeBodyLight.setTextureRect(sf::IntRect(0, 32, 32, 32));
-	ShapeBodyLight.setFillColor(Rgb);
-	ShapeBodyLight.setOrigin(CCharacter::SIZE, CCharacter::SIZE);
-	ShapeBodyLight.setPosition(CharPos);
-	ShapeBodyLight.setRotation(upm::radToDeg(CharRot));
-	//target.draw(ShapeBodyLight, states);
-	sf::Shader *pShader = Client()->Assets().getShader(CAssetManager::SHADER_BLOOM);
-	if (pShader)
-	{
-		sf::RenderStates orgStates = states;
-		pShader->setUniform("texture", sf::Shader::CurrentTexture);
-		pShader->setUniform("blur_radius", upm::floatRand(0.01f, 0.05f));
-		states.blendMode = sf::BlendAlpha;
-		states.shader = pShader;
-		target.draw(ShapeBodyLight, states);
-		states = orgStates;
-	}
-	else
-		target.draw(ShapeBodyLight, states);
 
 	if (pChar->getCharacterState()&CCharacter::STATE_FREEZED)
 	{
@@ -121,11 +94,22 @@ void CPlayerRender::renderPlayer(sf::RenderTarget& target, sf::RenderStates stat
 	// Render Weapon
 	if (!(pChar->getCharacterState()&CCharacter::STATE_ROTATE))
 	{
+		const sf::Vector2f weaponPos = CharPos-CharDir*OffsetWeapon;
+		if (g_Config.m_AimLineLength > 0.0f)
+		{
+			sf::VertexArray Line(sf::LinesStrip, 2);
+			Line[0].position = CharPos;
+			Line[0].color = g_Config.m_AimLineColor;
+			Line[1].position = weaponPos + CharDir*g_Config.m_AimLineLength;
+			Line[1].color = sf::Color::Transparent;
+			target.draw(Line, states);
+		}
+
 		sf::CircleShape ShapeWeapon(CCharacter::SIZE, 10); // Low Definition
 		ShapeWeapon.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_SKIN_DEFAULT));
 		ShapeWeapon.setTextureRect(sf::IntRect(32, 0, 28, 28));
 		ShapeWeapon.setOrigin(CCharacter::SIZE, CCharacter::SIZE);
-		ShapeWeapon.setPosition(CharPos-CharDir*OffsetWeapon);
+		ShapeWeapon.setPosition(weaponPos);
 		ShapeWeapon.setRotation(upm::vectorAngle(CharDir));
 		target.draw(ShapeWeapon, states);
 	}
@@ -141,5 +125,68 @@ void CPlayerRender::renderPlayer(sf::RenderTarget& target, sf::RenderStates stat
 			sf::Vertex(point, sf::Color::Yellow)
 		};
 		target.draw(lineDir, 2, sf::Lines, states);
+	}
+}
+
+void CPlayerRender::renderPlayerLights(sf::RenderTarget& target, sf::RenderStates states, CCharacter *pChar) const noexcept
+{
+	if (!pChar->isVisible())
+		return;
+
+	const sf::Vector2f CharPos = CSystemBox2D::b2ToSf(pChar->getBody()->GetPosition());
+	const float CharRot = pChar->getBody()->GetAngle();
+
+	// Render Body Light
+	const float CharAngVel = abs(pChar->getBody()->GetAngularVelocity());
+	const float MaxAngVel = 30;
+	sf::Color Rgb;
+	if (CharAngVel > MaxAngVel)
+		Rgb = ups::hslToRgb(sf::Vector3f(1.0f, 1.0f, 0.5f));
+	else
+		Rgb = ups::hslToRgb(sf::Vector3f(((CharAngVel * 0.35f) / MaxAngVel), 1.0f, 0.5f));
+	sf::CircleShape ShapeBodyLight(CCharacter::SIZE, 10); // Low Definition
+	ShapeBodyLight.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_SKIN_DEFAULT));
+	ShapeBodyLight.setTextureRect(sf::IntRect(0, 32, 32, 32));
+	ShapeBodyLight.setFillColor(Rgb);
+	ShapeBodyLight.setOrigin(CCharacter::SIZE, CCharacter::SIZE);
+	ShapeBodyLight.setPosition(CharPos);
+	ShapeBodyLight.setRotation(upm::radToDeg(CharRot));
+	target.draw(ShapeBodyLight, states);
+
+	// Weapon Movement
+	static sf::Int64 TimerShoot = 0;
+	static bool LastFire = false;
+	static float OffsetWeapon = 0.0f;
+	static int State = 0;
+	const bool Fire = Client()->Controls().isMousePressed("fire");
+	const int ActiveWeapon = pChar->getActiveWeapon();
+	if ((!LastFire || (LastFire && ups::timeGet() - TimerShoot >= ups::timeFreq()*g_Config.m_aWeaponsInfo[ActiveWeapon].m_FireDelay)) && Fire)
+	{
+		OffsetWeapon = 12.0f;
+		TimerShoot = ups::timeGet();
+		State = 0;
+	}
+
+	if (!Fire || (State == 0 && ups::timeGet() - TimerShoot >= ups::timeFreq()*0.05f))
+	{
+		OffsetWeapon = 0.0f;
+		TimerShoot = ups::timeGet();
+		State = 1;
+	}
+	LastFire = Fire;
+
+	// Render Weapon
+	if (!(pChar->getCharacterState()&CCharacter::STATE_ROTATE))
+	{
+		const sf::Vector2f CharDir = upm::vectorNormalize(Client()->mapPixelToCoords(Client()->Controls().getMousePos(), Client()->Camera()) - CharPos);
+		const sf::Vector2f weaponPos = CharPos-CharDir*OffsetWeapon;
+		sf::CircleShape ShapeWeapon(CCharacter::SIZE, 10); // Low Definition
+		ShapeWeapon.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_SKIN_DEFAULT));
+		ShapeWeapon.setTextureRect(sf::IntRect(32, 0, 28, 28));
+		ShapeWeapon.setOrigin(CCharacter::SIZE, CCharacter::SIZE);
+		ShapeWeapon.setPosition(weaponPos);
+		ShapeWeapon.setRotation(upm::vectorAngle(CharDir));
+		ShapeWeapon.setFillColor(sf::Color::Black);
+		target.draw(ShapeWeapon, states);
 	}
 }

@@ -34,6 +34,7 @@ bool CConfig::load() noexcept
 		#define MACRO_CONFIG_FLOAT(Name,ScriptName,def,min,max,flags) if (paramName.compare(#ScriptName) == 0) g_Config.m_##Name = upm::clamp((float)::atof(paramValue.c_str()), min, max);
 		#define MACRO_CONFIG_STR(Name,ScriptName,len,def,flags) if (paramName.compare(#ScriptName) == 0) strncpy(g_Config.m_##Name, paramValue.c_str(), len);
 		#define MACRO_CONFIG_BOOL(Name,ScriptName,def,flags) if (paramName.compare(#ScriptName) == 0) g_Config.m_##Name = (paramValue.compare("true") == 0);
+		#define MACRO_CONFIG_COLOR(Name,ScriptName,def,flags) if (paramName.compare(#ScriptName) == 0) g_Config.m_##Name = ups::intToColor(::atoi(paramValue.c_str()));
 
 		#include <game/config_vars.h>
 
@@ -62,6 +63,7 @@ void CConfig::reset() noexcept
 	#define MACRO_CONFIG_FLOAT(Name,ScriptName,def,min,max,flags) g_Config.m_##Name = def;
 	#define MACRO_CONFIG_STR(Name,ScriptName,len,def,flags) strncpy(g_Config.m_##Name, def, len);
 	#define MACRO_CONFIG_BOOL(Name,ScriptName,def,flags) g_Config.m_##Name = def;
+	#define MACRO_CONFIG_COLOR(Name,ScriptName,def,flags) g_Config.m_##Name = ups::intToColor(def);
 
 	#include <game/config_vars.h>
 
@@ -69,6 +71,7 @@ void CConfig::reset() noexcept
 	#undef MACRO_CONFIG_FLOAT
 	#undef MACRO_CONFIG_STR
 	#undef MACRO_CONFIG_BOOL
+	#undef MACRO_CONFIG_COLOR
 }
 
 bool CConfig::save() noexcept
@@ -79,12 +82,13 @@ bool CConfig::save() noexcept
 	if(!configFile.is_open())
 		return false;
 
-	char aLineBuf[1024*2];  // ignore unused warning
+	char aLineBuf[512];  // ignore unused warning
 
 	#define MACRO_CONFIG_INT(Name,ScriptName,def,min,max,flags) if(flags&SAVE){ snprintf(aLineBuf, sizeof(aLineBuf), "%s %i\n", #ScriptName, upm::clamp(g_Config.m_##Name, min, max)); configFile << aLineBuf; }
 	#define MACRO_CONFIG_FLOAT(Name,ScriptName,def,min,max,flags) if(flags&SAVE){ snprintf(aLineBuf, sizeof(aLineBuf), "%s %.2f\n", #ScriptName, upm::clamp(g_Config.m_##Name, min, max)); configFile << aLineBuf; }
 	#define MACRO_CONFIG_STR(Name,ScriptName,len,def,flags) if(flags&SAVE){ snprintf(aLineBuf, sizeof(aLineBuf), "%s %s\n", #ScriptName, g_Config.m_##Name); configFile << aLineBuf; }
 	#define MACRO_CONFIG_BOOL(Name,ScriptName,def,flags) if(flags&SAVE){ snprintf(aLineBuf, sizeof(aLineBuf), "%s %s\n", #ScriptName, g_Config.m_##Name?"true":"false"); configFile << aLineBuf; }
+	#define MACRO_CONFIG_COLOR(Name,ScriptName,def,flags) if(flags&SAVE){ snprintf(aLineBuf, sizeof(aLineBuf), "%s %u\n", #ScriptName, ups::colorToInt(g_Config.m_##Name)); configFile << aLineBuf; }
 
 	#include <game/config_vars.h>
 
@@ -92,6 +96,7 @@ bool CConfig::save() noexcept
 	#undef MACRO_CONFIG_FLOAT
 	#undef MACRO_CONFIG_STR
 	#undef MACRO_CONFIG_BOOL
+	#undef MACRO_CONFIG_COLOR
 
 	configFile.close();
 	return true;

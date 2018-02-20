@@ -6,8 +6,8 @@
 #include <game/entities/CProjectile.hpp>
 #include "CItemRender.hpp"
 
-CItemRender::CItemRender() noexcept
-: CComponent()
+CItemRender::CItemRender(CGameClient *pGameClient) noexcept
+: CComponent(pGameClient)
 { }
 CItemRender::~CItemRender() noexcept
 {
@@ -21,7 +21,7 @@ void CItemRender::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 	if (!Client()->Controller() || !Client()->Controller()->Context())
 		return;
 
-	Client()->setView(Client()->Camera());
+	target.setView(Client()->Camera());
 
 	std::vector<CEntity*> &vEntities = Client()->Controller()->Context()->getEntities();
 	std::vector<CEntity*>::const_iterator cit = vEntities.cbegin();
@@ -44,6 +44,9 @@ void CItemRender::renderHitBox(sf::RenderTarget& target, sf::RenderStates states
 
 void CItemRender::renderProjectile(sf::RenderTarget& target, sf::RenderStates states, CEntity *pEntity) const noexcept
 {
+	if (Client()->getRenderMode() != CGameClient::RENDER_NORMAL)
+		return;
+
 	CProjectile *pProj = static_cast<CProjectile*>(pEntity);
 	b2PolygonShape *pB2Poly = static_cast<b2PolygonShape*>(pEntity->getBody()->GetFixtureList()[0].GetShape());
 	sf::ConvexShape Shape(pB2Poly->m_count);

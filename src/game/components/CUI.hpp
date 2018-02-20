@@ -20,7 +20,7 @@ public:
 	};
 
 
-	CUI() noexcept;
+	CUI(CGameClient *pGameClient) noexcept;
 	virtual ~CUI() noexcept;
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept final;

@@ -5,6 +5,7 @@
 #define H_ENGINE_CONFIG
 
 #include <list>
+#include <SFML/Graphics/Color.hpp>
 
 enum
 {
@@ -28,11 +29,13 @@ struct CConfiguration
 	#define MACRO_CONFIG_FLOAT(Name,ScriptName,Def,Min,Max,Save) float m_##Name;
 	#define MACRO_CONFIG_STR(Name,ScriptName,Len,Def,Save) char m_##Name[Len];
 	#define MACRO_CONFIG_BOOL(Name,ScriptName,Def,Save) bool m_##Name;
+	#define MACRO_CONFIG_COLOR(Name,ScriptName,Def,Save) sf::Color m_##Name;
 	#include <game/config_vars.h>
 	#undef MACRO_CONFIG_INT
 	#undef MACRO_CONFIG_FLOAT
 	#undef MACRO_CONFIG_STR
 	#undef MACRO_CONFIG_BOOL
+	#undef MACRO_CONFIG_COLOR
 
 	WEAPON_INFO m_aWeaponsInfo[NUM_WEAPONS];
 };

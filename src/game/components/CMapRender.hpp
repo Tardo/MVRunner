@@ -9,7 +9,7 @@
 class CMapRender final : public CComponent
 {
 public:
-	CMapRender(int render) noexcept;
+	CMapRender(CGameClient *pGameClient, int render) noexcept;
 	~CMapRender() noexcept;
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept final;

@@ -6,8 +6,8 @@
 #include <game/entities/CProjectile.hpp>
 #include "CDebuggerRender.hpp"
 
-CDebuggerRender::CDebuggerRender() noexcept
-: CComponent()
+CDebuggerRender::CDebuggerRender(CGameClient *pGameClient) noexcept
+: CComponent(pGameClient)
 { }
 CDebuggerRender::~CDebuggerRender() noexcept
 {
@@ -21,7 +21,7 @@ void CDebuggerRender::draw(sf::RenderTarget& target, sf::RenderStates states) co
 	if (!Client()->m_Debug)
 		return;
 
-	Client()->setView(Client()->Camera());
+	target.setView(Client()->Camera());
 	renderBox2D(target, states);
 }
 

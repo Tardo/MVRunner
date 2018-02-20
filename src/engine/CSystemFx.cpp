@@ -659,7 +659,7 @@ void CSystemFx::createExplosionCar(const sf::Vector2f &worldPos, bool ring) noex
 	pParticle->m_Shape.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_SMOKE_WHITE));
 	Client()->Controller()->Context()->addParticle(pParticle);
 
-	CParticle *pParticleLight = new CParticle(sf::BlendAdd, RENDER_FRONT, true);
+	/*CParticle *pParticleLight = new CParticle(sf::BlendAdd, RENDER_FRONT, true);
 	pParticleLight->m_Pos = worldPos;
 	pParticle->m_Light = true;
 	pParticleLight->m_SizeInit = sf::Vector2f(1.0f, 1.0f);
@@ -668,7 +668,7 @@ void CSystemFx::createExplosionCar(const sf::Vector2f &worldPos, bool ring) noex
 	pParticleLight->m_ColorEnd = sf::Color(232, 171, 8);
 	pParticleLight->m_ColorEnd.a = 0;
 	pParticleLight->m_Duration = 0.4f;
-	Client()->Controller()->Context()->addParticle(pParticleLight);
+	Client()->Controller()->Context()->addParticle(pParticleLight);*/
 }
 
 void CSystemFx::createExplosionRocket(const sf::Vector2f &worldPos) noexcept

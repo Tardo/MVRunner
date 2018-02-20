@@ -37,7 +37,7 @@ namespace ups
 		return color;
 	}
 
-	float hueToRgb(float v1, float v2, float h)
+	float hueToRgb(float v1, float v2, float h) noexcept
 	{
 		if(h < 0.0f) h += 1;
 		if(h > 1.0f) h -= 1;
@@ -47,7 +47,7 @@ namespace ups
 		return v1;
 	}
 
-	sf::Color hslToRgb(const sf::Vector3f &hsl)
+	sf::Color hslToRgb(const sf::Vector3f &hsl) noexcept
 	{
 		if(hsl.y == 0.0f)
 			return sf::Color(hsl.z*255.0f, hsl.z*255.0f, hsl.z*255.0f);
@@ -59,6 +59,17 @@ namespace ups
 			return sf::Color(hueToRgb(v1, v2, hsl.x + (1.0f/3.0f))*255.0f, hueToRgb(v1, v2, hsl.x)*255.0f, hueToRgb(v1, v2, hsl.x - (1.0f/3.0f))*255.0f);
 		}
 	}
+
+	sf::Color intToColor(unsigned int color) noexcept
+	{
+		return sf::Color((color>>24) & 255, (color>>16) & 255, (color>>8) & 255, color & 255);
+	}
+
+	unsigned int colorToInt(const sf::Color &color) noexcept
+	{
+		return ((color.r&255)<<24) + ((color.g&255)<<16) + ((color.b&255)<<8) + (color.a&255);
+	}
+
 
 	// Original Source: https://github.com/SFML/SFML/wiki/Source%3A-cubic-bezier-curve
 	void calcCubicBezier(

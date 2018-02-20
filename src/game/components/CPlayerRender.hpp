@@ -9,13 +9,14 @@
 class CPlayerRender final : public CComponent
 {
 public:
-	CPlayerRender() noexcept;
+	CPlayerRender(CGameClient *pGameClient) noexcept;
 	~CPlayerRender() noexcept;
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept final;
 
 private:
 	void renderPlayer(sf::RenderTarget& target, sf::RenderStates states, CCharacter *pChar) const noexcept;
+	void renderPlayerLights(sf::RenderTarget& target, sf::RenderStates states, CCharacter *pChar) const noexcept;
 };
 
 #endif

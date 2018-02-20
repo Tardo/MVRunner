@@ -38,7 +38,7 @@ bool CSystemLight::init(class CGameClient *pGameClient) noexcept
 
 void CSystemLight::update(float deltaTime) noexcept
 {
-
+	m_LightMapTexture.clear(sf::Color::Black);
 }
 
 sf::Color CSystemLight::getTimeColor() noexcept
@@ -48,7 +48,6 @@ sf::Color CSystemLight::getTimeColor() noexcept
 
 const sf::Sprite& CSystemLight::getLightmap(const sf::View &camera) noexcept
 {
-	m_LightMapTexture.clear(getTimeColor());
 	m_LightMapTexture.setView(camera);
 
 	std::list<CLight*>::iterator itl = m_vpLights.begin();
@@ -106,7 +105,6 @@ const sf::Sprite& CSystemLight::getLightmap(const sf::View &camera) noexcept
 		++itl;
 	}
 	m_LightMapTexture.display();
-
 	return m_Lightmap;
 }
 

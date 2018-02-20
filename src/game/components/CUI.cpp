@@ -3,8 +3,8 @@
 #include <engine/CGame.hpp>
 #include "CUI.hpp"
 
-CUI::CUI() noexcept
-: CComponent()
+CUI::CUI(CGameClient *pGameClient) noexcept
+: CComponent(pGameClient)
 {
 	m_TimerBroadcast = ups::timeGet();
 	m_BroadcastDuration = 0.0f;
@@ -20,7 +20,10 @@ CUI::~CUI() noexcept
 
 void CUI::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
 {
-	Client()->setView(Client()->getHudView());
+	//if (Client()->getRenderMode() != CGameClient::RENDER_NORMAL)
+	//	return;
+
+	target.setView(Client()->getHudView());
 
 	drawHUD(target, states);
 	if (Client()->m_Debug)

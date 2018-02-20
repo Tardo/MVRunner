@@ -5,8 +5,9 @@
 #include <engine/CLocalization.hpp>
 #include "CCamera.hpp"
 
-CCamera::CCamera() noexcept
-: sf::View()
+CCamera::CCamera(CGameClient *pGameClient) noexcept
+: CComponent(pGameClient),
+  sf::View()
 {
 	m_VibrateCamTime = 0.0f;
 	m_VibrateCamIntensity = 0.0f;

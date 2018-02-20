@@ -8,7 +8,7 @@
 class CItemRender final : public CComponent
 {
 public:
-	CItemRender() noexcept;
+	CItemRender(CGameClient *pGameClient) noexcept;
 	~CItemRender() noexcept;
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept final;
