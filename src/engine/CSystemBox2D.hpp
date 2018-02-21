@@ -6,9 +6,9 @@
 #include <base/math.hpp>
 #include <Box2D/Box2D.h>
 #include <SFML/Graphics.hpp>
-#include <engine/CSystem.hpp>
 #include <game/CEntity.hpp>
 #include <vector>
+#include "ISystem.hpp"
 
 #define VELITER 1
 #define POSITER 1
@@ -49,7 +49,7 @@ struct CB2BodyInfo
 	b2BodyType m_B2Type;
 };
 
-class CSystemBox2D final : public CSystem
+class CSystemBox2D final : public ISystem
 {
 	class CContactListener final : public b2ContactListener
 	{
@@ -62,7 +62,7 @@ public:
 	CSystemBox2D() noexcept;
 	virtual ~CSystemBox2D() noexcept;
 
-	virtual bool init(class CGameClient *pGameClient) noexcept final;
+	virtual bool init() noexcept final;
 	virtual void update(float deltaTime) noexcept final;
 
 	b2World* getWorld() noexcept { return &m_World; }

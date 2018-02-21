@@ -5,14 +5,20 @@
 
 #include <SFML/Graphics.hpp>
 
+enum
+{
+	RENDER_BACK=0,
+	RENDER_FRONT,
+	RENDER_FOREGROUND
+};
+
 class CComponent : public sf::Drawable
 {
 public:
-	CComponent(CGameClient *pGameClient)
+	CComponent(class CGameClient *pGameClient)
 	{
 		m_pGameClient = pGameClient;
 	}
-	virtual ~CComponent() { }
 
 	class CGameClient* Client() const noexcept { return m_pGameClient; }
 

@@ -3,14 +3,11 @@
 #include <base/math.hpp>
 #include <base/system.hpp>
 #include <engine/CAssetManager.hpp>
-#include <engine/CSystemBox2D.hpp>
-#include <engine/CSystemSound.hpp>
 #include <engine/CLocalization.hpp>
-#include <game/entities/primitives/CB2Circle.hpp>
 #include <game/CContext.hpp>
 #include "CControllerMenu.hpp"
 #include <cstring>
-
+#include <engine/CSystemSound.hpp>
 
 CControllerMenu::CControllerMenu() noexcept
 : CController(),

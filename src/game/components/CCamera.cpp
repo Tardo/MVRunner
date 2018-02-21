@@ -1,7 +1,6 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
 #include <engine/CGame.hpp>
-#include <engine/CSystemSound.hpp>
 #include <engine/CLocalization.hpp>
 #include "CCamera.hpp"
 

@@ -4,8 +4,8 @@
 #define H_ENTITY_POLYGONB2
 
 #include <SFML/Graphics.hpp>
-#include <engine/CSystemBox2D.hpp>
 #include <game/CEntity.hpp>
+#include <engine/CSystemBox2D.hpp>
 
 class CB2Polygon : public CEntity
 {

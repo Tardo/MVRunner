@@ -3,19 +3,20 @@
 
 #ifndef H_ENGINE_SYSTEM_SOUND
 #define H_ENGINE_SYSTEM_SOUND
-#include <engine/CSystem.hpp>
+#include "CAssetManager.hpp"
 #include <SFML/Audio.hpp>
 #include <list>
+#include "ISystem.hpp"
 
 #define SOUND_MIN_DISTANCE	1.0f
 
-class CSystemSound final : public CSystem
+class CSystemSound final : public ISystem
 {
 public:
 	CSystemSound() noexcept;
 	virtual ~CSystemSound() noexcept final;
 
-	virtual bool init(class CGameClient *pGameClient) noexcept final;
+	virtual bool init() noexcept final;
 	virtual void update(float deltaTime) noexcept final;
 
 	void playBackgroundMusic(int id) noexcept;
@@ -32,6 +33,9 @@ public:
 	void setSfxActive(bool status) noexcept;
 	void setMusicActive(bool status) noexcept;
 
+	void setAssetManager(CAssetManager *pAssetManager) noexcept { m_pAssetManager = pAssetManager; }
+	void setListenerPosition(const sf::Vector2f &listenerPos) noexcept;
+
 	sf::Sound* createSound(int soundId, const sf::Vector2f worldPos, float volume = 100.0f, bool loop = false, float minDist = SOUND_MIN_DISTANCE, bool play = false) noexcept;
 
 	int getNumPlayingSound() const noexcept { return m_vpPlaySounds.size(); }
@@ -39,6 +43,7 @@ public:
 protected:
 	sf::Music m_BackgroundMusic;
 	std::list<sf::Sound*> m_vpPlaySounds;
+	CAssetManager *m_pAssetManager;
 
 private:
 	int m_LastMusicId;

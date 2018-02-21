@@ -9,7 +9,7 @@ class CLight final : public CEntity
 {
 	friend class CLightRender;
 public:
-    CLight(sf::Texture *pTexture, const sf::Vector2f &nposition, float angle, const sf::Vector2f &nscale, const sf::Color &ncolor, bool alwaysOn, float blink, float variationSize, int render = RENDER_FRONT) noexcept;
+    CLight(sf::Texture *pTexture, const sf::Vector2f &nposition, float angle, const sf::Vector2f &nscale, const sf::Color &ncolor, bool alwaysOn, float blink, float variationSize, int render) noexcept;
     ~CLight() noexcept;
 
     virtual void tick() noexcept final;

@@ -2,8 +2,6 @@
 
 #include "CLight.hpp"
 #include <engine/CGame.hpp>
-#include <engine/CSystemBox2D.hpp>
-#include <engine/CSystemSound.hpp>
 
 /** LIGHT **/
 CLight::CLight(sf::Texture *pTexture, const sf::Vector2f &nposition, float angle, const sf::Vector2f &nscale, const sf::Color &ncolor, bool alwaysOn, float blink, float variationSize, int render) noexcept

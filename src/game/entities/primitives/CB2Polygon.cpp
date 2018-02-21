@@ -2,7 +2,6 @@
 
 #include <base/math.hpp>
 #include <engine/CGame.hpp>
-#include <engine/CSystemBox2D.hpp>
 #include "CB2Polygon.hpp"
 
 CB2Polygon::CB2Polygon(sf::Vector2f worldPos, const std::vector<sf::Vector2f> points, const sf::Color color, const CB2BodyInfo &bodyInfo, int entityType) noexcept

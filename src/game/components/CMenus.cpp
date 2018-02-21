@@ -1,11 +1,11 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
 #include <engine/CGame.hpp>
-#include <engine/CSystemSound.hpp>
 #include <engine/CLocalization.hpp>
 #include <game/version.h>
 #include <SFML/OpenGL.hpp>
 #include "CMenus.hpp"
+#include <engine/CSystemSound.hpp>
 
 CMenus::CMenus(CGameClient *pGameClient) noexcept
 : CComponent(pGameClient)
@@ -31,7 +31,7 @@ void CMenus::setActive(int mid, CEntity *pEnt) noexcept
 
 void CMenus::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
 {
-	if (Client()->getRenderMode() != CGameClient::RENDER_NORMAL)
+	if (Client()->getRenderMode() != RENDER_MODE_NORMAL)
 		return;
 
 	target.setView(Client()->getHudView());

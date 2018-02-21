@@ -44,7 +44,7 @@ void CItemRender::renderHitBox(sf::RenderTarget& target, sf::RenderStates states
 
 void CItemRender::renderProjectile(sf::RenderTarget& target, sf::RenderStates states, CEntity *pEntity) const noexcept
 {
-	if (Client()->getRenderMode() != CGameClient::RENDER_NORMAL)
+	if (Client()->getRenderMode() != RENDER_MODE_NORMAL)
 		return;
 
 	CProjectile *pProj = static_cast<CProjectile*>(pEntity);

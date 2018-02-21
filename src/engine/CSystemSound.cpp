@@ -1,15 +1,16 @@
 /* (c) Alexandre D�az. See licence.txt in the root of the distribution for more information. */
 /* If you are missing that file, acquire a complete release at fingership.redneboa.es        */
 
+#include "CSystemSound.hpp"
 #include "CAssetManager.hpp"
-#include "CGame.hpp"
 #include "CConfig.hpp"
 #include <base/system.hpp>
-#include <engine/CSystemSound.hpp>
+#include <base/math.hpp>
 
 CSystemSound::CSystemSound() noexcept
 {
 	m_LastMusicId = -1;
+	m_pAssetManager = nullptr;
 }
 CSystemSound::~CSystemSound() noexcept
 {
@@ -24,21 +25,19 @@ CSystemSound::~CSystemSound() noexcept
 	#endif
 }
 
-bool CSystemSound::init(class CGameClient *pGameClient) noexcept
+bool CSystemSound::init() noexcept
 {
-	return CSystem::init(pGameClient);
+	return true;
+}
+
+void CSystemSound::setListenerPosition(const sf::Vector2f &listenerPos) noexcept
+{
+	sf::Listener::setPosition(listenerPos.x, 0.0f, listenerPos.y);
 }
 
 void CSystemSound::update(float deltaTime) noexcept
 {
 	cleanSoundBuffer();
-
-	CGame *pGame = CGame::getInstance();
-	if (pGame->Client()->Controller() && pGame->Client()->Controller()->Context()->getPlayer()->getCharacter())
-	{
-		const sf::Vector2f &pos = CSystemBox2D::b2ToSf(pGame->Client()->Controller()->Context()->getPlayer()->getCharacter()->getBody()->GetPosition());
-		sf::Listener::setPosition(pos.x, 0.0f, pos.y);
-	}
 }
 
 void CSystemSound::setSfxActive(bool status) noexcept
@@ -75,8 +74,7 @@ void CSystemSound::cleanSoundBuffer() noexcept
 
 sf::Sound* CSystemSound::createSound(int soundId, const sf::Vector2f worldPos, float volume, bool loop, float minDist, bool play) noexcept
 {
-	CGame *pGame = CGame::getInstance();
-	sf::Sound *pSound = new sf::Sound(pGame->Client()->Assets().getSound(soundId));
+	sf::Sound *pSound = new sf::Sound(m_pAssetManager->getSound(soundId));
 	if (pSound)
 	{
 		pSound->setVolume(volume);
@@ -153,27 +151,27 @@ void CSystemSound::stopAll() noexcept
 
 void CSystemSound::playBackgroundMusic(int id) noexcept
 {
-	static const char *musicFiles[] = { "data/sfx/first_floor_theme.ogg", "data/sfx/main_menu_theme.ogg" };
-	if (!g_Config.m_Music || id < 0 || id >= CAssetManager::MAX_SONGS)
-		return;
-
-	if (id != m_LastMusicId)
-	{
-		if (m_BackgroundMusic.getStatus() != sf::Sound::Stopped)
-			m_BackgroundMusic.stop();
-
-		unsigned long fileSize = 0;
-		const unsigned char *pData = Client()->Storage().getFileData(musicFiles[id], &fileSize);
-		m_BackgroundMusic.openFromMemory(pData, fileSize);
-		//delete[] pData;
-		m_BackgroundMusic.setLoop(true);
-		m_BackgroundMusic.setVolume(80);
-		m_BackgroundMusic.play();
-
-		m_LastMusicId = id;
-	}
-	else if (m_BackgroundMusic.getStatus() == sf::Sound::Stopped)
-		m_BackgroundMusic.play();
+//	static const char *musicFiles[] = { "data/sfx/first_floor_theme.ogg", "data/sfx/main_menu_theme.ogg" };
+//	if (!g_Config.m_Music || id < 0 || id >= CAssetManager::MAX_SONGS)
+//		return;
+//
+//	if (id != m_LastMusicId)
+//	{
+//		if (m_BackgroundMusic.getStatus() != sf::Sound::Stopped)
+//			m_BackgroundMusic.stop();
+//
+//		unsigned long fileSize = 0;
+//		const unsigned char *pData = Client()->Storage().getFileData(musicFiles[id], &fileSize);
+//		m_BackgroundMusic.openFromMemory(pData, fileSize);
+//		//delete[] pData;
+//		m_BackgroundMusic.setLoop(true);
+//		m_BackgroundMusic.setVolume(80);
+//		m_BackgroundMusic.play();
+//
+//		m_LastMusicId = id;
+//	}
+//	else if (m_BackgroundMusic.getStatus() == sf::Sound::Stopped)
+//		m_BackgroundMusic.play();
 }
 
 void CSystemSound::stopBackgroundMusic() noexcept

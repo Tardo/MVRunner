@@ -2,13 +2,13 @@
 
 #include <engine/CGame.hpp>
 #include <engine/CAssetManager.hpp>
-#include <engine/CSystemBox2D.hpp>
-#include <engine/CSystemSound.hpp>
 #include "CCharacter.hpp"
 #include "CProjectile.hpp"
 #include "CHitBox.hpp"
 #include "CFire.hpp"
 #include <game/controllers/CControllerMain.hpp>
+#include <engine/CSystemBox2D.hpp>
+#include <engine/CSystemSound.hpp>
 
 
 const float CCharacter::SIZE = 28.0f;

@@ -30,8 +30,8 @@ void CParticleRender::draw(sf::RenderTarget& target, sf::RenderStates states) co
 		{
 			CParticle *pParticle = static_cast<CParticle*>(*cit);
 			if (pParticle->m_Render == m_Render &&
-					(Client()->getRenderMode() == CGameClient::RENDER_NORMAL ||
-							(Client()->getRenderMode() == CGameClient::RENDER_LIGHTING && pParticle->m_Luminance)))
+					(Client()->getRenderMode() == RENDER_MODE_NORMAL ||
+							(Client()->getRenderMode() == RENDER_MODE_LIGHTING && pParticle->m_Luminance)))
 			{
 				renderParticle(target, states, pParticle);
 			}
@@ -43,7 +43,7 @@ void CParticleRender::draw(sf::RenderTarget& target, sf::RenderStates states) co
 
 void CParticleRender::renderParticle(sf::RenderTarget& target, sf::RenderStates states, CParticle *pParticle) const noexcept
 {
-	const float elapsedSeconds = (float)(ups::timeGet()-pParticle->m_Timer)/ups::timeFreq();
+	const float elapsedSeconds = upm::clamp((float)(ups::timeGet()-pParticle->m_Timer)/ups::timeFreq(), 0.0f, pParticle->m_Duration);
     const sf::Vector2f sizeStep(((pParticle->m_SizeEnd.x-pParticle->m_SizeInit.x)/pParticle->m_Duration)*elapsedSeconds, ((pParticle->m_SizeEnd.y-pParticle->m_SizeInit.y)/pParticle->m_Duration)*elapsedSeconds);
     const sf::Vector3f colorStep(((pParticle->m_ColorEnd.r-pParticle->m_ColorInit.r)/pParticle->m_Duration)*elapsedSeconds, ((pParticle->m_ColorEnd.g-pParticle->m_ColorInit.g)/pParticle->m_Duration)*elapsedSeconds, ((pParticle->m_ColorEnd.b-pParticle->m_ColorInit.b)/pParticle->m_Duration)*elapsedSeconds);
     const float colorAlphaStep = ((pParticle->m_ColorEnd.a-pParticle->m_ColorInit.a)/pParticle->m_Duration)*elapsedSeconds;

@@ -25,9 +25,7 @@ void CUI::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
 	drawHUD(target, states);
 	if (Client()->m_Debug)
 		drawDebugInfo(target, states);
-
-	if (Client()->getRenderMode() == CGameClient::RENDER_NORMAL)
-		drawCursor(target, states);
+	drawCursor(target, states);
 }
 
 void CUI::showBroadcastMessage(const char *pMsg, float duration) noexcept

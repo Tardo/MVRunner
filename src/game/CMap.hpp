@@ -188,9 +188,6 @@ private:
 	unsigned int m_TilesetsCount;
 	unsigned int m_TileLayersCount;
 
-	sf::RenderTexture m_RenderTexture;
-	sf::Sprite m_RenderSprite;
-
 	bool init() noexcept;
 	void renderTilemap(const sf::IntRect &mapBounds, int layerIndex, const sf::Color &lightColor, int renderType) noexcept;
 	void analyzeLayerTile(int layerIndex) noexcept;

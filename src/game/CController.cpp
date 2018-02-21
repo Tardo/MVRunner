@@ -13,11 +13,11 @@
 #include <tmxparser/TmxPoint.h>
 #include <Box2D/Box2D.h>
 #include <engine/CGame.hpp>
-#include <engine/CSystemBox2D.hpp>
 #include <game/components/CMapRender.hpp>
 #include <game/components/CLightRender.hpp>
 #include <game/controllers/CControllerMain.hpp>
 #include <game/CController.hpp>
+#include <engine/CSystemBox2D.hpp>
 
 
 CController::CController() noexcept
@@ -450,6 +450,7 @@ void CController::createFireBall(class CEntity *pTarget, const sf::Vector2f &off
 	pParticle->m_ColorEnd = sf::Color(251, 104, 4);
 	pParticle->m_ColorEnd.a = 35;
 	pParticle->m_Offset = offSet;
+	pParticle->m_Luminance = true;
 	pParticle->m_VelRot = upm::randInt(0, 2) == 1?-2.45f:2.45f;
 	pParticle->m_Duration = 0.75f;
 	pParticle->m_TextId = CAssetManager::TEXTURE_SMOKE_WHITE;
@@ -719,43 +720,43 @@ void CController::createExplosionCar(const sf::Vector2f &worldPos, bool ring) no
 	pParticle->m_Animated = true;
 	pParticle->m_AnimSize = { 4, 4 };
 
-//	pParticle = new CParticle(sf::BlendAlpha, RENDER_FRONT);
-//	pParticle->m_Pos = worldPos;
-//	pParticle->m_SizeInit = sf::Vector2f(15.0f, 15.0f);
-//	pParticle->m_SizeEnd = sf::Vector2f(275.0f, 275.0f);
-//	pParticle->m_ColorInit = sf::Color(125, 125, 125, 120);
-//	pParticle->m_ColorEnd = sf::Color::Black;
-//	pParticle->m_ColorEnd.a = 0;
-//	pParticle->m_VelRot = upm::randInt(0, 2) == 1?-2.45f:2.45f;
-//	pParticle->m_Duration = 0.4f;
-//	pParticle->m_TextId = CAssetManager::TEXTURE_SMOKE_WHITE;
+	pParticle = new CParticle(sf::BlendAlpha, RENDER_FRONT);
+	pParticle->m_Pos = worldPos;
+	pParticle->m_SizeInit = sf::Vector2f(15.0f, 15.0f);
+	pParticle->m_SizeEnd = sf::Vector2f(275.0f, 275.0f);
+	pParticle->m_ColorInit = sf::Color(125, 125, 125, 120);
+	pParticle->m_ColorEnd = sf::Color::Black;
+	pParticle->m_ColorEnd.a = 0;
+	pParticle->m_VelRot = upm::randInt(0, 2) == 1?-2.45f:2.45f;
+	pParticle->m_Duration = 0.4f;
+	pParticle->m_TextId = CAssetManager::TEXTURE_SMOKE_WHITE;
 }
 
 
 CLight* CController::createPoint(const sf::Vector2f &worldPos, const sf::Vector2f &scale, const sf::Color &color, bool alwaysOn, float blink, float variationSize) noexcept
 {
-	CLight *pLight = new CLight(Game()->Client()->Assets().getTexture(CAssetManager::TEXTURE_POINT_LIGHT), worldPos, 0.0f, scale, color, alwaysOn, blink, variationSize);
+	CLight *pLight = new CLight(Game()->Client()->Assets().getTexture(CAssetManager::TEXTURE_POINT_LIGHT), worldPos, 0.0f, scale, color, alwaysOn, blink, variationSize, RENDER_FRONT);
 	pLight->m_Origin = sf::Vector2f(0.5f, 0.5f);
 	return pLight;
 }
 
 CLight* CController::createSpot(const sf::Vector2f &worldPos, float degrees, const sf::Vector2f &scale, const sf::Color &color, bool alwaysOn, float blink, float variationSize) noexcept
 {
-	CLight *pLight = new CLight(Game()->Client()->Assets().getTexture(CAssetManager::TEXTURE_SPOT_LIGHT), worldPos, degrees, scale, color, alwaysOn, blink, variationSize);
+	CLight *pLight = new CLight(Game()->Client()->Assets().getTexture(CAssetManager::TEXTURE_SPOT_LIGHT), worldPos, degrees, scale, color, alwaysOn, blink, variationSize, RENDER_FRONT);
 	pLight->m_Origin = sf::Vector2f(0.5f, 1.0f);
 	return pLight;
 }
 
 CLight* CController::createEmissive(const sf::Vector2f &worldPos, float degrees, const sf::Vector2f &scale, const sf::Color &color, bool alwaysOn, float blink, float variationSize) noexcept
 {
-	CLight *pLight = new CLight(Game()->Client()->Assets().getTexture(CAssetManager::TEXTURE_EMISSIVE_LIGHT), worldPos, degrees, scale, color, alwaysOn, blink, variationSize);
+	CLight *pLight = new CLight(Game()->Client()->Assets().getTexture(CAssetManager::TEXTURE_EMISSIVE_LIGHT), worldPos, degrees, scale, color, alwaysOn, blink, variationSize, RENDER_FRONT);
 	pLight->m_Origin = sf::Vector2f(0.5f, 0.5f);
 	return pLight;
 }
 
 CLight* CController::createCustom(int textId, const sf::Vector2f &worldPos, const sf::Vector2f &origin, float degrees, const sf::Vector2f &scale, const sf::Color &color, bool alwaysOn, float blink, float variationSize) noexcept
 {
-	CLight *pLight = new CLight(Game()->Client()->Assets().getTexture(textId), worldPos, degrees, scale, color, alwaysOn, blink, variationSize);
+	CLight *pLight = new CLight(Game()->Client()->Assets().getTexture(textId), worldPos, degrees, scale, color, alwaysOn, blink, variationSize, RENDER_FRONT);
 	pLight->m_Origin = origin;
 	return pLight;
 }

@@ -48,11 +48,6 @@ bool CMap::init() noexcept
 	m_pGameLayer = nullptr;
 	m_GameLayerIndex = -1;
 
-	// Crear lienzos
-	if (!m_RenderTexture.create(g_Config.m_ScreenWidth, g_Config.m_ScreenHeight))
-		return false;
-	m_RenderSprite.setTexture(m_RenderTexture.getTexture());
-
 	// Procesar Imágenes
 	{
 		CGame *pGame = CGame::getInstance();

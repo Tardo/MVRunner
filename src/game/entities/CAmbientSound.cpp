@@ -2,7 +2,6 @@
 
 #include "CAmbientSound.hpp"
 #include <engine/CGame.hpp>
-#include <engine/CSystemBox2D.hpp>
 #include <engine/CSystemSound.hpp>
 
 CAmbientSound::CAmbientSound(const sf::Vector2f &worldPos, int soundId, float radius, bool loop, float volume) noexcept

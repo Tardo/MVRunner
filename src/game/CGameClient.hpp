@@ -8,9 +8,9 @@
 #include <base/system.hpp>
 #include <engine/CAssetManager.hpp>
 #include <engine/CConfig.hpp>
-#include <engine/CSystemBox2D.hpp>
+#include <engine/ISystem.hpp>
 #include <engine/CSystemSound.hpp>
-#include <engine/CSystem.hpp>
+#include <engine/CSystemBox2D.hpp>
 #include <game/components/CMapRender.hpp>
 #include <game/components/CMenus.hpp>
 #include <game/components/CUI.hpp>
@@ -30,15 +30,15 @@
 
 #define SCREEN_MARGIN_SPAWN_BOT	255.0f
 
+enum
+{
+	RENDER_MODE_NORMAL=0,
+	RENDER_MODE_LIGHTING
+};
 
 class CGameClient final : public sf::RenderWindow
 {
 public:
-	enum {
-		RENDER_NORMAL=0,
-		RENDER_LIGHTING
-	};
-
 	CGameClient() noexcept;
 	~CGameClient() noexcept;
 
@@ -54,7 +54,7 @@ public:
 	template<class T>
 	T* getSystem() noexcept
 	{
-		std::deque<CSystem*>::iterator itEng = m_vpSystems.begin();
+		std::deque<ISystem*>::iterator itEng = m_vpSystems.begin();
 		while (itEng != m_vpSystems.end())
 		{
 			if (dynamic_cast<T*>((*itEng)))
@@ -91,11 +91,16 @@ public:
 	unsigned int m_FPS;
 	unsigned int m_MinFPS;
 
+protected:
+	void renderComponentsPhase(int mode);
+	void doUpdate();
+	void doRender();
+
 private:
 	bool init() noexcept;
 
 	std::deque<CComponent*> m_vpComponents;
-	std::deque<CSystem*> m_vpSystems;
+	std::deque<ISystem*> m_vpSystems;
 
 	Zpg m_Zpg;
 

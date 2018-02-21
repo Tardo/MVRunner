@@ -33,7 +33,7 @@ void CMapRender::draw(sf::RenderTarget& target, sf::RenderStates states) const n
 
 	const sf::IntRect mapBounds = Map.getMapBounds(Client()->Camera());
 
-	if (Client()->getRenderMode() == CGameClient::RENDER_NORMAL)
+	if (Client()->getRenderMode() == RENDER_MODE_NORMAL)
 	{
 		if (m_Render == RENDER_BACK)
 		{
@@ -65,7 +65,7 @@ void CMapRender::draw(sf::RenderTarget& target, sf::RenderStates states) const n
 			}
 		}
 	}
-	else if (Client()->getRenderMode() == CGameClient::RENDER_LIGHTING)
+	else if (Client()->getRenderMode() == RENDER_MODE_LIGHTING)
 	{
 		if (m_Render == RENDER_FRONT)
 		{
@@ -164,6 +164,12 @@ void CMapRender::renderTilemap(sf::RenderTarget& target, sf::RenderStates states
 			}
 
 			sf::Color colorQuad = lightColor;
+			if (pTile && Client()->getRenderMode() == RENDER_MODE_LIGHTING)
+			{
+				const bool luminance = pTile->GetProperties().GetBoolProperty("luminance", false);
+				if (luminance)
+					colorQuad = sf::Color::White;
+			}
 			vQuad[0].color = colorQuad;
 			vQuad[1].color = colorQuad;
 			vQuad[2].color = colorQuad;

@@ -22,9 +22,9 @@ void CPlayerRender::draw(sf::RenderTarget& target, sf::RenderStates states) cons
 
 	target.setView(Client()->Camera());
 
-	if (Client()->getRenderMode() == CGameClient::RENDER_NORMAL)
+	if (Client()->getRenderMode() == RENDER_MODE_NORMAL)
 		renderPlayer(target, states, Client()->Controller()->Context()->getPlayer()->getCharacter());
-	else if (Client()->getRenderMode() == CGameClient::RENDER_LIGHTING)
+	else if (Client()->getRenderMode() == RENDER_MODE_LIGHTING)
 		renderPlayerLights(target, states, Client()->Controller()->Context()->getPlayer()->getCharacter());
 }
 

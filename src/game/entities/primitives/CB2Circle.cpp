@@ -2,7 +2,6 @@
 
 #include <base/math.hpp>
 #include <engine/CGame.hpp>
-#include <engine/CSystemBox2D.hpp>
 #include "CB2Circle.hpp"
 
 CB2Circle::CB2Circle(sf::Vector2f worldPos, float radius, sf::Color color, const CB2BodyInfo &bodyInfo, int entityType) noexcept

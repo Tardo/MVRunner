@@ -37,7 +37,7 @@ CGameClient::CGameClient() noexcept
 	m_ViewHud = getDefaultView();
 	m_DeltaTime = 0.0f;
 	m_MinFPS = 9999;
-	m_RenderMode = RENDER_NORMAL;
+	m_RenderMode = RENDER_MODE_NORMAL;
 
 	m_TimerGame = ups::timeGet();
 	m_Add100Hz = false;
@@ -82,7 +82,7 @@ void CGameClient::run() noexcept
         		m_Controls.processEvent(event);
         }
 
-        // Timers
+        // Timing Control Flags
     	static const sf::Int64 time100Hz = ups::timeFreq()/100;
     	static const sf::Int64 time50Hz = ups::timeFreq()/50;
     	if(m_Timer100Hz.getElapsedTime().asMicroseconds() > time100Hz)
@@ -101,58 +101,9 @@ void CGameClient::run() noexcept
     	else
     		m_Add50Hz = false;
 
-        // Update Systems
-    	std::deque<CSystem*>::const_iterator itSys = m_vpSystems.cbegin();
-    	while (itSys != m_vpSystems.cend())
-        	(*itSys++)->update(m_DeltaTime);
-
-    	// Update Camera
-    	m_Camera.update(m_DeltaTime);
-
-        // Update Controller
-        if (Controller())
-        	Controller()->tick();
-
-        // Render
-        // Update Components
-        setRenderMode(RENDER_NORMAL);
-        m_RenderPhaseTexture.clear(CMap::tmxToSf(Controller()->Context()->Map().GetBackgroundColor()));
-        std::deque<CComponent*>::const_iterator itComp = m_vpComponents.cbegin();
-    	while (itComp != m_vpComponents.cend())
-    		m_RenderPhaseTexture.draw(*(*itComp++));
-    	m_RenderPhaseTexture.display();
-    	draw(m_RenderPhase);
-
-		// Update Lighting
-    	setRenderMode(RENDER_LIGHTING);
-    	m_RenderPhaseTexture.clear(sf::Color::Black);
-		itComp = m_vpComponents.cbegin();
-		while (itComp != m_vpComponents.cend())
-			m_RenderPhaseTexture.draw(*(*itComp++));
-		m_RenderPhaseTexture.display();
-		draw(m_RenderPhase, sf::BlendAdd);
-
-		sf::Shader *pShader = Assets().getShader(CAssetManager::SHADER_BLOOM);
-		if (pShader)
-		{
-			sf::RenderStates states;
-			states.blendMode = sf::BlendAlpha;
-			states.shader = pShader;
-			pShader->setUniform("iChannel0", sf::Shader::CurrentTexture);
-			pShader->setUniform("iResolution", sf::Vector2f(m_RenderPhase.getTexture()->getSize().x, m_RenderPhase.getTexture()->getSize().y));
-			static const int sIters = 8;
-			for (int i=0; i<sIters; ++i)
-			{
-				pShader->setUniform("direction", (i%2 == 0)?sf::Vector2f((sIters-i-1)*upm::floatRand(0.6f, 0.8f), 0):sf::Vector2f(0, (sIters-i-1)*upm::floatRand(0.6f, 0.8f)));
-				m_RenderPhaseTexture.draw(m_RenderPhase, states);
-				m_RenderPhaseTexture.display();
-			}
-
-			draw(m_RenderPhase, sf::BlendAdd);
-		}
-
-        // Magic!
-        display();
+    	// Magic!
+    	doUpdate();
+        doRender();
 
         // FPS
         static unsigned int fpsCounter = 0;
@@ -169,6 +120,69 @@ void CGameClient::run() noexcept
         	++fpsCounter;
         }
     }
+}
+
+void CGameClient::doUpdate()
+{
+	if (Controller() && Controller()->Context()->getPlayer()->getCharacter())
+	{
+		const sf::Vector2f &pos = CSystemBox2D::b2ToSf(Controller()->Context()->getPlayer()->getCharacter()->getBody()->GetPosition());
+		m_SystemSound.setListenerPosition(pos);
+	}
+
+    // Update Systems
+	std::deque<ISystem*>::const_iterator itSys = m_vpSystems.cbegin();
+	while (itSys != m_vpSystems.cend())
+    	(*itSys++)->update(m_DeltaTime);
+
+	// Update Camera
+	m_Camera.update(m_DeltaTime);
+
+    // Update Controller
+    if (Controller())
+    	Controller()->tick();
+}
+
+void CGameClient::doRender()
+{
+    // Render Components
+    // Normal Mode
+    m_RenderPhaseTexture.clear(CMap::tmxToSf(Controller()->Context()->Map().GetBackgroundColor()));
+    renderComponentsPhase(RENDER_MODE_NORMAL);
+    draw(m_RenderPhase);
+
+	// Lighting Mode
+    m_RenderPhaseTexture.clear(sf::Color::Black);
+    renderComponentsPhase(RENDER_MODE_LIGHTING);
+    draw(m_RenderPhase, sf::BlendAdd);
+
+    // Bloom Effect
+	sf::Shader *pShader = Assets().getShader(CAssetManager::SHADER_BLOOM);
+	if (pShader)
+	{
+		pShader->setUniform("iChannel0", sf::Shader::CurrentTexture);
+		pShader->setUniform("iResolution", sf::Vector2f(m_RenderPhase.getTexture()->getSize().x, m_RenderPhase.getTexture()->getSize().y));
+		static const int sIters = 8;
+		for (int i=0; i<sIters; ++i)
+		{
+			pShader->setUniform("direction", (i%2 == 0)?sf::Vector2f((sIters-i-1)*upm::floatRand(0.6f, 0.8f), 0):sf::Vector2f(0, (sIters-i-1)*upm::floatRand(0.6f, 0.8f)));
+			m_RenderPhaseTexture.draw(m_RenderPhase, pShader);
+			m_RenderPhaseTexture.display();
+		}
+
+		draw(m_RenderPhase, sf::BlendAdd);
+	}
+
+    display();
+}
+
+void CGameClient::renderComponentsPhase(int mode)
+{
+    setRenderMode(mode);
+    std::deque<CComponent*>::const_iterator itComp = m_vpComponents.cbegin();
+	while (itComp != m_vpComponents.cend())
+		m_RenderPhaseTexture.draw(*(*itComp++));
+	m_RenderPhaseTexture.display();
 }
 
 void CGameClient::reset() noexcept
@@ -263,13 +277,15 @@ bool CGameClient::init() noexcept
 	m_vpComponents.push_back(&m_Menus);
 	m_vpComponents.push_back(&m_UI);
 
+	m_SystemSound.setAssetManager(&Assets());
+
 	m_vpSystems.push_back(&m_SystemSound); 		// Sound: sound spatialization
 	m_vpSystems.push_back(&m_SystemBox2D); 		// Box2D: for realistic physics
 
-	std::deque<CSystem*>::iterator itEng = m_vpSystems.begin();
+	std::deque<ISystem*>::iterator itEng = m_vpSystems.begin();
 	while (itEng != m_vpSystems.end())
 	{
-    	if (!(*itEng)->init(this))
+    	if (!(*itEng)->init())
     		return false;
     	++itEng;
 	}

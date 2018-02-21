@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.0" orientation="orthogonal" renderorder="right-up" width="176" height="128" tilewidth="64" tileheight="64" infinite="0" backgroundcolor="#00002c" nextobjectid="37">
+<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-up" width="176" height="128" tilewidth="64" tileheight="64" infinite="0" backgroundcolor="#00002c" nextobjectid="37">
  <tileset firstgid="1" name="mario" tilewidth="64" tileheight="64" tilecount="256" columns="16">
   <image source="mapres/mario_oldscool.png" width="1024" height="1024"/>
+  <tile id="45">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="51">
    <objectgroup draworder="index">
     <object id="1" type="static" x="4.25" y="8" width="55.5" height="55.75">
@@ -9,7 +14,25 @@
     </object>
    </objectgroup>
   </tile>
+  <tile id="73">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="74">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="75">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="76">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
    <animation>
     <frame tileid="76" duration="300"/>
     <frame tileid="75" duration="300"/>
@@ -17,13 +40,101 @@
     <frame tileid="73" duration="300"/>
    </animation>
   </tile>
+  <tile id="77">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="89">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="90">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="91">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="92">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
    <animation>
     <frame tileid="92" duration="300"/>
     <frame tileid="91" duration="300"/>
     <frame tileid="90" duration="300"/>
     <frame tileid="89" duration="300"/>
    </animation>
+  </tile>
+  <tile id="93">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="105">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="106">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="107">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="108">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="109">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="110">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="121">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="122">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="123">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="124">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="125">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="126">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
   </tile>
   <tile id="137">
    <animation>
@@ -45,6 +156,16 @@
     <frame tileid="155" duration="300"/>
     <frame tileid="171" duration="300"/>
    </animation>
+  </tile>
+  <tile id="142">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="158">
+   <properties>
+    <property name="luminance" type="bool" value="true"/>
+   </properties>
   </tile>
   <tile id="189">
    <animation>

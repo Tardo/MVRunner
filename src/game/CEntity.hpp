@@ -4,8 +4,9 @@
 #define H_GAME_ENTITY
 
 #include <SFML/Graphics.hpp>
-#include <engine/CSystemBox2D.hpp>
 #include <vector>
+
+#include "../engine/CSystemBox2D.hpp"
 
 #define MAX_SHADOWS	4
 

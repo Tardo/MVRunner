@@ -34,7 +34,7 @@ MACRO_CONFIG_FLOAT(WeaponGrenadeLauncherRadius, weapon_grenade_launcher_radius, 
 MACRO_CONFIG_FLOAT(WeaponGrenadeLauncherFireDelay, weapon_grenade_launcher_fire_delay, 0.45f, 0.0f, 999.0f, CConfig::SAVE)
 MACRO_CONFIG_FLOAT(WeaponGrenadeLauncherLifeTime, weapon_grenade_launcher_life_time, 2.0f, 0.0f, 999.0f, CConfig::SAVE)
 MACRO_CONFIG_FLOAT(WeaponGrenadeLauncherSpeed, weapon_grenade_launcher_speed, 4.0f, 0.0f, 999.0f, CConfig::SAVE)
-MACRO_CONFIG_FLOAT(WeaponJetPackEnergy, weapon_jet_pack_energy, 12.5f, 0.0f, 999.0f, CConfig::SAVE)
+MACRO_CONFIG_FLOAT(WeaponJetPackEnergy, weapon_jet_pack_energy, 2.5f, 0.0f, 999.0f, CConfig::SAVE)
 MACRO_CONFIG_FLOAT(WeaponJetPackFireDelay, weapon_jet_pack_fire_delay, 0.1f, 0.0f, 999.0f, CConfig::SAVE)
 
 MACRO_CONFIG_FLOAT(HitBoxGoreDuration, hitbox_gore_duration, 4.0f, 0.0f, 999.9f, CConfig::SAVE)

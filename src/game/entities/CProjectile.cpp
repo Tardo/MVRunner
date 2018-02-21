@@ -20,7 +20,6 @@ CProjectile::CProjectile(const sf::Vector2f &pos, const sf::Vector2f &size, cons
     if (m_pBody)
     	m_pBody->SetBullet(true);
 
-    CGame *pGame = CGame::getInstance();
     if (m_ProjType == WEAPON_GRENADE_LAUNCHER)
     {
     	if (m_pBody)

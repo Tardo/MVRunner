@@ -1,7 +1,7 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
+#include "CSystemBox2D.hpp"
 #include <base/math.hpp>
-#include <engine/CSystemBox2D.hpp>
 #include "CGame.hpp"
 
 b2Vec2 CSystemBox2D::ZERO(0.0f, 0.0f);
@@ -24,9 +24,8 @@ CSystemBox2D::~CSystemBox2D() noexcept
 	#endif
 }
 
-bool CSystemBox2D::init(class CGameClient *pGameClient) noexcept
+bool CSystemBox2D::init() noexcept
 {
-	CSystem::init(pGameClient);
 	m_World.SetContactListener(&m_ContactListener);
 	return true;
 }

@@ -4,8 +4,8 @@
 #define H_ENTITY_CIRCLEB2
 
 #include <SFML/Graphics.hpp>
-#include <engine/CSystemBox2D.hpp>
 #include <game/CEntity.hpp>
+#include <engine/CSystemBox2D.hpp>
 
 class CB2Circle : public CEntity
 {

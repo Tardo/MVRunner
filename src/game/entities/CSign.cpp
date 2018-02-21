@@ -2,8 +2,8 @@
 
 #include <engine/CGame.hpp>
 #include <engine/CAssetManager.hpp>
-#include <engine/CSystemBox2D.hpp>
 #include "CSign.hpp"
+#include <engine/CSystemBox2D.hpp>
 
 const CB2BodyInfo CSign::ms_BodyInfo = CB2BodyInfo(0.2f, 0.7f, 0.1f, b2_dynamicBody, CAT_SIGN, true, CAT_CHARACTER_PLAYER);
 CSign::CSign(const sf::Vector2f &pos, const sf::Vector2f &size, const char *pText) noexcept
