@@ -31,10 +31,20 @@ void CMenus::setActive(int mid, CEntity *pEnt) noexcept
 
 void CMenus::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
 {
-	//if (Client()->getRenderMode() != CGameClient::RENDER_NORMAL)
-	//	return;
+	if (Client()->getRenderMode() != CGameClient::RENDER_NORMAL)
+		return;
 
 	target.setView(Client()->getHudView());
+
+	static bool inMenu = false;
+	if (!inMenu && Client()->getElapsedTime() > 4.0f)
+	{
+		Client()->Menus().setActive(CMenus::MAIN);
+		inMenu = true;
+	}
+	else if (!inMenu)
+		renderMenuIntro(target, states);
+
 
 	if (m_ActiveMenu == MAIN)
 		renderMenuMain(target, states);
@@ -190,7 +200,33 @@ void CMenus::renderMenuMain(sf::RenderTarget& target, sf::RenderStates states) c
 	}
 }
 
-void CMenus::ClipEnable(const sf::RenderTarget &target, int x, int y, int w, int h) const noexcept
+void CMenus::renderMenuIntro(sf::RenderTarget& target, sf::RenderStates states) const noexcept
+{
+	sf::Shader *pShader = Client()->Assets().getShader(CAssetManager::SHADER_FLAG);
+	if (pShader)
+	{
+		pShader->setUniform("wave_phase", Client()->getElapsedTime());
+		pShader->setUniform("wave_amplitude", sf::Vector2f(8.0f, 8.0f));
+		pShader->setUniform("texture", sf::Shader::CurrentTexture);
+	}
+
+	sf::Text text;
+	text.setFont(Client()->Assets().getDefaultFont());
+	text.setString(_("Powered By"));
+	text.setCharacterSize(92.0f);
+	text.setFillColor(sf::Color(80, 80, 80));
+	text.setPosition(g_Config.m_ScreenWidth/2.0f - text.getLocalBounds().width/2.0f, 180.0f);
+	Client()->getTexturePhase()->draw(text);
+
+	sf::Sprite SpriteLogo;
+	SpriteLogo.setTexture(*Client()->Assets().getTexture(CAssetManager::TEXTURE_SFML_LOGO));
+	SpriteLogo.setScale(0.75f, 0.75f);
+	SpriteLogo.setPosition(sf::Vector2f(g_Config.m_ScreenWidth/2.0f - SpriteLogo.getLocalBounds().width/2.0f*SpriteLogo.getScale().x, g_Config.m_ScreenHeight/2.0f - SpriteLogo.getLocalBounds().height/2.0f*SpriteLogo.getScale().y));
+	states.shader = pShader;
+	target.draw(SpriteLogo, states);
+}
+
+void CMenus::clipEnable(const sf::RenderTarget &target, int x, int y, int w, int h) const noexcept
 {
 	sf::FloatRect rectArea;
 	Client()->getViewportGlobalBounds(&rectArea, target.getView());
@@ -209,7 +245,7 @@ void CMenus::ClipEnable(const sf::RenderTarget &target, int x, int y, int w, int
 	glEnable(GL_SCISSOR_TEST);
 }
 
-void CMenus::ClipDisable() const noexcept
+void CMenus::clipDisable() const noexcept
 {
 	glDisable(GL_SCISSOR_TEST);
 }

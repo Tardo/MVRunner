@@ -42,6 +42,7 @@ bool CConfig::load() noexcept
 		#undef MACRO_CONFIG_FLOAT
 		#undef MACRO_CONFIG_STR
 		#undef MACRO_CONFIG_BOOL
+		#undef MACRO_CONFIG_COLOR
 	}
 
 

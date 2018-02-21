@@ -4,6 +4,8 @@
 #define H_GAME_COMPONENT_PARTICLE_RENDER
 
 #include <game/CComponent.hpp>
+#include <game/entities/CParticle.hpp>
+
 
 class CParticleRender final : public CComponent
 {
@@ -15,6 +17,9 @@ public:
 
 protected:
 	int m_Render;
+
+private:
+	virtual void renderParticle(sf::RenderTarget& target, sf::RenderStates states, CParticle *pParticle) const noexcept final;
 };
 
 #endif

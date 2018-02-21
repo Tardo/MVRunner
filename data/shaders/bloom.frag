@@ -27,7 +27,6 @@ vec4 blur13(sampler2D image, vec2 uv, vec2 resolution, vec2 direction) {
 }
 
 void main() {
-  //vec2 uv = vec2(gl_FragCoord.xy / iResolution.xy);
-  vec2 uv = gl_TexCoord[0].xy;
-  gl_FragColor = gl_Color * blur13(iChannel0, uv, iResolution.xy, direction);
+  vec2 uv = vec2(gl_FragCoord.xy / iResolution.xy);
+  gl_FragColor = gl_Color * blur5(iChannel0, uv, iResolution.xy, direction);
 }

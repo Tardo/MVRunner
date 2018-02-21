@@ -11,8 +11,6 @@ CB2Circle::CB2Circle(sf::Vector2f worldPos, float radius, sf::Color color, const
 	CGame *pGame = CGame::getInstance();
 	m_pBody = pGame->Client()->getSystem<CSystemBox2D>()->createCircleBody(worldPos, radius, bodyInfo);
 	m_pBody->SetUserData(this);
-
-	m_Id = pGame->Client()->Controller()->Context()->addEntity(this);
 }
 CB2Circle::~CB2Circle() noexcept
 {

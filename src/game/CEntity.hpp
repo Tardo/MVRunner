@@ -38,6 +38,8 @@ public:
 		FIRE,
 		AMBIENTSOUND,
 		SIGN,
+		LIGHT,
+		PARTICLE,
 
 		NUM_ENTITIES,
 

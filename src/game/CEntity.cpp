@@ -17,6 +17,9 @@ CEntity::CEntity(int type, const sf::Color color)
 	m_pBody = nullptr;
 	m_Color = color;
 	m_ContactFx = FX_NONE;
+
+	CGame *pGame = CGame::getInstance();
+	m_Id = pGame->Client()->Controller()->Context()->addEntity(this);
 }
 
 CEntity::~CEntity()

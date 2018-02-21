@@ -53,7 +53,6 @@ void CCharacter::tick() noexcept
 		return;
 
 	CGame *pGame = CGame::getInstance();
-	CSystemFx *pFxEngine = pGame->Client()->getSystem<CSystemFx>();
 
 	if (isAlive())
 	{
@@ -85,7 +84,7 @@ void CCharacter::tick() noexcept
 
 		if (m_Health <= 0)
 		{
-			pFxEngine->createBlood(shapePos);
+			pGame->Client()->Controller()->createBlood(shapePos);
 			m_Alive = false;
 			m_Visible = false;
 			getBody()->SetActive(false);
@@ -158,7 +157,7 @@ void CCharacter::takeHealth(int amount, class CPlayer *pPlayer) noexcept
 	m_Health = upm::max(m_Health-amount, 0);
 	CGame *pGame = CGame::getInstance();
 	m_TimerDamageIndicator = ups::timeGet();
-	pGame->Client()->getSystem<CSystemFx>()->createPoints(charPos, -amount);
+	pGame->Client()->Controller()->createPoints(charPos, -amount);
 	pGame->Client()->getSystem<CSystemSound>()->play(CAssetManager::SOUND_DAMAGE, charPos, 15.0f);
 	if (m_Health == 1)
 		m_TimerHeartbeat = ups::timeGet();
@@ -269,11 +268,11 @@ void CCharacter::onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexc
 	if ((m_State&MOVE_STATE_LEFT) && charVel.x > 500.0f)
 	{
 		CGame *pGame = CGame::getInstance();
-		pGame->Client()->getSystem<CSystemFx>()->createSmokeImpact(worldPos, sf::Vector2f(-1.0f, 0.0f), upm::vectorLength(charVel)/500.0f);
+		pGame->Client()->Controller()->createSmokeImpact(worldPos, sf::Vector2f(-1.0f, 0.0f), upm::vectorLength(charVel)/500.0f);
 	} else if ((m_State&MOVE_STATE_RIGHT) && charVel.x < -500.0f)
 	{
 		CGame *pGame = CGame::getInstance();
-		pGame->Client()->getSystem<CSystemFx>()->createSmokeImpact(worldPos, sf::Vector2f(1.0f, 0.0f), upm::vectorLength(charVel)/500.0f);
+		pGame->Client()->Controller()->createSmokeImpact(worldPos, sf::Vector2f(1.0f, 0.0f), upm::vectorLength(charVel)/500.0f);
 	}
 }
 

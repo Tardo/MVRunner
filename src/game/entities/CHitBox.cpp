@@ -81,9 +81,9 @@ void CHitBox::tick() noexcept
 		if (getBody() && m_LastPos != shapePos)
 		{
 			if (m_HitBoxType == HITBOX_EXPLOSION_TRASH && elapsedTicks < ups::timeFreq()*0.25f)
-				pGame->Client()->getSystem<CSystemFx>()->createImpactSparkMetal(shapePos);
+				pGame->Client()->Controller()->createImpactSparkMetal(shapePos);
 			else if ((m_HitBoxType == HITBOX_CHARACTER_HEAD || m_HitBoxType == HITBOX_CHARACTER_BODY || m_HitBoxType == HITBOX_CHARACTER_LEG) && elapsedTicks < ups::timeFreq()*0.75f)
-				pGame->Client()->getSystem<CSystemFx>()->createBloodSpark(shapePos, 10.0f);
+				pGame->Client()->Controller()->createBloodSpark(shapePos, 10.0f);
 		}
 	}
 

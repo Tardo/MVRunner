@@ -180,6 +180,16 @@ void CPlayerRender::renderPlayerLights(sf::RenderTarget& target, sf::RenderState
 	{
 		const sf::Vector2f CharDir = upm::vectorNormalize(Client()->mapPixelToCoords(Client()->Controls().getMousePos(), Client()->Camera()) - CharPos);
 		const sf::Vector2f weaponPos = CharPos-CharDir*OffsetWeapon;
+		if (g_Config.m_AimLineLength > 0.0f)
+		{
+			sf::VertexArray Line(sf::LinesStrip, 2);
+			Line[0].position = CharPos;
+			Line[0].color = g_Config.m_AimLineColor;
+			Line[1].position = weaponPos + CharDir*g_Config.m_AimLineLength;
+			Line[1].color = sf::Color::Transparent;
+			target.draw(Line, states);
+		}
+
 		sf::CircleShape ShapeWeapon(CCharacter::SIZE, 10); // Low Definition
 		ShapeWeapon.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_SKIN_DEFAULT));
 		ShapeWeapon.setTextureRect(sf::IntRect(32, 0, 28, 28));

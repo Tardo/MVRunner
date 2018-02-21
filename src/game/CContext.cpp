@@ -8,6 +8,9 @@ CContext::CContext() noexcept
 {
 	m_pPlayer = new CPlayer();
 	m_Weather = WEATHER_NORMAL;
+	m_TimerStorm = 0;
+	m_ColorClear = sf::Color(128, 128, 128);
+	m_ColorShadow = sf::Color(64, 64, 64);
 }
 CContext::~CContext() noexcept
 {
@@ -45,16 +48,6 @@ CContext::~CContext() noexcept
     }
     m_vpEntities.clear();
 
-    std::vector<CParticle*>::const_iterator itp = m_vpParticles.cbegin();
-	while (itp != m_vpParticles.cend())
-	{
-		CParticle *pParticle = (*itp);
-		delete pParticle;
-		pParticle = nullptr;
-		++itp;
-	}
-	m_vpParticles.clear();
-
 	#ifdef DEBUG_DESTRUCTORS
 	ups::msgDebug("CContext", "Borrado");
 	#endif
@@ -68,24 +61,4 @@ int CContext::addEntity(CEntity *pEntity) noexcept
 		return m_vpEntities.size() - 1;
 	}
 	return -1;
-}
-
-int CContext::addParticle(CParticle *pParticle) noexcept
-{
-	if (pParticle)
-	{
-		m_vpParticles.push_back(pParticle);
-		return m_vpParticles.size() - 1;
-	}
-	return -1;
-}
-
-void CContext::clearParticles() noexcept
-{
-	std::vector<CParticle*>::const_iterator itp = m_vpParticles.cbegin();
-	while (itp != m_vpParticles.cend())
-	{
-		(*itp)->m_Duration = 0;
-		++itp;
-	}
 }

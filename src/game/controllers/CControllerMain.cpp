@@ -4,7 +4,6 @@
 #include <base/system.hpp>
 #include <engine/CAssetManager.hpp>
 #include <engine/CSystemBox2D.hpp>
-#include <engine/CSystemLight.hpp>
 #include <engine/CSystemSound.hpp>
 #include <game/entities/CCharacter.hpp>
 #include <game/entities/CFire.hpp>
@@ -248,7 +247,7 @@ void CControllerMain::tick() noexcept
 					//pChar->getBody()->SetFixedRotation(true);
 					pChar->getBody()->SetLinearVelocity(b2Vec2(0.0f, 0.0f));
 					pChar->getBody()->SetAngularVelocity(0.0f);
-					Game()->Client()->getSystem<CSystemFx>()->createFireBall(pChar);
+					createFireBall(pChar);
 					pChar->getBody()->SetTransform(CSystemBox2D::sfToB2(m_LastCheckPoint), pChar->getBody()->GetAngle());
 				}
 			}

@@ -5,6 +5,7 @@
 
 #include <base/math.hpp>
 #include <game/CContext.hpp>
+#include <game/entities/CLight.hpp>
 #include <SFML/Graphics.hpp>
 #include <vector>
 
@@ -57,12 +58,32 @@ public:
 
 	virtual bool isStaticObject(const char *pType) const noexcept; // FIXME: Use other implementation!!
 
+	void createFireBall(class CEntity *pTarget, const sf::Vector2f &offSet = VECTOR_ZERO) noexcept;
+	void createFireTrailSmall(const sf::Vector2f &worldPos) noexcept;
+	void createFireTrailLarge(const sf::Vector2f &worldPos) noexcept;
+	void createBloodSpark(const sf::Vector2f &worldPos, float duration = 60.0f) noexcept;
+	void createBlood(const sf::Vector2f &worldPos) noexcept;
+	void createPoints(const sf::Vector2f &worldPos, int points) noexcept;
+	void createSmokeImpact(const sf::Vector2f &worldPos, const sf::Vector2f &dir, float vel) noexcept;
+	void createRainBack(const sf::Vector2f &worldPos, float rainVel) noexcept;
+	void createRainFront(const sf::Vector2f &worldPos, float rainVel) noexcept;
+	void createStorm() noexcept;
+	void createSnowBack(const sf::Vector2f &worldPos, float snowVel) noexcept;
+	void createSnowFront(const sf::Vector2f &worldPos, float snowVel) noexcept;
+	void createSmokeCarDamaged(const sf::Vector2f &worldPos, bool fire) noexcept;
+	void createImpactSparkMetal(const sf::Vector2f &worldPos) noexcept;
+	void createExplosionCar(const sf::Vector2f &worldPos, bool ring) noexcept;
+
+	CLight* createPoint(const sf::Vector2f &worldPos, const sf::Vector2f &scale, const sf::Color &color, bool alwaysOn = false, float blink = 0.0f, float variationSize = 0.0f) noexcept;
+	CLight* createSpot(const sf::Vector2f &worldPos, float angle, const sf::Vector2f &scale, const sf::Color &color, bool alwaysOn = false, float blink = 0.0f, float variationSize = 0.0f) noexcept;
+	CLight* createEmissive(const sf::Vector2f &worldPos, float angle, const sf::Vector2f &scale, const sf::Color &color, bool alwaysOn = false, float blink = 0.0f, float variationSize = 0.0f) noexcept;
+	CLight* createCustom(int textId, const sf::Vector2f &worldPos, const sf::Vector2f &origin, float angle, const sf::Vector2f &scale, const sf::Color &color, bool alwaysOn = false, float blink = 0.0f, float variationSize = 0.0f) noexcept;
+
 	CSpawn m_PlayerSpawnPos;
 
 private:
 	class CGame *m_pGame;
 	CContext *m_pGameContext;
-	sf::Int64 m_TimerStorm;
 };
 
 #endif

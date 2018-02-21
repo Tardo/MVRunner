@@ -15,8 +15,6 @@
 #include <game/CEntity.hpp>
 #include <engine/CNoise.hpp>
 #include <engine/CQuadTree.hpp>
-#include <engine/CSystemLight.hpp>
-#include <engine/CSystemLight.hpp>
 
 enum
 {
@@ -80,7 +78,6 @@ public:
 	CMapRenderObject() noexcept
 	{
 		m_pEntity = nullptr;
-		m_pLight = nullptr;
 		m_pObject = nullptr;
 		m_Offset = sf::Vector2f(0.0f, 0.0f);
 	}
@@ -88,7 +85,6 @@ public:
 	CMapRenderObject(const Tmx::Object *pObj, const sf::Vector2f &offset = sf::Vector2f(0.0f, 0.0f)) noexcept
 	{
 		m_pEntity = nullptr;
-		m_pLight = nullptr;
 		m_pObject = pObj;
 		m_Offset = offset;
 	}
@@ -97,8 +93,6 @@ public:
 	{
 		if (m_pEntity && m_pEntity->getBody())
 			return CSystemBox2D::b2ToSf(m_pEntity->getBody()->GetPosition());
-		else if (m_pLight)
-			return m_pLight->m_Position;
 		else if (m_pObject)
 		{
 			const sf::FloatRect globalBounds(
@@ -115,12 +109,9 @@ public:
 	{
 		if (m_pEntity)
 			m_pEntity->destroy();
-		if (m_pLight)
-			m_pLight->destroy();
 	}
 
 	CEntity *m_pEntity;
-	CLight *m_pLight;
 	sf::Vector2f m_Offset;
 	const Tmx::Object *m_pObject;
 };

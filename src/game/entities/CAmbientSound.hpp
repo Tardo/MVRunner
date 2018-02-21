@@ -1,7 +1,7 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
 #ifndef H_ENTITY_CAMBIENTSOUND
-#define H_ENTITY_CLASER
+#define H_ENTITY_CAMBIENTSOUND
 
 #include <SFML/Audio.hpp>
 #include <game/CEntity.hpp>

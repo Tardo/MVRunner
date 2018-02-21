@@ -21,7 +21,6 @@ public:
 
 private:
 	sf::Vector2f m_CamPos;
-	sf::Sprite m_SpriteLogo;
 };
 
 #endif

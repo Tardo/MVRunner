@@ -16,7 +16,7 @@ CFire::CFire(const sf::Vector2f &pos, const sf::Vector2f &dir, float force, floa
 
 	CGame *pGame = CGame::getInstance();
 
-	pGame->Client()->getSystem<CSystemFx>()->createFireBall(this);
+	pGame->Client()->Controller()->createFireBall(this);
 	if (getBody())
 	{
 		getBody()->SetBullet(true);
@@ -65,5 +65,5 @@ void CFire::onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexcept
 		return;
 
 	CGame *pGame = CGame::getInstance();
-	pGame->Client()->getSystem<CSystemFx>()->createFireTrailLarge(worldPos);
+	pGame->Client()->Controller()->createFireTrailLarge(worldPos);
 }

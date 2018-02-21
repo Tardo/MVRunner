@@ -3,7 +3,6 @@
 #ifndef H_GAME_CONTEXT
 #define H_GAME_CONTEXT
 
-#include <engine/CSystemFx.hpp>
 #include <game/CPlayer.hpp>
 #include "CMap.hpp"
 #include <vector>
@@ -24,9 +23,6 @@ public:
 	CMap& Map() { return m_Map; }
 
 	int addEntity(CEntity *pEntity) noexcept;
-	int addParticle(CParticle *pParticle) noexcept;
-	void clearParticles() noexcept;
-
 	CEntity* getEntity(std::size_t index) const noexcept
 	{
 		if (index < 0 || index >= m_vpEntities.size())
@@ -34,20 +30,28 @@ public:
 		return m_vpEntities[index];
 	}
 	std::vector<CEntity*>& getEntities() noexcept { return m_vpEntities; }
-	std::vector<CParticle*>& getParticles() noexcept { return m_vpParticles; }
 
 	void setWeather(int weather) { m_Weather = weather; }
 	int getWeather() const { return m_Weather; }
 
+	sf::Color getColorClear() const noexcept { return m_ColorClear; }
+	sf::Color getColorShadow() const noexcept { return m_ColorShadow; }
+
 	CPlayer* getPlayer() noexcept { return m_pPlayer; }
 
+	sf::Int64 getTimerStorm() const { return m_TimerStorm; }
+	void setTimerStorm(sf::Int64 time) { m_TimerStorm = time; }
+
 private:
-	std::vector<CParticle*> m_vpParticles;
 	std::vector<CEntity*> m_vpEntities;
 
 	CPlayer *m_pPlayer;
 	CMap m_Map;
 	int m_Weather;
+	sf::Int64 m_TimerStorm;
+
+	sf::Color m_ColorClear;
+	sf::Color m_ColorShadow;
 };
 
 #endif

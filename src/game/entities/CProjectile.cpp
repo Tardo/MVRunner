@@ -21,7 +21,6 @@ CProjectile::CProjectile(const sf::Vector2f &pos, const sf::Vector2f &size, cons
     	m_pBody->SetBullet(true);
 
     CGame *pGame = CGame::getInstance();
-    m_pSystemFx = pGame->Client()->getSystem<CSystemFx>();
     if (m_ProjType == WEAPON_GRENADE_LAUNCHER)
     {
     	if (m_pBody)
@@ -56,8 +55,8 @@ void CProjectile::onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noex
 	CGame *pGame = CGame::getInstance();
 	if (!isToDelete() && m_ProjType == WEAPON_GRENADE_LAUNCHER)
 	{
-		pGame->Client()->getSystem<CSystemFx>()->createImpactSparkMetal(worldPos);
-		pGame->Client()->getSystem<CSystemFx>()->createExplosionCar(worldPos, true);
+		pGame->Client()->Controller()->createImpactSparkMetal(worldPos);
+		pGame->Client()->Controller()->createExplosionCar(worldPos, true);
 		pGame->Client()->getSystem<CSystemBox2D>()->createExplosion(worldPos, g_Config.m_aWeaponsInfo[m_ProjType].m_Energy, g_Config.m_aWeaponsInfo[m_ProjType].m_Radius, m_pBody);
 	}
 

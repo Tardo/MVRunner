@@ -11,8 +11,6 @@ CB2Chain::CB2Chain(sf::Vector2f worldPos, const std::vector<sf::Vector2f> points
 	CGame *pGame = CGame::getInstance();
 	m_pBody = pGame->Client()->getSystem<CSystemBox2D>()->createPolyLineBody(worldPos, points, bodyInfo);
 	m_pBody->SetUserData(this);
-
-	m_Id = pGame->Client()->Controller()->Context()->addEntity(this);
 }
 CB2Chain::~CB2Chain() noexcept
 {
@@ -30,6 +28,6 @@ void CB2Chain::onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexcep
 	{
 		CGame *pGame = CGame::getInstance();
 		if (m_ContactFx == CEntity::FX_SPARKS)
-			pGame->Client()->getSystem<CSystemFx>()->createImpactSparkMetal(worldPos);
+			pGame->Client()->Controller()->createImpactSparkMetal(worldPos);
 	}
 }

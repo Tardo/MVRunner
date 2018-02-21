@@ -9,7 +9,6 @@
 #include <engine/CAssetManager.hpp>
 #include <engine/CConfig.hpp>
 #include <engine/CSystemBox2D.hpp>
-#include <engine/CSystemLight.hpp>
 #include <engine/CSystemSound.hpp>
 #include <engine/CSystem.hpp>
 #include <game/components/CMapRender.hpp>
@@ -21,6 +20,7 @@
 #include <game/components/CControls.hpp>
 #include <game/components/CCamera.hpp>
 #include <game/components/CDebuggerRender.hpp>
+#include <game/components/CLightRender.hpp>
 #include <game/CController.hpp>
 #include <game/CEntity.hpp>
 #include <Zpg/Zpg.hpp>
@@ -49,6 +49,7 @@ public:
 	CUI& UI() noexcept { return m_UI; }
 	CCamera& Camera() noexcept { return m_Camera; }
 	Zpg& Storage() noexcept { return m_Zpg; }
+	CLightRender Lights() noexcept { return m_LightRender; }
 
 	template<class T>
 	T* getSystem() noexcept
@@ -78,7 +79,12 @@ public:
 	float getDeltaTime() const noexcept { return m_DeltaTime; }
 	const float getElapsedTime() const noexcept { return (ups::timeGet()-m_TimerGame)/(float)ups::timeFreq(); }
 
-	int getRenderMode() const { return m_RenderMode; }
+	int getRenderMode() const noexcept { return m_RenderMode; }
+	void setRenderMode(int mode) noexcept;
+	sf::RenderTexture* getTexturePhase() { return &m_RenderPhaseTexture; }
+
+	bool canAdd100Hz() const noexcept { return m_Add100Hz; }
+	bool canAdd50Hz() const noexcept { return m_Add50Hz; }
 
 	bool m_Debug;
 	bool m_Paused;
@@ -109,17 +115,22 @@ private:
 	CParticleRender m_ParticleRenderForeground;
 	CControls m_Controls;
 	CDebuggerRender m_DebuggerRender;
+	CLightRender m_LightRender;
 
 	CSystemBox2D m_SystemBox2D;
-	CSystemFx m_SystemFx;
-	CSystemLight m_SystemLight;
 	CSystemSound m_SystemSound;
 
+	sf::RenderTexture m_RenderPhaseTexture;
+	sf::Sprite m_RenderPhase;
 	int m_RenderMode;
 
 	sf::Int64 m_TimerGame;
 
 	float m_DeltaTime;
+	sf::Clock m_Timer100Hz;
+	sf::Clock m_Timer50Hz;
+	bool m_Add100Hz;
+	bool m_Add50Hz;
 };
 
 #endif

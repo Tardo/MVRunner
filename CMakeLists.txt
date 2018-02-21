@@ -151,8 +151,6 @@ set(ENGINE_SRC  src/engine/CAssetManager.cpp
                 src/engine/CLocalization.cpp
                 src/engine/CNoise.cpp
                 src/engine/CSystemBox2D.cpp
-                src/engine/CSystemFx.cpp
-                src/engine/CSystemLight.cpp
                 src/engine/CSystemSound.cpp)
 set(GAME_SRC    src/game/components/CMapRender.cpp
                 src/game/components/CMenus.cpp
@@ -163,6 +161,7 @@ set(GAME_SRC    src/game/components/CMapRender.cpp
                 src/game/components/CControls.cpp
                 src/game/components/CCamera.cpp
                 src/game/components/CDebuggerRender.cpp
+                src/game/components/CLightRender.cpp
                 src/game/controllers/CControllerMain.cpp
                 src/game/controllers/CControllerMenu.cpp
                 src/game/entities/primitives/CB2Circle.cpp
@@ -174,6 +173,8 @@ set(GAME_SRC    src/game/components/CMapRender.cpp
                 src/game/entities/CHitBox.cpp
                 src/game/entities/CProjectile.cpp
                 src/game/entities/CSign.cpp
+                src/game/entities/CLight.cpp
+                src/game/entities/CParticle.cpp
                 src/game/CContext.cpp
                 src/game/CController.cpp
                 src/game/CGameClient.cpp

@@ -20,15 +20,14 @@ CUI::~CUI() noexcept
 
 void CUI::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
 {
-	//if (Client()->getRenderMode() != CGameClient::RENDER_NORMAL)
-	//	return;
-
 	target.setView(Client()->getHudView());
 
 	drawHUD(target, states);
 	if (Client()->m_Debug)
 		drawDebugInfo(target, states);
-	drawCursor(target, states);
+
+	if (Client()->getRenderMode() == CGameClient::RENDER_NORMAL)
+		drawCursor(target, states);
 }
 
 void CUI::showBroadcastMessage(const char *pMsg, float duration) noexcept
@@ -57,7 +56,7 @@ bool CUI::doButton(const char* pText, const sf::FloatRect &bounds, unsigned int 
 	else
 		text.setPosition(bounds.left, bounds.top+bounds.height/2.0f-fontSize);
 	text.setFillColor((text.getGlobalBounds().contains((sf::Vector2f)Client()->Controls().getMousePos()))?sf::Color::Red:sf::Color::White);
-	Client()->draw(text);
+	Client()->getTexturePhase()->draw(text);
 
 	return (Client()->Controls().isMouseLeftClicked() && text.getGlobalBounds().contains((sf::Vector2f)Client()->Controls().getMousePos()));
 }
@@ -126,7 +125,6 @@ void CUI::drawDebugInfo(sf::RenderTarget& target, sf::RenderStates states) const
 	if (!Client()->Controller() || !Client()->Controller()->Context())
 		return;
 
-	CSystemLight *pSystemLight = Client()->getSystem<CSystemLight>();
 	CSystemSound *pSystemSound = Client()->getSystem<CSystemSound>();
 
 	sf::FloatRect rectArea;
@@ -147,35 +145,10 @@ void CUI::drawDebugInfo(sf::RenderTarget& target, sf::RenderStates states) const
 	sfStr.setFillColor(sf::Color::Red);
 	target.draw(sfStr, states);
 
-	#ifdef __LP64__
-	snprintf(aBuff, sizeof(aBuff), "Particulas: %lu", Client()->Controller()->Context()->getParticles().size());
-	#else
-	snprintf(aBuff, sizeof(aBuff), "Particulas: %u", Client()->Controller()->Context()->getParticles().size());
-	#endif
-	sfStr.setString(aBuff);
-	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 60.0f);
-	sfStr.setFillColor(sf::Color::Red);
-	target.draw(sfStr, states);
-
-	#ifdef __LP64__
-	snprintf(aBuff, sizeof(aBuff), "Luces: %lu", pSystemLight->getLights().size());
-	#else
-	snprintf(aBuff, sizeof(aBuff), "Luces: %u", pSystemLight->getLights().size());
-	#endif
-	sfStr.setString(aBuff);
-	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 90.0f);
-	sfStr.setFillColor(sf::Color::Red);
-	target.draw(sfStr, states);
-
 	snprintf(aBuff, sizeof(aBuff), "Sonidos: %d", pSystemSound->getNumPlayingSound());
 
 	sfStr.setString(aBuff);
 	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 120.0f);
-	sfStr.setFillColor(sf::Color::Red);
-	target.draw(sfStr, states);
-
-	sfStr.setString(aBuff);
-	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 150.0f);
 	sfStr.setFillColor(sf::Color::Red);
 	target.draw(sfStr, states);
 }

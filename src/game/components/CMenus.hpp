@@ -34,13 +34,14 @@ private:
 	void renderMenuMain(sf::RenderTarget& target, sf::RenderStates states) const noexcept;
 	void renderMenuControls(sf::RenderTarget& target, sf::RenderStates states) const noexcept;
 	void renderMenuCredits(sf::RenderTarget& target, sf::RenderStates states) const noexcept;
+	void renderMenuIntro(sf::RenderTarget& target, sf::RenderStates states) const noexcept;
 
-	void ClipEnable(const sf::RenderTarget &target, const sf::FloatRect &area) const noexcept
+	void clipEnable(const sf::RenderTarget &target, const sf::FloatRect &area) const noexcept
 	{
-		ClipEnable(target, area.left, area.top, area.width, area.height);
+		clipEnable(target, area.left, area.top, area.width, area.height);
 	}
-	void ClipEnable(const sf::RenderTarget &target, int x, int y, int w, int h) const noexcept;
-	void ClipDisable() const noexcept;
+	void clipEnable(const sf::RenderTarget &target, int x, int y, int w, int h) const noexcept;
+	void clipDisable() const noexcept;
 };
 
 #endif

@@ -11,8 +11,6 @@ CB2Polygon::CB2Polygon(sf::Vector2f worldPos, const std::vector<sf::Vector2f> po
 	CGame *pGame = CGame::getInstance();
 	m_pBody = pGame->Client()->getSystem<CSystemBox2D>()->createPolygonBody(worldPos, points, bodyInfo);
 	m_pBody->SetUserData(this);
-
-	m_Id = pGame->Client()->Controller()->Context()->addEntity(this);
 }
 CB2Polygon::CB2Polygon(sf::Vector2f worldPos, const sf::Vector2f size, const sf::Color color, const CB2BodyInfo &bodyInfo, int entityType) noexcept
 : CEntity(entityType, color)
@@ -20,8 +18,6 @@ CB2Polygon::CB2Polygon(sf::Vector2f worldPos, const sf::Vector2f size, const sf:
 	CGame *pGame = CGame::getInstance();
 	m_pBody = pGame->Client()->getSystem<CSystemBox2D>()->createBoxBody(worldPos, size, bodyInfo);
 	m_pBody->SetUserData(this);
-
-	m_Id = pGame->Client()->Controller()->Context()->addEntity(this);
 }
 CB2Polygon::~CB2Polygon() noexcept
 {

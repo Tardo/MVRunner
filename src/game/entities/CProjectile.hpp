@@ -2,7 +2,6 @@
 #define GAME_ENTITIES_PROJECTILE
 
 #include "primitives/CB2Polygon.hpp"
-#include <engine/CSystemFx.hpp>
 //#include <vector>
 
 
@@ -31,8 +30,6 @@ protected:
 	b2Body *m_pBody;
 	float m_Speed;
 	sf::Vector2f m_Dir;
-	CSystemFx *m_pSystemFx;
-
 private:
 	class CPlayer *m_pPlayer;
 	unsigned int m_ProjType;
