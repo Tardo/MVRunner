@@ -23,6 +23,9 @@ void CDebuggerRender::draw(sf::RenderTarget& target, sf::RenderStates states) co
 
 	target.setView(Client()->Camera());
 	renderBox2D(target, states);
+
+	if (Client()->Controller() && Client()->Controller()->Context())
+		renderQuadTree(target, states, Client()->Controller()->Context()->Map().getObjects());
 }
 
 void CDebuggerRender::renderBox2D(sf::RenderTarget& target, sf::RenderStates states) const noexcept
@@ -31,9 +34,7 @@ void CDebuggerRender::renderBox2D(sf::RenderTarget& target, sf::RenderStates sta
 	for (b2Body *pBody = pSystemBox2D->getWorld()->GetBodyList(); pBody; pBody = pBody->GetNext())
 	{
 		const sf::Vector2f bodyPos = CSystemBox2D::b2ToSf(pBody->GetPosition());
-		sf::FloatRect screenArea;
-		Client()->getViewportGlobalBounds(&screenArea, Client()->Camera());
-		if (!screenArea.contains(bodyPos))
+		if (Client()->isClipped(bodyPos, SCREEN_MARGIN_DRAW))
 			continue;
 
 		for (b2Fixture *pFixture = pBody->GetFixtureList(); pFixture; pFixture = pFixture->GetNext())
@@ -88,4 +89,32 @@ void CDebuggerRender::renderBox2D(sf::RenderTarget& target, sf::RenderStates sta
 			}
 		}
 	}
+}
+
+void CDebuggerRender::renderQuadTree(sf::RenderTarget& target, sf::RenderStates states, CQuadTree<CMapRenderObject*> *pQuadTree) const noexcept
+{
+	if (!pQuadTree)
+		return;
+
+	const sf::FloatRect &bounds = pQuadTree->getBounds();
+	if (Client()->isClipped(bounds, SCREEN_MARGIN_DRAW))
+		return;
+	sf::RectangleShape Shape(sf::Vector2f(bounds.width, bounds.height));
+	Shape.setPosition(bounds.left, bounds.top);
+	Shape.setFillColor(sf::Color::Transparent);
+	Shape.setOutlineColor(sf::Color::Red);
+	Shape.setOutlineThickness(2.0f);
+	target.draw(Shape);
+	for (int i=0; i<pQuadTree->getNumItems(); ++i)
+	{
+		sf::CircleShape Circle(10.0f);
+		Circle.setPosition(pQuadTree->getItem(i)->m_Pos);
+		Circle.setOrigin(10.0f, 10.0f);
+		Circle.setFillColor(sf::Color::Red);
+		target.draw(Circle);
+	}
+	renderQuadTree(target, states, pQuadTree->m_pNW);
+	renderQuadTree(target, states, pQuadTree->m_pNE);
+	renderQuadTree(target, states, pQuadTree->m_pSW);
+	renderQuadTree(target, states, pQuadTree->m_pSE);
 }

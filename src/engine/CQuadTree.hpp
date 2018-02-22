@@ -22,20 +22,16 @@ private:
 	unsigned int m_NumItems;
 	bool m_Subdivided;
 
-	CQuadTree *m_pParent;
-	CQuadTree *m_pNW;
-	CQuadTree *m_pNE;
-	CQuadTree *m_pSW;
-	CQuadTree *m_pSE;
+	CQuadTree<T> *m_pParent;
 
 	void subdivide() noexcept
 	{
 		const float halfW = m_Bounds.width/2.0f;
 		const float halfH = m_Bounds.height/2.0f;
-		m_pNW = new CQuadTree(sf::FloatRect(m_Bounds.left, m_Bounds.top, halfW, halfH), this);
-		m_pNE = new CQuadTree(sf::FloatRect(m_Bounds.left+halfW, m_Bounds.top, halfW, halfH), this);
-		m_pSW = new CQuadTree(sf::FloatRect(m_Bounds.left, m_Bounds.top+halfH, halfW, halfH), this);
-		m_pSE = new CQuadTree(sf::FloatRect(m_Bounds.left+halfW, m_Bounds.top+halfH, halfW, halfH), this);
+		m_pNW = new CQuadTree<T>(sf::FloatRect(m_Bounds.left, m_Bounds.top, halfW, halfH), this);
+		m_pNE = new CQuadTree<T>(sf::FloatRect(m_Bounds.left+halfW, m_Bounds.top, halfW, halfH), this);
+		m_pSW = new CQuadTree<T>(sf::FloatRect(m_Bounds.left, m_Bounds.top+halfH, halfW, halfH), this);
+		m_pSE = new CQuadTree<T>(sf::FloatRect(m_Bounds.left+halfW, m_Bounds.top+halfH, halfW, halfH), this);
 		m_Subdivided = true;
 
 		for (int p=m_NumItems-1; p>=0; --p)
@@ -44,7 +40,7 @@ private:
 	}
 
 public:
-	CQuadTree(const sf::FloatRect &bounds, CQuadTree *pParent = nullptr) noexcept
+	CQuadTree(const sf::FloatRect &bounds, CQuadTree<T> *pParent = nullptr) noexcept
 	{
 		m_Bounds = bounds;
 		m_NumItems = 0;
@@ -67,6 +63,14 @@ public:
 		}
 	}
 
+	CQuadTree<T> *m_pNW;
+	CQuadTree<T> *m_pNE;
+	CQuadTree<T> *m_pSW;
+	CQuadTree<T> *m_pSE;
+
+	int getNumItems() const { return m_NumItems; }
+	CQTItem* getItem(int index) { return &m_aItems[index]; }
+
 
 	bool insert(const sf::Vector2f &Pos, const T &Item) noexcept
 	{
@@ -88,6 +92,7 @@ public:
 			}
 			else
 			{
+				ups::msgDebug("WWWW", "LO HACE");
 				m_aItems[m_NumItems].m_Pos = Pos;
 				m_aItems[m_NumItems].m_Item = Item;
 				++m_NumItems;

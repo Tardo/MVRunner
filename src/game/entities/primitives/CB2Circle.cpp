@@ -19,4 +19,8 @@ CB2Circle::~CB2Circle() noexcept
 }
 
 void CB2Circle::tick() noexcept
-{ }
+{
+	CGame *pGame = CGame::getInstance();
+	if (pGame->Client()->isClipped(CSystemBox2D::b2ToSf(m_pBody->GetPosition()), SCREEN_MARGIN_DESTRUCTION))
+		destroy();
+}

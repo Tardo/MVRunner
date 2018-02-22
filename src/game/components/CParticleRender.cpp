@@ -43,6 +43,10 @@ void CParticleRender::draw(sf::RenderTarget& target, sf::RenderStates states) co
 
 void CParticleRender::renderParticle(sf::RenderTarget& target, sf::RenderStates states, CParticle *pParticle) const noexcept
 {
+	const sf::Vector2f particlePos = pParticle->m_Pos+(pParticle->m_FixedPos?Client()->getView().getCenter():sf::Vector2f(0.0f,0.0f));
+	if (Client()->isClipped(particlePos, SCREEN_MARGIN_DRAW))
+		return;
+
 	const float elapsedSeconds = upm::clamp((float)(ups::timeGet()-pParticle->m_Timer)/ups::timeFreq(), 0.0f, pParticle->m_Duration);
     const sf::Vector2f sizeStep(((pParticle->m_SizeEnd.x-pParticle->m_SizeInit.x)/pParticle->m_Duration)*elapsedSeconds, ((pParticle->m_SizeEnd.y-pParticle->m_SizeInit.y)/pParticle->m_Duration)*elapsedSeconds);
     const sf::Vector3f colorStep(((pParticle->m_ColorEnd.r-pParticle->m_ColorInit.r)/pParticle->m_Duration)*elapsedSeconds, ((pParticle->m_ColorEnd.g-pParticle->m_ColorInit.g)/pParticle->m_Duration)*elapsedSeconds, ((pParticle->m_ColorEnd.b-pParticle->m_ColorInit.b)/pParticle->m_Duration)*elapsedSeconds);
@@ -62,7 +66,7 @@ void CParticleRender::renderParticle(sf::RenderTarget& target, sf::RenderStates 
 			const sf::Vector2i tileSize = { (int)(Shape.getTexture()->getSize().x/pParticle->m_AnimSize.x), (int)(Shape.getTexture()->getSize().y/pParticle->m_AnimSize.y) };
 			Shape.setTextureRect(sf::IntRect(animStepPos.x*tileSize.x, animStepPos.y*tileSize.y, tileSize.x, tileSize.y));
 		}
-		Shape.setPosition(pParticle->m_Pos+(pParticle->m_FixedPos?Client()->getView().getCenter():sf::Vector2f(0.0f,0.0f)));
+		Shape.setPosition(particlePos);
 		Shape.setSize(pParticle->m_SizeInit+sizeStep);
 		Shape.setOrigin((pParticle->m_SizeInit.x+sizeStep.x)/2.0f, (pParticle->m_SizeInit.y+sizeStep.y)/2.0f);
 		Shape.setFillColor(sf::Color(pParticle->m_ColorInit.r+colorStep.x, pParticle->m_ColorInit.g+colorStep.y, pParticle->m_ColorInit.b+colorStep.z, pParticle->m_ColorInit.a+colorAlphaStep));

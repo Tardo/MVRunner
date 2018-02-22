@@ -21,4 +21,8 @@ CAmbientSound::~CAmbientSound() noexcept
 }
 
 void CAmbientSound::tick() noexcept
-{ }
+{
+	CGame *pGame = CGame::getInstance();
+	if (pGame->Client()->isClipped(sf::Vector2f(m_pSound->getPosition().x, m_pSound->getPosition().z), SCREEN_MARGIN_DESTRUCTION))
+		destroy();
+}

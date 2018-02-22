@@ -4,6 +4,8 @@
 #define H_GAME_DEBUGGER_RENDER
 
 #include <game/CComponent.hpp>
+#include <game/CMap.hpp>
+#include <engine/CQuadTree.hpp>
 
 class CDebuggerRender final : public CComponent
 {
@@ -15,6 +17,7 @@ public:
 
 private:
 	void renderBox2D(sf::RenderTarget& target, sf::RenderStates states) const noexcept;
+	void renderQuadTree(sf::RenderTarget& target, sf::RenderStates states, CQuadTree<CMapRenderObject*> *pQuadTree) const noexcept;
 };
 
 #endif

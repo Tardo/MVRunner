@@ -49,21 +49,21 @@ CGameClient::~CGameClient() noexcept
 	m_Zpg.close();
 
 	#ifdef DEBUG_DESTRUCTORS
-    ups::msgDebug("CGame", "Deleted");
+    ups::msgDebug("CGameClient", "Deleted");
 	#endif
 }
 
 
 void CGameClient::run() noexcept
 {
-	ups::msgDebug("CGame", "Initializing game...");
+	ups::msgDebug("CGameClient", "Initializing game...");
 	if (!init())
 	{
-		ups::msgDebug("CGame", "Error initializing game... closing!");
+		ups::msgDebug("CGameClient", "Error initializing game... closing!");
 		close();
 	}
 	else
-		ups::msgDebug("CGame", "Game initialized successfully :)");
+		ups::msgDebug("CGameClient", "Game initialized successfully :)");
 
 	sf::Int64 TimerFPS = ups::timeGet();
 	sf::Int64 LTime=0, CTime=0;
@@ -223,7 +223,7 @@ bool CGameClient::init() noexcept
 	{
 		if (m_AssetManager.hasErrors())
 		{
-			ups::msgDebug("CGAME", "ERROR: Can't load assets!");
+			ups::msgDebug("CGameClient", "ERROR: Can't load assets!");
 			return false;
 		}
 
@@ -299,23 +299,23 @@ bool CGameClient::initializeGameMode(const char *pGameType) noexcept
 
 	if (!pGameType)
 	{
-		ups::msgDebug("CGame", "Invalid Game Mode!");
+		ups::msgDebug("CGameClient", "Invalid Game Mode!");
 		return false;
 	}
 
-    ups::msgDebug("CGame", "Initializing game mode...");
+    ups::msgDebug("CGameClient", "Initializing game mode...");
     if (ups::strCaseCmp(pGameType, "menu") == 0)
     	m_pGameController = new CControllerMenu();
     else if (ups::strCaseCmp(pGameType, "main") == 0)
     	m_pGameController = new CControllerMain();
     else
 	{
-		ups::msgDebug("CGame", "Oops... Invalid game mode!");
+		ups::msgDebug("CGameClient", "Oops... Invalid game mode!");
 		return false;
 	}
     m_pGameController->onInit();
 
-	ups::msgDebug("CGame", "Starting game mode...");
+	ups::msgDebug("CGameClient", "Starting game mode...");
 	m_pGameController->onStart();
 
 	return true;
@@ -342,6 +342,8 @@ bool CGameClient::isClipped(const sf::Vector2f &worldPos, float margin) noexcept
 
 	sf::FloatRect screenArea;
 	getViewportGlobalBounds(&screenArea, Camera(), margin);
+	screenArea.width -= screenArea.left;
+	screenArea.height -= screenArea.top;
 
 	return !screenArea.contains(worldPos);
 }
@@ -353,6 +355,8 @@ bool CGameClient::isClipped(const sf::FloatRect &worldRect, float margin) noexce
 
 	sf::FloatRect screenArea;
 	getViewportGlobalBounds(&screenArea, Camera(), margin);
+	screenArea.width -= screenArea.left;
+	screenArea.height -= screenArea.top;
 
 	return !worldRect.intersects(screenArea);
 }
@@ -364,6 +368,8 @@ bool CGameClient::isClipped(const std::vector<sf::Vector2f> &points, float margi
 
 	sf::FloatRect screenArea;
 	getViewportGlobalBounds(&screenArea, Camera(), margin);
+	screenArea.width -= screenArea.left;
+	screenArea.height -= screenArea.top;
 
 	std::vector<sf::Vector2f>::const_iterator itp = points.begin();
 	while  (itp != points.end())

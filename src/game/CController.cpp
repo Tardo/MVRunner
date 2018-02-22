@@ -19,6 +19,8 @@
 #include <game/CController.hpp>
 #include <engine/CSystemBox2D.hpp>
 
+#define MARGIN_CREATE_OBJECTS	0.0f
+
 
 CController::CController() noexcept
 {
@@ -95,6 +97,8 @@ void CController::tick() noexcept
 		// Create Map Objects
 		sf::FloatRect screenArea;
 		Game()->Client()->getViewportGlobalBounds(&screenArea, Game()->Client()->Camera(), 0.0f); // MARGIN_CREATE_OBJECTS
+		screenArea.width = screenArea.width - screenArea.left;
+		screenArea.height = screenArea.height - screenArea.top;
 
 		std::list<CMapRenderObject*> vObjects = Context()->Map().getObjects()->queryAABB(screenArea);
 		//ups::msgDebug("CONTEXT", "Num: %d", vObjects.size());
@@ -102,7 +106,7 @@ void CController::tick() noexcept
 		while (itob != vObjects.cend())
 		{
 			CMapRenderObject *pMapObj = (*itob);
-			if (!pMapObj || (pMapObj && !pMapObj->m_pObject))
+			if (!pMapObj || !pMapObj->m_pObject)
 			{
 				++itob;
 				continue;
@@ -117,7 +121,8 @@ void CController::tick() noexcept
 			const int objId = pMapObj->m_pObject->GetId();
 
 			// Dynamic Objects
-			if (!isStaticObject(pMapObj->m_pObject->GetType().c_str()))
+			//if (!isStaticObject(pMapObj->m_pObject->GetType().c_str()))
+			if (true)
 			{
 				bool canCreate = false;
 				if (pMapObj->m_pObject->GetPolyline())
@@ -136,34 +141,10 @@ void CController::tick() noexcept
 						}
 					}
 				}
-				else if (pMapObj->m_pObject->GetPolygon())
-				{
-					const Tmx::Polygon *pPoly = pMapObj->m_pObject->GetPolygon();
-					if (pPoly)
-					{
-						for (int i=0; i<pPoly->GetNumPoints(); i++)
-						{
-							const sf::Vector2f pointPos = sf::Vector2f(globalBounds.left+pPoly->GetPoint(i).x, globalBounds.top+pPoly->GetPoint(i).y);
-							if (!Game()->Client()->isClipped(pointPos, MARGIN_CREATE_OBJECTS))
-							{
-								canCreate = true;
-								break;
-							}
-						}
-					}
-				}
 				else
 					canCreate = !Game()->Client()->isClipped(globalBounds, MARGIN_CREATE_OBJECTS);
 
-				if (!canCreate)
-				{
-					if (pMapObj->m_pEntity)
-					{
-						pMapObj->m_pEntity->destroy();
-						pMapObj->m_pEntity = nullptr;
-					}
-				}
-				else if (!pMapObj->m_pEntity)
+				if (canCreate && !pMapObj->m_pEntity)
 				{
 					if (pMapObj->m_pObject->GetType().compare("light") == 0)
 					{
@@ -218,85 +199,89 @@ void CController::tick() noexcept
 						const Tmx::PropertySet &soundProps = pMapObj->m_pObject->GetProperties();
 						pMapObj->m_pEntity = new CAmbientSound(worldPosObj, soundProps.GetIntProperty("sound_id", -1), minDist/2.0f, soundProps.GetIntProperty("loop", 1), soundProps.GetFloatProperty("volume", 100.0f));
 					}
-				}
-			} else if (!pMapObj->m_pEntity)
-			{
-				const Tmx::PropertySet GeomProps = pMapObj->m_pObject->GetProperties();
-				const Tmx::Color color = GeomProps.GetColorProperty("color", Tmx::Color(255, 255, 255, 0));
-				const sf::Color colorGeom(color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
-				const int onContactFx = GeomProps.GetIntProperty("on_contact_fx", CEntity::FX_NONE);
-
-				b2BodyType b2Type = b2_dynamicBody;
-				if (pMapObj->m_pObject->GetType().compare("static") == 0)
-					b2Type = b2_staticBody;
-				else if (pMapObj->m_pObject->GetType().compare("kinematic") == 0)
-					b2Type = b2_kinematicBody;
-
-				const Tmx::Polygon *pPoly = pMapObj->m_pObject->GetPolygon();
-				if (pPoly)
-				{
-					std::vector<sf::Vector2f> points;
-					for (int i=0; i<pPoly->GetNumPoints(); i++)
-						points.push_back(sf::Vector2f(pPoly->GetPoint(i).x, pPoly->GetPoint(i).y));
-
-					const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, b2Type, CAT_BUILD);
-					pMapObj->m_pEntity = new CB2Polygon(
-							sf::Vector2f(globalBounds.left, globalBounds.top),
-							points,
-							colorGeom,
-							bodyInfo);
-					pMapObj->m_pEntity->m_ContactFx = onContactFx;
-					pMapObj->m_pEntity->getBody()->SetAwake(false);
-					ups::msgDebug("GameContext", "Polygon Created! [#%d]", objId);
-				}
-				else
-				{
-					const Tmx::Ellipse *pEllipse = pMapObj->m_pObject->GetEllipse();
-					if (pEllipse)
-					{
-						const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, b2Type, CAT_BUILD);
-						pMapObj->m_pEntity = new CB2Circle(
-								worldPosObj,
-								pEllipse->GetRadiusX(),
-								colorGeom,
-								bodyInfo);
-						pMapObj->m_pEntity->m_ContactFx = onContactFx;
-						pMapObj->m_pEntity->getBody()->SetAwake(false);
-						ups::msgDebug("GameContext", "Ellipse Created: %s [#%d]", pMapObj->m_pObject->GetType().c_str(), objId);
-					}
 					else
 					{
-						const Tmx::Polyline *pPolyline = pMapObj->m_pObject->GetPolyline();
-						if (pPolyline)
+						const Tmx::PropertySet GeomProps = pMapObj->m_pObject->GetProperties();
+						const Tmx::Color color = GeomProps.GetColorProperty("color", Tmx::Color(255, 255, 255, 0));
+						const sf::Color colorGeom(color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+						const int onContactFx = GeomProps.GetIntProperty("on_contact_fx", CEntity::FX_NONE);
+
+						b2BodyType b2Type = b2_dynamicBody;
+						if (pMapObj->m_pObject->GetType().compare("static") == 0)
+							b2Type = b2_staticBody;
+						else if (pMapObj->m_pObject->GetType().compare("kinematic") == 0)
+							b2Type = b2_kinematicBody;
+
+						const Tmx::Polygon *pPoly = pMapObj->m_pObject->GetPolygon();
+						if (pPoly)
 						{
 							std::vector<sf::Vector2f> points;
-							for (int i=0; i<pPolyline->GetNumPoints(); ++i)
-								points.push_back(sf::Vector2f(pPolyline->GetPoint(i).x, pPolyline->GetPoint(i).y));
+							for (int i=0; i<pPoly->GetNumPoints(); i++)
+								points.push_back(sf::Vector2f(pPoly->GetPoint(i).x, pPoly->GetPoint(i).y));
 
 							const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, b2Type, CAT_BUILD);
-							pMapObj->m_pEntity = new CB2Chain(
-									worldPosObj,
+							pMapObj->m_pEntity = new CB2Polygon(
+									sf::Vector2f(globalBounds.left, globalBounds.top),
 									points,
 									colorGeom,
 									bodyInfo);
 							pMapObj->m_pEntity->m_ContactFx = onContactFx;
 							pMapObj->m_pEntity->getBody()->SetAwake(false);
-							ups::msgDebug("GameContext", "PolyLine Created! [#%d]", objId);
+							ups::msgDebug("GameContext", "Polygon Created! [#%d]", objId);
 						}
 						else
 						{
-							const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, b2Type, CAT_BUILD);
-							pMapObj->m_pEntity = new CB2Polygon(
-									worldPosObj,
-									sizeObj,
-									colorGeom,
-									bodyInfo);
-							pMapObj->m_pEntity->m_ContactFx = onContactFx;
-							pMapObj->m_pEntity->getBody()->SetAwake(false);
-							ups::msgDebug("GameContext", "Rectangle Created! [#%d]", objId);
+							const Tmx::Ellipse *pEllipse = pMapObj->m_pObject->GetEllipse();
+							if (pEllipse)
+							{
+								const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, b2Type, CAT_BUILD);
+								pMapObj->m_pEntity = new CB2Circle(
+										worldPosObj,
+										pEllipse->GetRadiusX(),
+										colorGeom,
+										bodyInfo);
+								pMapObj->m_pEntity->m_ContactFx = onContactFx;
+								pMapObj->m_pEntity->getBody()->SetAwake(false);
+								ups::msgDebug("GameContext", "Ellipse Created: %s [#%d]", pMapObj->m_pObject->GetType().c_str(), objId);
+							}
+							else
+							{
+								const Tmx::Polyline *pPolyline = pMapObj->m_pObject->GetPolyline();
+								if (pPolyline)
+								{
+									std::vector<sf::Vector2f> points;
+									for (int i=0; i<pPolyline->GetNumPoints(); ++i)
+										points.push_back(sf::Vector2f(pPolyline->GetPoint(i).x, pPolyline->GetPoint(i).y));
+
+									const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, b2Type, CAT_BUILD);
+									pMapObj->m_pEntity = new CB2Chain(
+											worldPosObj,
+											points,
+											colorGeom,
+											bodyInfo);
+									pMapObj->m_pEntity->m_ContactFx = onContactFx;
+									pMapObj->m_pEntity->getBody()->SetAwake(false);
+									ups::msgDebug("GameContext", "PolyLine Created! [#%d]", objId);
+								}
+								else
+								{
+									const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, b2Type, CAT_BUILD);
+									pMapObj->m_pEntity = new CB2Polygon(
+											worldPosObj,
+											sizeObj,
+											colorGeom,
+											bodyInfo);
+									pMapObj->m_pEntity->m_ContactFx = onContactFx;
+									pMapObj->m_pEntity->getBody()->SetAwake(false);
+									ups::msgDebug("GameContext", "Rectangle Created! [#%d]", objId);
+								}
+							}
 						}
 					}
 				}
+			} else if (!pMapObj->m_pEntity)
+			{
+
 			}
 
 			++itob;
@@ -313,6 +298,23 @@ void CController::tick() noexcept
     	CEntity *pEnt = (*itE);
     	if (pEnt->isToDelete())
     	{
+    		// Is a MapObject Entity?
+			if (Context()->Map().isMapLoaded())
+			{
+				// TODO: Add a flag for know if is a map object entity
+				std::list<CMapRenderObject*> mapObjs = Context()->Map().getObjects()->queryAll();
+				std::list<CMapRenderObject*>::iterator itObj = mapObjs.begin();
+				while (itObj != mapObjs.end())
+				{
+					if ((*itObj)->m_pEntity == pEnt)
+					{
+						(*itObj)->m_pEntity = nullptr;
+						break;
+					}
+					++itObj;
+				}
+			}
+
     		delete pEnt;
     		pEnt = nullptr;
     		itE = vpEntities.erase(itE);

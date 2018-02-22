@@ -38,6 +38,10 @@ void CLightRender::renderLight(sf::RenderTarget& target, sf::RenderStates states
 	// Render Light
 	if (pLight->m_Active && !pLight->m_Blinked)
 	{
+		if (Client()->isClipped(pLight->m_Position, SCREEN_MARGIN_DRAW))
+			return;
+
+		pLight->m_Sprite.setRotation(pLight->m_Degrees);
 		const sf::Texture *pText = pLight->m_Sprite.getTexture();
 		pLight->m_Sprite.setOrigin(pText->getSize().x*pLight->m_Origin.x, pText->getSize().y*pLight->m_Origin.y);
 		float factorSize = 1.0f;
@@ -45,8 +49,8 @@ void CLightRender::renderLight(sf::RenderTarget& target, sf::RenderStates states
 			factorSize = upm::floatRand(1.0f, pLight->m_VariationSize);
 		pLight->m_Sprite.setScale(pLight->m_Scale*factorSize);
 		pLight->m_Sprite.setColor(pLight->m_Color);
-		pLight->m_Sprite.setPosition(pLight->m_Position);
-		pLight->m_Sprite.setRotation(pLight->m_Degrees);
+		pLight->m_Sprite.setPosition(pLight->m_Position - pLight->m_Scale/2.0f);
+		//pLight->m_Sprite.setRotation(pLight->m_Degrees);
 		states.blendMode = sf::BlendAdd;
 		target.draw(pLight->m_Sprite, states);
 	}

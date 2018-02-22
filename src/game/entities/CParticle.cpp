@@ -39,6 +39,9 @@ CParticle::~CParticle() noexcept
 void CParticle::tick() noexcept
 {
 	CGame *pGame = CGame::getInstance();
+	if (pGame->Client()->isClipped(m_Pos, SCREEN_MARGIN_DESTRUCTION))
+		destroy();
+
     if (pGame->Client()->m_Paused)
     {
     	// TODO: Restar al tiempo pasado el tiempo que se esta pausado

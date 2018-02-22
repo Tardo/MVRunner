@@ -28,6 +28,10 @@ CLight::~CLight() noexcept
 
 void CLight::tick() noexcept
 {
+	CGame *pGame = CGame::getInstance();
+	if (pGame->Client()->isClipped(m_Position, SCREEN_MARGIN_DESTRUCTION))
+		destroy();
+
 	// Parpadeos
 	if (m_Blink != 0.0f && ups::timeGet()-m_TimerBlink > ups::timeFreq()*m_Blink)
 	{

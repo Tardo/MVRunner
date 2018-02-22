@@ -47,12 +47,16 @@ void CItemRender::renderProjectile(sf::RenderTarget& target, sf::RenderStates st
 	if (Client()->getRenderMode() != RENDER_MODE_NORMAL)
 		return;
 
+	const sf::Vector2f projPos = CSystemBox2D::b2ToSf(pEntity->getBody()->GetPosition());
+	if (Client()->isClipped(projPos, SCREEN_MARGIN_DRAW))
+		return;
+
 	CProjectile *pProj = static_cast<CProjectile*>(pEntity);
 	b2PolygonShape *pB2Poly = static_cast<b2PolygonShape*>(pEntity->getBody()->GetFixtureList()[0].GetShape());
 	sf::ConvexShape Shape(pB2Poly->m_count);
 	for (int i=0; i<pB2Poly->m_count; ++i)
 		Shape.setPoint(i, CSystemBox2D::b2ToSf(pB2Poly->m_vertices[i]));
-	Shape.setPosition(CSystemBox2D::b2ToSf(pEntity->getBody()->GetPosition()));
+	Shape.setPosition(projPos);
 	Shape.setRotation(upm::radToDeg(pEntity->getBody()->GetAngle()));
 	if (pProj->getProjType() == WEAPON_GRENADE_LAUNCHER)
 		Shape.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_GRENADE));
@@ -64,6 +68,8 @@ void CItemRender::renderPrimitive(sf::RenderTarget& target, sf::RenderStates sta
 {
 	if (pEntity->m_Color == sf::Color::Transparent)
 		return;
+
+	// TODO: Check if need render by b2type
 
 	if (pEntity->getType() == CEntity::B2POLY)
 	{
@@ -94,7 +100,7 @@ void CItemRender::renderPrimitive(sf::RenderTarget& target, sf::RenderStates sta
 		for (int i=0; i<pB2Chain->m_count; ++i)
 		{
 			VArray[i].color = pEntity->m_Color;
-			VArray[i].position = CSystemBox2D::b2ToSf(pEntity->getBody()->GetPosition() + pB2Chain->m_vertices[i]);
+			VArray[i].position = CSystemBox2D::b2ToSf(pEntity->getBody()->GetPosition()) + CSystemBox2D::b2ToSf(pB2Chain->m_vertices[i]);
 		}
 		target.draw(VArray, states);
 	}

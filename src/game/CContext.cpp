@@ -9,8 +9,8 @@ CContext::CContext() noexcept
 	m_pPlayer = new CPlayer();
 	m_Weather = WEATHER_NORMAL;
 	m_TimerStorm = 0;
-	m_ColorClear = sf::Color(128, 128, 128);
-	m_ColorShadow = sf::Color(64, 64, 64);
+	m_ColorClear = sf::Color(86, 86, 86);
+	m_ColorShadow = sf::Color(32, 32, 32);
 }
 CContext::~CContext() noexcept
 {

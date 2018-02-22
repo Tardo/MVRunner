@@ -28,7 +28,8 @@
 #include <list>
 #include <deque>
 
-#define SCREEN_MARGIN_SPAWN_BOT	255.0f
+#define SCREEN_MARGIN_DRAW			128.0f
+#define SCREEN_MARGIN_DESTRUCTION	512.0f
 
 enum
 {
