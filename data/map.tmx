@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-up" width="176" height="128" tilewidth="64" tileheight="64" infinite="0" backgroundcolor="#00002c" nextobjectid="40">
+<map version="1.0" tiledversion="1.1.3" orientation="orthogonal" renderorder="right-up" width="176" height="128" tilewidth="64" tileheight="64" infinite="0" backgroundcolor="#00002c" nextobjectid="72">
  <tileset firstgid="1" name="mario" tilewidth="64" tileheight="64" tilecount="256" columns="16">
   <image source="mapres/mario_oldscool.png" width="1024" height="1024"/>
   <tile id="45">
@@ -167,6 +167,11 @@
     <property name="luminance" type="bool" value="true"/>
    </properties>
   </tile>
+  <tile id="165">
+   <objectgroup draworder="index">
+    <object id="1" type="static" x="0.00390625" y="0.00390625" width="63.9961" height="63.9961"/>
+   </objectgroup>
+  </tile>
   <tile id="189">
    <animation>
     <frame tileid="189" duration="100"/>
@@ -191,37 +196,29 @@
  <tileset firstgid="513" name="race" tilewidth="64" tileheight="64" tilecount="256" columns="16">
   <image source="mapres/race.png" width="1024" height="1024"/>
  </tileset>
- <tileset firstgid="769" name="entities" tilewidth="64" tileheight="64" tilecount="256" columns="16">
-  <image source="mapres/entities.png" width="1024" height="1024"/>
-  <tile id="1">
-   <objectgroup draworder="index">
-    <object id="1" type="static" x="0.00497159" y="0.00887784" width="63.9901" height="63.9911"/>
-   </objectgroup>
-  </tile>
- </tileset>
  <layer name="Background" width="176" height="128">
   <data encoding="base64" compression="zlib">
-   eJzt2kFKw0AUgOEUz+Kqa1e69R4exbV6CI/iUTyK6aIQQlunedO8PPp98BZlwjSQnzKBDgMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFGPDWu7yfTYD3p5alxr7bd1P1jqY5zPcb7GeW1cO/Y7XT9lvl/rGgDr2J8YqOLlxEAV+qUy/VKZfqlMv1R2Tb+7h1VuCZot+f3VMVuxtN+eDR/3yx7qWXr+1S9bsIX3t+xu9dvPqZ4O8zwMv/th+DnO+Pnt3LXRadXrmWd3q99+zjU1Nvs9vW6vX/1u0Jb7nT9j/TJ3bb+3+L5W+mXuwvn3ffofx+ehz7uWfvXb063Oqtd83znOD/xn7X4j9MtcpX4Pejz37G71249+9VtZpX6dH5jTr34rq9av8wNT+tVvZfrVb2X61S/r0C/V6ZfK9Mu9y+5Wv0Rkd6tfIrK71S8R2d3ql4jsbvVLRHa3+iUiu1v9EpHdrX6JyO5Wv0Rkd6tfIrK71S8R2d3ql4jsbvVLRHa3+iUiu1v9EpHdrX6JyO5Wv0Rkd6tfIrK71S8R2d3ql4jsbvVLRHa3+iUiu1v9EpHdrX4BAAAAAAAAAAAAAAAu2+2y7wCW0y8AAAAAAAAAAAAAAMB9+AODN2zm
+   eJzt2rFtwkAYhuHzMFSuU0GbPRiFOjAEo2QURsmlsGRFJrrYF8inPI/0F+i3DhevZBcuBQAAAAAAAAAAAAAAAAAAAAAAAAAAAACArXYNu2E2Pc6DXl4ad639tp4Ha73VOde51Hlt3E39zvdLvp7XugPgMcaFgRSHhYEU+iWZfkmmX5Lpl2T6JZl+SaZfkumXZPqlp6WePmdfym0s5X2a+vt479qtA2vda6o2e51fN+qXP0i/JPtpv7/xf7DWN++/p/k3jvvSpzX90tOjn/X6pSfvqiTTL8n0SzL9kky/JNMvyfRLMv2STL8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAFsPw7DuA9fQLAAAAAAAAAAAAAADwP3wAEdtUhg==
+  </data>
+ </layer>
+ <layer name="GameModifiers" width="176" height="128">
+  <data encoding="base64" compression="zlib">
+   eJztzjERAAAIBKC3s/3PFOoCCUgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIANXd8DAAAAAAAArg1TNgB2
   </data>
  </layer>
  <layer name="Game" width="176" height="128">
   <data encoding="base64" compression="zlib">
-   eJzt3WFumzAYh3EIn1b1Cvsy5SK5SY/Wo2xX2UkmorhyPRsMvIb3D89PspTRNGHiieOQVOk6AAAAAAAAAAAAAAAAAIqGftvwvM84v1u/fhzZb83+4fxKx1uhgXgfc/uP84uPf3r5l0ADU48/nF98nNMWFPod1far8JyCZaaO51H9rumM+feaPPZrgX7PZ+k6kX7hHf1CWat+93ytxPmH62L+hTL6hbLaftXOnSrtK9Zj/oUy+oUy+oUy+oUy+oUy+oUy+oUy+oWy+Dj/SY45/cI75l8oo18o2/L380eOmv8L4NFUv/1rAF7N9Qt4Rr9QRr9QRr9QRr9QxvkHKJvqF/COfqGMfmHpiPeP+8woba8duKa95r37zP3E5x/SHuf6pN/rol8oi/utfT5e81x+L3yuLF0/xNtzl0v7g2t6dtPlR07fbV//5r4va8n692tfCvM1ruM25Fstbetfv7P6/ib6rRE3S7+I+30b6sbR/aZzMf1eV6nfx9B9tup3yd9lpOgXsdBvmkC8PfzMYv0QS9cCNR2y/kUs12JotPS6zrrftb9Dv7gla4NRqd/4Zxa29Mv7bxil/YaGp85LeOg3XKbfa0v7ffTdR9g+9TtbLV3rxtv4/AOCscUhGuO/n++VJdvT62xVam6uy9ptuIZcv++N+y2tAebec5vajmvK9fvTYb/FdgeNNcTgfP8Ujcf+9mo1Hn1mW+461qO4n7nrD9Gg30vqjc4jPG9rQZdLX399azXTLf1ek2W/rYRWv/69Yv72gH7tqfQ7ex36vaSz9Pu8nvM+6Nee537Tta46+rV3hi5U0K89+t0P/dqj3/3Qrz363Q/92qPf/dCvPfrdD/3ao9/90K89+t0P/dqz7pfHQxn92mvRLw3n0a+9Vv2uee/37N3Tr71W64dvn3es7Jh+sdQe/cY/m+qYfrFUy9dvU52W+j4z+rXXspmpRot/D7Rh7ey9f/q117rf3Dp47voWwyP6tdf6WKfz7Vnuaw36tWc553kb3tCvvaMbo194lj6nr2ms5npem43Rrx6LpmrbpF9Ys2qqdDve1wwx+tXQqqn0tuLbV2iYfjW0nBPjXkv3ucWj736Hse2W/ke//rU+D9D6vAP9ntPR58JKnVo/Puj3nI5utdV8m6JfKKNfKGvZL9Aa/UIZ/ULBW2EtSr/wbmyXfqEkNBsPQAX9ArZuPIYgZojeL6RfBM/vwE2GR2O/43ejv7/28ceCgfOKex0v/+27zz3v/76iL+/fV4f9pP3uPf/SL7ZQnH+BQHH+BQLmXyhj/oUyb/Ov1/N38In5F8q8zb/AEsy/UMb8C2UK8++j7z7G0XxnIEdh/g390jFSuc+feR8AAAAAAACo8w8YSUTK
-  </data>
- </layer>
- <layer name="Modifiers" width="176" height="128">
-  <data encoding="base64" compression="zlib">
-   eJzt1MERABEUBcEvZyyiF8ZTtd0RzGmqAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACqTksXAPzT9l+AiOW/ABGf/wJETP8FiBj+CxDR/RcAAAAAeMAF+Y4DSQ==
-  </data>
- </layer>
- <layer name="Animated" width="176" height="128">
-  <data encoding="base64" compression="zlib">
-   eJzt2TEKwCAMBVA9YI9gr+D9t3boIFVBKJgO78FHSDJkyGZKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADsknMfAAAA4hx3yvO2yqs3moFoZ5NZfTYD0dwvACv8pwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB/VaMXgA/cLwAAAAAAAAAAAAAAAADscQGl/AqA
+   eJzt3W2um0YYgFHT+6tVt9A/1d3I3UmWlqW0W8lKGqoijaYMMMzw8ZpzpFF8cYyJ/ASPwQmvFwAAAAAAAAAAENHH0DbuvM28v1+G/ePKfrdsH++v9HpHaCDdxrnt5/2lr39++88ADSz9/eP9pa9z3kKEfkdb+43wnkKdpdfzqn73dGb/+0x37LcH/b6f2nmifrk7/RLZUf2e+VnJ8Yfnsv8lMv0S2dZ+ox07jbSt7Gf/S2T6JTL9Epl+iUy/RKZfItMvkemXyNLX+e/sNdcvd2f/S2T6JbKWfz9/1pjbzi1/FmjRu990vaXnG/4b0Kp1H7i3X+hBv0TWcw6qX87W0m9pHry0Xv3S09hTy/9tudRpabl+6eWqfjVMD1f0C73ol8h6nbuYW2/NclhyxTnlYWaUlm8dPNNZ+73PledJjz/kPa71qd/n0i+Rpf1ufT/e817+WZgT5/OHdPnc7dL28Ez/dvOaH3OGV/v8t3S8onauW9pf8xxTv7nSsqnfluerWf6/bUia1S+lftce0/J8NceLc3P7Yv0+V6nfr+H1fekxLc9Xc7w4p19S6fy3tHy6r8f8IZXPBbZ0aP5LavaYwGv5c13vfvc+Rr/U9Jve10NLv86/MVr8PuPM8rv0O93W77PlLf783PZtbvnSY/aoneumy3z/gUl+PGv8eTpXVvvdyBql5ta63LqMZ8hbHH/+faXR1n5Lc4C1c25Ly3mmuf3vHwfvf/f0u3Ye+e4Nf9x8+6IqfT93z3d4W0fJ2u/VL61quuz1+SvSZzj9Mtqz/74D/VKiX6LTLxxHv0SmXyLTL5Hpl8j0S2T6JTL9Epl+iUy/RKZfItMvkemXyPRLZPolMv0SmX6JTL9Epl8i0y+R6ZfI9Etk+iUy/RKZfjna1/D6axq9161fjqZfItMvkemXyPRLZEf2C0fTL5Hplwh+K8xF9ctZ9l7Da2xXv1xpuobXVlOz6YArTN3O9ftZ6FK/3EHabE2/d9TjGtLEMXed5lxNv9O1cK+i3+eYe62j9jteG326PvqvFYP7WLu28txYW8foqn73zFvufr06lvV6/0zXo1/O1Npw/vhI/fIe9swlSnMK/XK29JzX1FS6bGnk67qqI/0+V02/+f35uvTLlVrf0+8yf3Bs9zm+hv0jd5d+eY4z+p1rtdTvnq71+1xnHH/QL0c4+vjvj+H1ffxVv/R2xvm36b479PtzvvNtHHVr5o56fz7Pv/+QzjE+Oo7Sdtf0q+M+WuadRvsAAAAAYJt/AHiwWfw=
   </data>
  </layer>
  <layer name="Foreground" width="176" height="128">
   <data encoding="base64" compression="zlib">
-   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
+   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
+  </data>
+ </layer>
+ <layer name="Animated" width="176" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt2TEKwCAMBVA9oEew9z9GHRykVagIzfIefGI0YzZTAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgLzm/AwAAQJzSUnsd1cfbbAaiXUNW96sZiGZ/AfjCfwoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAp0pL7bVM+p0zAAAAAMCOG83tD7k=
   </data>
  </layer>
  <objectgroup name="Collisions">
@@ -245,15 +242,48 @@
   <object id="36" type="static" x="8056" y="6918.67">
    <polyline points="0,0 0,824"/>
   </object>
+  <object id="42" type="dynamic" x="2736.34" y="2529.34" width="60" height="57.3333">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="43" type="dynamic" x="2774" y="2593" width="235.333" height="132.333">
+   <properties>
+    <property name="color" type="color" value="#ffffaa00"/>
+   </properties>
+  </object>
+  <object id="44" type="dynamic" x="3040.58" y="2547.13" width="156" height="44.5717" rotation="40.1238">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+   </properties>
+  </object>
+  <object id="68" type="dynamic" x="2577.33" y="2574.5" width="156" height="41.3495" rotation="40.1238">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+   </properties>
+  </object>
+  <object id="71" type="dynamic" x="3250.67" y="2552">
+   <properties>
+    <property name="color" type="color" value="#ffff5500"/>
+   </properties>
+   <polygon points="0,0 -27.6667,163.667 38,146 36,-1.33333"/>
+  </object>
+ </objectgroup>
+ <objectgroup name="Water">
+  <object id="40" type="water" x="2496" y="2754" width="959.996" height="254.004">
+   <properties>
+    <property name="color" type="color" value="#00000000"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup name="Lights">
-  <object id="37" type="light" x="3327" y="3097" width="575" height="265">
+  <object id="37" type="light" x="3360.33" y="3097" width="371" height="265">
    <properties>
     <property name="color" type="color" value="#205500ff"/>
    </properties>
    <ellipse/>
   </object>
-  <object id="38" type="light" x="2883.5" y="3104.5" width="575" height="265">
+  <object id="38" type="light" x="3031.5" y="3104.5" width="376.333" height="265">
    <properties>
     <property name="color" type="color" value="#205500ff"/>
    </properties>

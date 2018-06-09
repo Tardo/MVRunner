@@ -33,6 +33,26 @@ public:
 	sf::Vector2f m_Dir;
 };
 
+class CSpawnCanon : public CSpawn
+{
+public:
+	CSpawnCanon() noexcept
+	: CSpawn()
+	{
+		m_Duration = 0;
+		m_Timer = 0;
+	}
+
+	CSpawnCanon(const sf::Vector2f &pos, const sf::Vector2f &dir, int duration) noexcept
+	: CSpawn(pos, dir)
+	{
+		m_Duration = duration;
+		m_Timer = 0;
+	}
+
+	int m_Duration;
+	sf::Int64 m_Timer;
+};
 
 class CController
 {
@@ -54,10 +74,11 @@ public:
 	virtual void onMapObject(CMapRenderObject *pMapObj, int objId, const sf::Vector2f &worldPos, const sf::Vector2f &size) noexcept;
 
 	virtual void updateCamera(float deltaTime) noexcept;
+	bool loadMap(const char *filemap) noexcept;
 
 	virtual bool isStaticObject(const char *pType) const noexcept; // FIXME: Use other implementation!!
 
-	void createFireBall(class CEntity *pTarget, const sf::Vector2f &offSet = VECTOR_ZERO) noexcept;
+	void createFireBall(class CEntity *pTarget, float duration, const sf::Vector2f &offSet = VECTOR_ZERO) noexcept;
 	void createFireTrailSmall(const sf::Vector2f &worldPos) noexcept;
 	void createFireTrailLarge(const sf::Vector2f &worldPos) noexcept;
 	void createBloodSpark(const sf::Vector2f &worldPos, float duration = 60.0f) noexcept;
@@ -77,8 +98,6 @@ public:
 	CLight* createSpot(const sf::Vector2f &worldPos, float angle, const sf::Vector2f &scale, const sf::Color &color, bool alwaysOn = false, float blink = 0.0f, float variationSize = 0.0f) noexcept;
 	CLight* createEmissive(const sf::Vector2f &worldPos, float angle, const sf::Vector2f &scale, const sf::Color &color, bool alwaysOn = false, float blink = 0.0f, float variationSize = 0.0f) noexcept;
 	CLight* createCustom(int textId, const sf::Vector2f &worldPos, const sf::Vector2f &origin, float angle, const sf::Vector2f &scale, const sf::Color &color, bool alwaysOn = false, float blink = 0.0f, float variationSize = 0.0f) noexcept;
-
-	CSpawn m_PlayerSpawnPos;
 
 private:
 	class CGame *m_pGame;

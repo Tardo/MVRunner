@@ -4,11 +4,11 @@
 #include <engine/CGame.hpp>
 #include "CB2Circle.hpp"
 
-CB2Circle::CB2Circle(sf::Vector2f worldPos, float radius, sf::Color color, const CB2BodyInfo &bodyInfo, int entityType) noexcept
+CB2Circle::CB2Circle(const sf::Vector2f &worldPos, float radius, float rot, const sf::Color &color, const CB2BodyInfo &bodyInfo, int entityType) noexcept
 : CEntity(entityType, color)
 {
 	CGame *pGame = CGame::getInstance();
-	m_pBody = pGame->Client()->getSystem<CSystemBox2D>()->createCircleBody(worldPos, radius, bodyInfo);
+	m_pBody = pGame->Client()->getSystem<CSystemBox2D>()->createCircleBody(worldPos, radius, rot, bodyInfo);
 	m_pBody->SetUserData(this);
 }
 CB2Circle::~CB2Circle() noexcept

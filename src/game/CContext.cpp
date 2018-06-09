@@ -11,6 +11,7 @@ CContext::CContext() noexcept
 	m_TimerStorm = 0;
 	m_ColorClear = sf::Color(86, 86, 86);
 	m_ColorShadow = sf::Color(32, 32, 32);
+	m_GID = 0;
 }
 CContext::~CContext() noexcept
 {
@@ -23,25 +24,6 @@ CContext::~CContext() noexcept
     while (itEnt != m_vpEntities.end())
     {
     	CEntity *pEnty = (*itEnt);
-
-    	// Is a MapObject Entity?
-		if (Map().isMapLoaded())
-		{
-			// TODO: Add a flag for know if is a map object entity
-			std::list<CMapRenderObject*> mapObjs = Map().getObjects()->queryAll();
-			std::list<CMapRenderObject*>::iterator itObj = mapObjs.begin();
-			while (itObj != mapObjs.end())
-			{
-				if ((*itObj)->m_pEntity == pEnty)
-				{
-					(*itObj)->m_pEntity = nullptr;
-					break;
-				}
-				++itObj;
-			}
-		}
-
-
     	delete pEnty;
     	pEnty = nullptr;
     	itEnt = m_vpEntities.erase(itEnt);
@@ -58,7 +40,7 @@ int CContext::addEntity(CEntity *pEntity) noexcept
 	if (pEntity)
 	{
 		m_vpEntities.push_back(pEntity);
-		return m_vpEntities.size() - 1;
+		return m_GID++;
 	}
 	return -1;
 }

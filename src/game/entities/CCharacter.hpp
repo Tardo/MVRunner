@@ -45,13 +45,11 @@ public:
 	static const long ANIM_TIME;
 	static const unsigned int ANIM_SUBRECTS;
 
-	CCharacter(const sf::Vector2f &pos, class CPlayer *pPlayer) noexcept;
+	CCharacter(const sf::Vector2f &pos, float rot, class CPlayer *pPlayer) noexcept;
 	~CCharacter() noexcept;
 
 	virtual void tick() noexcept final;
     virtual void onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexcept final;
-	virtual void onSensorIn(CEntity *pEntity) noexcept final;
-	virtual void onSensorOut(CEntity *pEntity) noexcept final;
 	virtual void takeHealth(int amount, class CPlayer *pPlayer) noexcept final;
 
     void doImpulse(sf::Vector2f dir, float energy) noexcept;

@@ -208,7 +208,6 @@ void CMap::reset() noexcept
 		while (ito != vObjects.cend())
 		{
 			CMapRenderObject *pObj = (*ito);
-			pObj->destroy();
 			delete pObj;
 			pObj = nullptr;
 			++ito;
@@ -262,8 +261,6 @@ void CMap::analyzeLayerTile(int layerIndex) noexcept
 	const Tmx::TileLayer *pTileLayer = static_cast<const Tmx::TileLayer*>((*it));
 	const sf::Vector2i tileSize(GetTileWidth(), GetTileHeight());
 
-	ups::msgDebug("TT", "Analizando Mapa");
-
     for (int y=0; y<GetHeight(); ++y)
     {
     	for (int x=0; x<GetWidth(); ++x)
@@ -291,7 +288,6 @@ void CMap::analyzeLayerTile(int layerIndex) noexcept
 			{
 				for (int i=0; i<pTile->GetNumObjects(); ++i)
 				{
-					ups::msgDebug("TT", "Creando Tile");
 					CMapRenderObject *pObj = new CMapRenderObject(pTile->GetObject(i), tilePos);
 					m_vpObjects->insert(pObj->getPosition(), pObj);
 				}

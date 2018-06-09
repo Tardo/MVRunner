@@ -60,6 +60,32 @@ enum
 	TILE_24,
 	TILE_25,
 
+	TILE_MOD_TIMER_1_SEC=115,
+	TILE_MOD_TIMER_2_SEC,
+	TILE_MOD_TIMER_3_SEC,
+	TILE_MOD_TIMER_4_SEC,
+	TILE_MOD_TIMER_5_SEC,
+	TILE_MOD_TIMER_6_SEC,
+	TILE_MOD_TIMER_7_SEC,
+	TILE_MOD_TIMER_8_SEC,
+	TILE_MOD_TIMER_9_SEC,
+	TILE_MOD_TIMER_10_SEC,
+	TILE_MOD_TIMER_11_SEC,
+	TILE_MOD_TIMER_12_SEC,
+	TILE_MOD_TIMER_13_SEC,
+	TILE_MOD_TIMER_14_SEC,
+	TILE_MOD_TIMER_15_SEC,
+	TILE_MOD_TIMER_16_SEC,
+	TILE_MOD_TIMER_17_SEC,
+	TILE_MOD_TIMER_18_SEC,
+	TILE_MOD_TIMER_19_SEC,
+	TILE_MOD_TIMER_20_SEC,
+	TILE_MOD_TIMER_21_SEC,
+	TILE_MOD_TIMER_22_SEC,
+	TILE_MOD_TIMER_23_SEC,
+	TILE_MOD_TIMER_24_SEC,
+	TILE_MOD_TIMER_25_SEC,
+
 	ENTITY_NULL=0,
 	ENTITY_SPAWN_PLAYER,
 	ENTITY_SPAWN,
@@ -68,6 +94,7 @@ enum
 	ENTITY_SPAWN_BOSS,
 	ENTITY_SPAWN_FIRE,
 	ENTITY_LASER_HARD=24,
+	ENTITY_CANON=34,
 	NUM_ENTITIES,
 	ENTITY_OFFSET=255-16*4
 };
@@ -77,23 +104,21 @@ class CMapRenderObject final
 public:
 	CMapRenderObject() noexcept
 	{
-		m_pEntity = nullptr;
+		m_EntID = -1;
 		m_pObject = nullptr;
 		m_Offset = sf::Vector2f(0.0f, 0.0f);
 	}
 
 	CMapRenderObject(const Tmx::Object *pObj, const sf::Vector2f &offset = sf::Vector2f(0.0f, 0.0f)) noexcept
 	{
-		m_pEntity = nullptr;
+		m_EntID = -1;
 		m_pObject = pObj;
 		m_Offset = offset;
 	}
 
 	sf::Vector2f getPosition() const noexcept
 	{
-		if (m_pEntity && m_pEntity->getBody())
-			return CSystemBox2D::b2ToSf(m_pEntity->getBody()->GetPosition());
-		else if (m_pObject)
+		if (m_pObject)
 		{
 			const sf::FloatRect globalBounds(
 				m_pObject->GetX(), m_pObject->GetY(),
@@ -105,13 +130,7 @@ public:
 		return VECTOR_ZERO;
 	}
 
-	void destroy() noexcept
-	{
-		if (m_pEntity)
-			m_pEntity->destroy();
-	}
-
-	CEntity *m_pEntity;
+	sf::Uint64 m_EntID;
 	sf::Vector2f m_Offset;
 	const Tmx::Object *m_pObject;
 };

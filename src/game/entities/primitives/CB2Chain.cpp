@@ -4,11 +4,11 @@
 #include <engine/CGame.hpp>
 #include "CB2Chain.hpp"
 
-CB2Chain::CB2Chain(sf::Vector2f worldPos, const std::vector<sf::Vector2f> points, const sf::Color color, const CB2BodyInfo &bodyInfo, int entityType) noexcept
+CB2Chain::CB2Chain(const sf::Vector2f &worldPos, const std::vector<sf::Vector2f> &points, float rot, const sf::Color &color, const CB2BodyInfo &bodyInfo, int entityType) noexcept
 : CEntity(entityType, color)
 {
 	CGame *pGame = CGame::getInstance();
-	m_pBody = pGame->Client()->getSystem<CSystemBox2D>()->createPolyLineBody(worldPos, points, bodyInfo);
+	m_pBody = pGame->Client()->getSystem<CSystemBox2D>()->createPolyLineBody(worldPos, points, rot, bodyInfo);
 	m_pBody->SetUserData(this);
 }
 CB2Chain::~CB2Chain() noexcept

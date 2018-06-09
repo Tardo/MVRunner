@@ -40,7 +40,7 @@ void CUI::showHelpMessage(const char *pMsg) noexcept
 	strncpy(m_aHelpMsg, pMsg, HELP_TEXT_MAX_LENGTH);
 }
 
-bool CUI::doButton(const char* pText, const sf::FloatRect &bounds, unsigned int fontSize, int align) noexcept
+bool CUI::doButton(sf::RenderTarget& target, sf::RenderStates states, const char* pText, const sf::FloatRect &bounds, unsigned int fontSize, int align) const noexcept
 {
 	sf::Text text;
 	text.setFont(Client()->Assets().getDefaultFont());
@@ -54,7 +54,7 @@ bool CUI::doButton(const char* pText, const sf::FloatRect &bounds, unsigned int 
 	else
 		text.setPosition(bounds.left, bounds.top+bounds.height/2.0f-fontSize);
 	text.setFillColor((text.getGlobalBounds().contains((sf::Vector2f)Client()->Controls().getMousePos()))?sf::Color::Red:sf::Color::White);
-	Client()->getTexturePhase()->draw(text);
+	target.draw(text, states);
 
 	return (Client()->Controls().isMouseLeftClicked() && text.getGlobalBounds().contains((sf::Vector2f)Client()->Controls().getMousePos()));
 }

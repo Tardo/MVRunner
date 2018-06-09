@@ -60,6 +60,13 @@ void CItemRender::renderProjectile(sf::RenderTarget& target, sf::RenderStates st
 	Shape.setRotation(upm::radToDeg(pEntity->getBody()->GetAngle()));
 	if (pProj->getProjType() == WEAPON_GRENADE_LAUNCHER)
 		Shape.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_GRENADE));
+	else if (pProj->getProjType() == WEAPON_CANON_BALL)
+		Shape.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_CANON_BALL));
+
+	if (pProj->getDir().x < 0.0f)
+		Shape.setTextureRect(sf::IntRect(0, Shape.getTexture()->getSize().y, Shape.getTexture()->getSize().x, -Shape.getTexture()->getSize().y));
+	if (pProj->getDir().y < 0.0f)
+			Shape.setTextureRect(sf::IntRect(Shape.getTexture()->getSize().x, 0, -Shape.getTexture()->getSize().x, Shape.getTexture()->getSize().y));
 
 	target.draw(Shape, states);
 }

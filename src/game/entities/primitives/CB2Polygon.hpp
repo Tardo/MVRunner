@@ -10,8 +10,8 @@
 class CB2Polygon : public CEntity
 {
 public:
-	CB2Polygon(sf::Vector2f worldPos, const std::vector<sf::Vector2f> points, const sf::Color, const CB2BodyInfo &bodyInfo, int type = CEntity::B2POLY) noexcept;
-	CB2Polygon(sf::Vector2f worldPos, const sf::Vector2f points, const sf::Color color, const CB2BodyInfo &bodyInfo, int type = CEntity::B2POLY) noexcept;
+	CB2Polygon(const sf::Vector2f &worldPos, const std::vector<sf::Vector2f> &points, float rot, const sf::Color &color, const CB2BodyInfo &bodyInfo, int type = CEntity::B2POLY) noexcept;
+	CB2Polygon(const sf::Vector2f &worldPos, const sf::Vector2f &points, float rot, const sf::Color &color, const CB2BodyInfo &bodyInfo, int type = CEntity::B2POLY) noexcept;
 	virtual ~CB2Polygon() noexcept;
 
 	virtual void tick() noexcept;

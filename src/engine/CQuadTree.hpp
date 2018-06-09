@@ -92,7 +92,6 @@ public:
 			}
 			else
 			{
-				ups::msgDebug("WWWW", "LO HACE");
 				m_aItems[m_NumItems].m_Pos = Pos;
 				m_aItems[m_NumItems].m_Item = Item;
 				++m_NumItems;

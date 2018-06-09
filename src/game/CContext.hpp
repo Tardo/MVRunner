@@ -23,11 +23,16 @@ public:
 	CMap& Map() { return m_Map; }
 
 	int addEntity(CEntity *pEntity) noexcept;
-	CEntity* getEntity(std::size_t index) const noexcept
+	CEntity* getEntity(sf::Uint64 id) const noexcept
 	{
-		if (index < 0 || index >= m_vpEntities.size())
-			return nullptr;
-		return m_vpEntities[index];
+		std::vector<CEntity*>::const_iterator cit = m_vpEntities.cbegin();
+		while (cit != m_vpEntities.cend())
+		{
+			if ((*cit)->getID() == id)
+				return (*cit);
+			++cit;
+		}
+		return nullptr;
 	}
 	std::vector<CEntity*>& getEntities() noexcept { return m_vpEntities; }
 
@@ -41,6 +46,9 @@ public:
 
 	sf::Int64 getTimerStorm() const { return m_TimerStorm; }
 	void setTimerStorm(sf::Int64 time) { m_TimerStorm = time; }
+
+protected:
+	sf::Uint64 m_GID;
 
 private:
 	std::vector<CEntity*> m_vpEntities;

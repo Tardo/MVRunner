@@ -34,11 +34,19 @@ void CDebuggerRender::renderBox2D(sf::RenderTarget& target, sf::RenderStates sta
 	for (b2Body *pBody = pSystemBox2D->getWorld()->GetBodyList(); pBody; pBody = pBody->GetNext())
 	{
 		const sf::Vector2f bodyPos = CSystemBox2D::b2ToSf(pBody->GetPosition());
-		if (Client()->isClipped(bodyPos, SCREEN_MARGIN_DRAW))
-			continue;
-
 		for (b2Fixture *pFixture = pBody->GetFixtureList(); pFixture; pFixture = pFixture->GetNext())
 		{
+			const sf::FloatRect localBounds = CSystemBox2D::b2ToSf(pFixture->GetAABB(0));
+			const sf::FloatRect globalBounds(
+				pBody->GetPosition().x + localBounds.left,
+				pBody->GetPosition().y + localBounds.top,
+				localBounds.width,
+				localBounds.height
+			);
+
+			if (Client()->isClipped(globalBounds, SCREEN_MARGIN_DRAW))
+				continue;
+
 			sf::Color color = sf::Color::Blue;
 			if (pFixture->IsSensor())
 				color.a = 64.0f;
@@ -99,6 +107,7 @@ void CDebuggerRender::renderQuadTree(sf::RenderTarget& target, sf::RenderStates 
 	const sf::FloatRect &bounds = pQuadTree->getBounds();
 	if (Client()->isClipped(bounds, SCREEN_MARGIN_DRAW))
 		return;
+
 	sf::RectangleShape Shape(sf::Vector2f(bounds.width, bounds.height));
 	Shape.setPosition(bounds.left, bounds.top);
 	Shape.setFillColor(sf::Color::Transparent);

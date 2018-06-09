@@ -29,7 +29,7 @@ CControllerMain::~CControllerMain() noexcept
 {
 	Game()->Client()->getSystem<CSystemSound>()->stopBackgroundMusic();
 
-	m_vSpawnsCharacter.clear();
+	m_vPlayerCanonSpawns.clear();
 	m_vTeleports.clear();
 
 	#ifdef DEBUG_DESTRUCTORS
@@ -42,84 +42,9 @@ void CControllerMain::onSystemEvent(sf::Event *pEvent) noexcept
 
 bool CControllerMain::onInit() noexcept
 {
-	CController::onInit();
+	loadMap("data/map.tmx");
 
-	unsigned long fileSize = 0;
-	const unsigned char *pData = Game()->Client()->Storage().getFileData("data/map.tmx", &fileSize);
-	if (!Context()->Map().loadMap(Zpg::toString(pData, fileSize).c_str()))
-	{
-		ups::msgDebug("CGame", "Oops... Error loading map!");
-		return false;
-	}
-
-	if (Context()->Map().isMapLoaded())
-	{
-		// Analizar Game Layer
-		const Tmx::TileLayer *pGameLayer = Context()->Map().getGameLayer();
-		const Tmx::TileLayer *pGameModifiersLayer = Context()->Map().getGameModifiersLayer();
-		if (pGameLayer)
-		{
-			ups::msgDebug("CGame", "Analyzing map entities (%dx%d)...", pGameLayer->GetWidth(), pGameLayer->GetHeight());
-			for (int i=0; i<pGameLayer->GetHeight(); i++)
-			{
-				for (int e=0; e<pGameLayer->GetWidth(); e++)
-				{
-					const Tmx::MapTile &curTile = pGameLayer->GetTile(e, i);
-					if (curTile.tilesetId < 0)
-						continue;
-
-					const Tmx::Tileset *pTileset = Context()->Map().GetTileset(curTile.tilesetId);
-					const int tileIndex = (curTile.gid - pTileset->GetFirstGid());
-					if (tileIndex<=0)
-						continue;
-
-					sf::Vector2f worldPos(
-						e*Context()->Map().GetTileWidth()+Context()->Map().GetTileWidth()/2.0f,
-						i*Context()->Map().GetTileHeight()+Context()->Map().GetTileHeight()/2.0f
-					);
-
-					unsigned int modifierId = 0;
-					if (pGameModifiersLayer)
-					{
-						const Tmx::MapTile &curModifierTile = pGameModifiersLayer->GetTile(e, i);
-						if (curModifierTile.tilesetId >= 0)
-						{
-							const Tmx::Tileset *pTilesetModifiers = Context()->Map().GetTileset(curModifierTile.tilesetId);
-							modifierId = (curModifierTile.gid - pTilesetModifiers->GetFirstGid());
-						}
-					}
-
-					onMapTile(tileIndex, worldPos, Context()->Map().getTileDirection(sf::Vector2i(e, i)), modifierId);
-				}
-			}
-		}
-
-		// Map Objects
-		std::list<CMapRenderObject*> vObjects = Context()->Map().getObjects()->queryAll();
-		std::list<CMapRenderObject*>::const_iterator itob = vObjects.cbegin();
-		while (itob != vObjects.cend())
-		{
-			CMapRenderObject *pMapObj = (*itob);
-			if (!pMapObj || (pMapObj && !pMapObj->m_pObject))
-			{
-				++itob;
-				continue;
-			}
-
-			const sf::FloatRect globalBounds(
-				pMapObj->m_pObject->GetX(), pMapObj->m_pObject->GetY(),
-				pMapObj->m_pObject->GetWidth(), pMapObj->m_pObject->GetHeight()
-			);
-			const sf::Vector2f worldPosObj(globalBounds.left+pMapObj->m_pObject->GetWidth()/2.0f, globalBounds.top+pMapObj->m_pObject->GetHeight()/2.0f);
-			const sf::Vector2f sizeObj(globalBounds.width, globalBounds.height);
-			const int objId = pMapObj->m_pObject->GetId();
-
-			onMapObject(pMapObj, objId, worldPosObj, sizeObj);
-			++itob;
-		}
-	}
-
-	return true;
+	return CController::onInit();
 }
 
 void CControllerMain::tick() noexcept
@@ -128,7 +53,7 @@ void CControllerMain::tick() noexcept
 
 	CPlayer *pMainPlayer = Context()->getPlayer();
 
-	if (Game()->Client()->hasFocus() && Game()->Client()->Menus().getActive() == CMenus::NONE)
+	if (Game()->Client()->hasFocus())
 	{
 		static bool pressedButtonUse = false;
 		//static bool pressedButtonLight = false;
@@ -141,8 +66,9 @@ void CControllerMain::tick() noexcept
 				const sf::Vector2f &charPos = CSystemBox2D::b2ToSf(pChar->getBody()->GetPosition());
 				int charState = pChar->getCharacterState();
 
+				/** PLAYER ACTIONS **/
 				// If the camera is in travel not execute player commands
-				if (!(Game()->Client()->Camera().getStatus()&CCamera::TRAVEL))
+				if (!(Game()->Client()->Camera().getStatus()&CCamera::TRAVEL) && Game()->Client()->Menus().getActive() == CMenus::NONE)
 				{
 					const sf::Vector2f dir = upm::vectorNormalize(Game()->Client()->mapPixelToCoords(Game()->Client()->Controls().getMousePos(), Game()->Client()->Camera()) - charPos);
 
@@ -194,6 +120,7 @@ void CControllerMain::tick() noexcept
 						pressedButtonUse = false;
 				}
 
+				/** PLAYER STATE **/
 				// Unfreeze
 				if ((charState&CCharacter::STATE_FREEZED) && ups::timeGet()-m_TimerFreezed > ups::timeFreq()*g_Config.m_TimeFreeze)
 				{
@@ -202,6 +129,7 @@ void CControllerMain::tick() noexcept
 				}
 
 				const int tileId = Context()->Map().getMapTileIndex(Context()->Map().getMapPos(charPos), Context()->Map().getGameLayer());
+				/** PLAYER MAP ENVIRONMENT **/
 				// Interact with the map environment
 				if (tileId == TILE_TELEPORT_IN)
 				{
@@ -238,6 +166,11 @@ void CControllerMain::tick() noexcept
 					const sf::Vector2f tileDir = Context()->Map().getTileDirectionVector(Context()->Map().getMapPos(charPos));
 					pChar->getBody()->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(tileDir*g_Config.m_SpeedSoftImpulse), true);
 				}
+				else if (tileId == TILE_SPEED_HARD)
+				{
+					const sf::Vector2f tileDir = Context()->Map().getTileDirectionVector(Context()->Map().getMapPos(charPos));
+					pChar->getBody()->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(tileDir*g_Config.m_SpeedHardImpulse), true);
+				}
 				else if (tileId >= TILE_1 && tileId <= TILE_25)
 				{
 					m_LastCheckPoint = charPos;
@@ -247,10 +180,21 @@ void CControllerMain::tick() noexcept
 					//pChar->getBody()->SetFixedRotation(true);
 					pChar->getBody()->SetLinearVelocity(b2Vec2(0.0f, 0.0f));
 					pChar->getBody()->SetAngularVelocity(0.0f);
-					createFireBall(pChar);
 					pChar->getBody()->SetTransform(CSystemBox2D::sfToB2(m_LastCheckPoint), pChar->getBody()->GetAngle());
 				}
 			}
+		}
+
+		/** SPAWN CANONS **/
+		std::vector<CSpawnCanon>::iterator it = m_vPlayerCanonSpawns.begin();
+		while (it != m_vPlayerCanonSpawns.end())
+		{
+			if (ups::timeGet()-(*it).m_Timer > ups::timeFreq()*(*it).m_Duration)
+			{
+				new CProjectile((*it).m_Pos+(*it).m_Dir*80.0f, sf::Vector2f(64.0f, 40.0f), 0.0f, (*it).m_Dir, g_Config.m_aWeaponsInfo[WEAPON_CANON_BALL].m_Speed, 0x0, WEAPON_CANON_BALL, g_Config.m_aWeaponsInfo[WEAPON_CANON_BALL].m_LifeTime, WEAPON_CANON_BALL);
+				(*it).m_Timer = ups::timeGet();
+			}
+			++it;
 		}
 	}
 }
@@ -296,17 +240,19 @@ bool CControllerMain::onMapTile(unsigned int tileId, const sf::Vector2f &pos, un
 					else
 						(*rec.first).second.m_Pos = pos;
 				}
-				return true;
 			}
 		}
 	}
 	else
 	{
 		const unsigned int entityId = tileId - ENTITY_OFFSET;
-		if (entityId == ENTITY_SPAWN_CHARACTER)
+		if (entityId == ENTITY_SPAWN_PLAYER)
 		{
-			m_vSpawnsCharacter.push_back(pos);
-			return true;
+			m_PlayerSpawnPos.m_Pos = pos;
+		}
+		else if (entityId == ENTITY_CANON)
+		{
+			m_vPlayerCanonSpawns.push_back(CSpawnCanon(pos, Context()->Map().getTileDirectionVector(tileDir), (modifierId-TILE_MOD_TIMER_1_SEC)+1));
 		}
 	}
 

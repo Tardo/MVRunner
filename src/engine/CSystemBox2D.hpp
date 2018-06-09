@@ -24,16 +24,18 @@ struct CB2BodyInfo
 		m_Friction = 0.0f;
 		m_Density = 0.0f;
 		m_Restitution = 0.0f;
+		m_Mass = 0.0f;
 		m_CategoryBits = 0;
 		m_MaskBits = 0xFFFF;
 		m_IsSensor = false;
 		m_B2Type = b2_dynamicBody;
 	}
-	CB2BodyInfo(float friction, float density, float restitution, b2BodyType b2type, uint16 cBits, bool sensor = false, uint16 mBits = 0xFFFF)
+	CB2BodyInfo(float friction, float density, float restitution, float mass, b2BodyType b2type, uint16 cBits, bool sensor = false, uint16 mBits = 0xFFFF)
 	{
 		m_Friction = friction;
 		m_Density = density;
 		m_Restitution = restitution;
+		m_Mass = mass;
 		m_CategoryBits = cBits;
 		m_MaskBits = mBits;
 		m_IsSensor = sensor;
@@ -43,6 +45,7 @@ struct CB2BodyInfo
 	float m_Friction;
 	float m_Density;
 	float m_Restitution;
+	float m_Mass;
 	uint16 m_CategoryBits;
 	uint16 m_MaskBits;
 	bool m_IsSensor;
@@ -67,16 +70,17 @@ public:
 
 	b2World* getWorld() noexcept { return &m_World; }
 
-	b2Body* createBoxBody(const sf::Vector2f &worldPos, const sf::Vector2f &size, const CB2BodyInfo &bodyInfo) noexcept;
-	b2Body* createCircleBody(const sf::Vector2f &worldPos, float radius, const CB2BodyInfo &bodyInfo) noexcept;
-	b2Body* createPolygonBody(const sf::Vector2f &worldPos, const std::vector<sf::Vector2f> points, const CB2BodyInfo &bodyInfo) noexcept;
-	b2Body* createPolyLineBody(const sf::Vector2f &worldPos, const std::vector<sf::Vector2f> points, const CB2BodyInfo &bodyInfo) noexcept;
+	b2Body* createBoxBody(const sf::Vector2f &worldPos, const sf::Vector2f &size, float rot, const CB2BodyInfo &bodyInfo) noexcept;
+	b2Body* createCircleBody(const sf::Vector2f &worldPos, float radius, float rot, const CB2BodyInfo &bodyInfo) noexcept;
+	b2Body* createPolygonBody(const sf::Vector2f &worldPos, const std::vector<sf::Vector2f> points, float rot, const CB2BodyInfo &bodyInfo) noexcept;
+	b2Body* createPolyLineBody(const sf::Vector2f &worldPos, const std::vector<sf::Vector2f> points, float rot, const CB2BodyInfo &bodyInfo) noexcept;
 
 	b2Fixture* createFixture(b2Body *pBody, const b2Shape &Shape, bool sensor, const b2Filter &filter, void *pUserData = nullptr, float density = 0.0f, float friction = 0.0f, float restitution = 0.0f) noexcept;
 
 	std::vector<b2Body*> getBodiesNear(const sf::Vector2f &worldPos, float margin, sf::Uint16 categoryBits, b2Body *pNotThis = nullptr) noexcept;
 	b2Fixture* getFixtureAt(const sf::Vector2f &worldPos) noexcept;
 
+	void applyBlastImpulse(b2Body *pBody, const sf::Vector2f &blastCenter, const sf::Vector2f &applyPoint, float blastPower);
 	class CEntity* checkIntersectLine(const sf::Vector2f &worlPosInit, const sf::Vector2f &worldPosEnd, sf::Vector2f *pPoint = nullptr, b2Body *pNotThis = nullptr, uint16 maskBits = 0xFFF) noexcept;
 	void createExplosion(const sf::Vector2f &worldPos, float energy, float radius, b2Body *pNotThis = nullptr) noexcept;
 
@@ -84,10 +88,16 @@ public:
 
 	static inline b2Vec2 sfToB2(const sf::Vector2f &vector) noexcept { return b2Vec2(vector.x*MPP, vector.y*MPP); }
 	static inline sf::Vector2f b2ToSf(const b2Vec2 &vector) noexcept { return sf::Vector2f(vector.x*PPM, vector.y*PPM); }
+	static inline sf::FloatRect b2ToSf(const b2AABB &aabb) noexcept { return sf::FloatRect(aabb.lowerBound.x*PPM, aabb.lowerBound.y*PPM, aabb.upperBound.x*PPM, aabb.upperBound.y*PPM); }
+	static bool findIntersectionOfFixtures(b2Fixture *pFA, b2Fixture *pFB, std::vector<b2Vec2> *pOutputVertices) noexcept;
+	static b2Vec2 computeCentroid(const std::vector<b2Vec2> &vs, float *pArea) noexcept;
 	static b2Vec2 ZERO;
 
 private:
 	b2World m_World;
+
+	static bool inside(const b2Vec2 &cp1, const b2Vec2 &cp2, const b2Vec2 &p) noexcept;
+	static b2Vec2 intersection(const b2Vec2 &cp1, const b2Vec2 &cp2, const b2Vec2 &s, const b2Vec2 &e) noexcept;
 };
 
 

@@ -25,7 +25,7 @@ public:
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept final;
 
-	bool doButton(const char*pText, const sf::FloatRect &bounds, unsigned int fontSize, int align = 0) noexcept;
+	bool doButton(sf::RenderTarget& target, sf::RenderStates states, const char*pText, const sf::FloatRect &bounds, unsigned int fontSize, int align = 0) const noexcept;
 
 	void showBroadcastMessage(const char *pMsg, float duration) noexcept;
 	void showHelpMessage(const char *pMsg) noexcept;

@@ -57,6 +57,7 @@ void CAssetManager::load() noexcept
 	LOAD_TEXTURE(TEXTURE_SFML_LOGO, "data/fx/sfml_logo.png")
 	LOAD_TEXTURE(TEXTURE_WATER_SHADER, "data/fx/water_shader.png")
 	LOAD_TEXTURE(TEXTURE_GRENADE, "data/objects/grenade.png")
+	LOAD_TEXTURE(TEXTURE_CANON_BALL, "data/objects/canon_ball.png")
 	LOAD_TEXTURE(TEXTURE_SKIN_DEFAULT, "data/skins/default.png")
 
 	LOAD_SOUND(SOUND_MOUSE_CLICK, "data/sfx/mouse_click.wav")

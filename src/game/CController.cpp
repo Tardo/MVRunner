@@ -6,6 +6,7 @@
 #include <game/entities/primitives/CB2Chain.hpp>
 #include <game/entities/CSign.hpp>
 #include <game/entities/CAmbientSound.hpp>
+#include <game/entities/CWater.hpp>
 #include <tmxparser/TmxObject.h>
 #include <tmxparser/TmxPolygon.h>
 #include <tmxparser/TmxEllipse.h>
@@ -39,24 +40,96 @@ CController::~CController() noexcept
 	m_pGameContext = nullptr;
 }
 
+bool CController::loadMap(const char *filemap) noexcept
+{
+	unsigned long fileSize = 0;
+	const unsigned char *pData = Game()->Client()->Storage().getFileData(filemap, &fileSize);
+	if (!Context()->Map().loadMap(Zpg::toString(pData, fileSize).c_str()))
+	{
+		ups::msgDebug("CGame", "Oops... Error loading map!");
+		return false;
+	}
+
+	Game()->Client()->Storage().unloadData(filemap);
+	return true;
+}
+
 bool CController::onInit() noexcept
 {
+	if (Context()->Map().isMapLoaded())
+	{
+		// Analizar Game Layer
+		const Tmx::TileLayer *pGameLayer = Context()->Map().getGameLayer();
+		const Tmx::TileLayer *pGameModifiersLayer = Context()->Map().getGameModifiersLayer();
+		if (pGameLayer)
+		{
+			ups::msgDebug("CController", "Analyzing map entities (%dx%d)...", pGameLayer->GetWidth(), pGameLayer->GetHeight());
+			for (int i=0; i<pGameLayer->GetHeight(); i++)
+			{
+				for (int e=0; e<pGameLayer->GetWidth(); e++)
+				{
+					const Tmx::MapTile &curTile = pGameLayer->GetTile(e, i);
+					if (curTile.tilesetId < 0)
+						continue;
+
+					const Tmx::Tileset *pTileset = Context()->Map().GetTileset(curTile.tilesetId);
+					const int tileIndex = (curTile.gid - pTileset->GetFirstGid());
+					if (tileIndex<=0)
+						continue;
+
+					sf::Vector2f worldPos(
+						e*Context()->Map().GetTileWidth()+Context()->Map().GetTileWidth()/2.0f,
+						i*Context()->Map().GetTileHeight()+Context()->Map().GetTileHeight()/2.0f
+					);
+
+					unsigned int modifierId = 0;
+					if (pGameModifiersLayer)
+					{
+						const Tmx::MapTile &curModifierTile = pGameModifiersLayer->GetTile(e, i);
+						if (curModifierTile.tilesetId >= 0)
+						{
+							const Tmx::Tileset *pTilesetModifiers = Context()->Map().GetTileset(curModifierTile.tilesetId);
+							modifierId = (curModifierTile.gid - pTilesetModifiers->GetFirstGid());
+						}
+					}
+
+					onMapTile(tileIndex, worldPos, Context()->Map().getTileDirection(sf::Vector2i(e, i)), modifierId);
+				}
+			}
+		}
+
+		// Map Objects
+		std::list<CMapRenderObject*> vObjects = Context()->Map().getObjects()->queryAll();
+		ups::msgDebug("CController", "Analyzing map objects (%u)...", vObjects.size());
+		std::list<CMapRenderObject*>::const_iterator itob = vObjects.cbegin();
+		while (itob != vObjects.cend())
+		{
+			CMapRenderObject *pMapObj = (*itob);
+			if (!pMapObj || (pMapObj && !pMapObj->m_pObject))
+			{
+				++itob;
+				continue;
+			}
+
+			const sf::FloatRect globalBounds(
+				pMapObj->m_pObject->GetX(), pMapObj->m_pObject->GetY(),
+				pMapObj->m_pObject->GetWidth(), pMapObj->m_pObject->GetHeight()
+			);
+			const sf::Vector2f worldPosObj(globalBounds.left+pMapObj->m_pObject->GetWidth()/2.0f, globalBounds.top+pMapObj->m_pObject->GetHeight()/2.0f);
+			const sf::Vector2f sizeObj(globalBounds.width, globalBounds.height);
+			const int objId = pMapObj->m_pObject->GetId();
+
+			onMapObject(pMapObj, objId, worldPosObj, sizeObj);
+			++itob;
+		}
+	}
+
 	return true;
 }
 
 bool CController::onMapTile(unsigned int tileId, const sf::Vector2f &pos, unsigned int tileDir, unsigned int modifierId) noexcept
 {
-	if (tileId >= ENTITY_OFFSET)
-	{
-		const unsigned int entityId = tileId-ENTITY_OFFSET;
-		if (entityId == ENTITY_SPAWN_PLAYER)
-		{
-			m_PlayerSpawnPos.m_Pos = pos;
-			return true;
-		}
-	}
-
-	return false;
+	return true;
 }
 
 void CController::onMapObject(CMapRenderObject *pMapObj, int objId, const sf::Vector2f &worldPos, const sf::Vector2f &size) noexcept
@@ -89,6 +162,12 @@ bool CController::isStaticObject(const char *pType) const noexcept
 
 void CController::tick() noexcept
 {
+	std::vector<CEntity*> *p_vpEntities = &Context()->getEntities();
+    // Tick Entities
+    std::vector<CEntity*>::const_iterator citE = p_vpEntities->begin();
+    while (citE != p_vpEntities->end())
+		(*citE++)->tick();
+
 	// Camera Pos
 	updateCamera(Game()->Client()->getDeltaTime());
 
@@ -119,6 +198,7 @@ void CController::tick() noexcept
 			const sf::Vector2f worldPosObj(globalBounds.left+pMapObj->m_pObject->GetWidth()/2.0f, globalBounds.top+pMapObj->m_pObject->GetHeight()/2.0f);
 			const sf::Vector2f sizeObj(globalBounds.width, globalBounds.height);
 			const int objId = pMapObj->m_pObject->GetId();
+			const float objRot = pMapObj->m_pObject->GetRot();
 
 			// Dynamic Objects
 			//if (!isStaticObject(pMapObj->m_pObject->GetType().c_str()))
@@ -144,7 +224,8 @@ void CController::tick() noexcept
 				else
 					canCreate = !Game()->Client()->isClipped(globalBounds, MARGIN_CREATE_OBJECTS);
 
-				if (canCreate && !pMapObj->m_pEntity)
+				CEntity *pEntity = Game()->Client()->Controller()->Context()->getEntity(pMapObj->m_EntID);
+				if (canCreate && !pEntity)
 				{
 					if (pMapObj->m_pObject->GetType().compare("light") == 0)
 					{
@@ -168,36 +249,49 @@ void CController::tick() noexcept
 							else if (ligthDirection.compare("bottom") == 0)
 								degrees = 180.0f;
 
-							pMapObj->m_pEntity = Game()->Client()->Controller()->createEmissive(
+							CEntity *pEnt = Game()->Client()->Controller()->createEmissive(
 								worldPosObj,
 								degrees,
 								sf::Vector2f(globalBounds.width/225.0f, globalBounds.height/225.0f),
 								colorLight, alwaysOn, blink, variationSize
 							);
+							pMapObj->m_EntID = pEnt->getID();
 						}
 						else
 						{
-							pMapObj->m_pEntity = Game()->Client()->Controller()->createPoint(
+							CEntity *pEnt = Game()->Client()->Controller()->createPoint(
 								worldPosObj,
 								sf::Vector2f(globalBounds.width/256.0f, globalBounds.height/256.0f),
 								colorLight, alwaysOn, blink, variationSize
 							);
+							pMapObj->m_EntID = pEnt->getID();
 						}
 					}
 					else if (pMapObj->m_pObject->GetType().compare("smoke") == 0)
 					{
-						const sf::Vector2f pos(globalBounds.left+globalBounds.width/2.0f, globalBounds.top+globalBounds.height/2.0f);
+						// TODO
+					}
+					else if (pMapObj->m_pObject->GetType().compare("water") == 0)
+					{
+						const Tmx::PropertySet &waterProps = pMapObj->m_pObject->GetProperties();
+						const Tmx::Color color = waterProps.GetColorProperty("color", Tmx::Color(255, 255, 255, 255));
+
+						CEntity *pEnt = new CWater(worldPosObj, sizeObj, objRot);
+						pMapObj->m_EntID = pEnt->getID();
+						pEnt->m_Color = CMap::tmxToSf(color);
 					}
 					else if (pMapObj->m_pObject->GetType().compare("sign") == 0)
 					{
 						const Tmx::PropertySet &signProps = pMapObj->m_pObject->GetProperties();
-						pMapObj->m_pEntity = new CSign(worldPosObj, sizeObj, signProps.GetStringProperty("message", "").c_str());
+						CEntity *pEnt = new CSign(worldPosObj, sizeObj, objRot, signProps.GetStringProperty("message", "").c_str());
+						pMapObj->m_EntID = pEnt->getID();
 					}
 					else if (pMapObj->m_pObject->GetType().compare("sound") == 0)
 					{
 						const float minDist = upm::min(sizeObj.x, sizeObj.y);
 						const Tmx::PropertySet &soundProps = pMapObj->m_pObject->GetProperties();
-						pMapObj->m_pEntity = new CAmbientSound(worldPosObj, soundProps.GetIntProperty("sound_id", -1), minDist/2.0f, soundProps.GetIntProperty("loop", 1), soundProps.GetFloatProperty("volume", 100.0f));
+						CEntity *pEnt = new CAmbientSound(worldPosObj, soundProps.GetIntProperty("sound_id", -1), minDist/2.0f, soundProps.GetIntProperty("loop", 1), soundProps.GetFloatProperty("volume", 100.0f));
+						pMapObj->m_EntID = pEnt->getID();
 					}
 					else
 					{
@@ -212,6 +306,8 @@ void CController::tick() noexcept
 						else if (pMapObj->m_pObject->GetType().compare("kinematic") == 0)
 							b2Type = b2_kinematicBody;
 
+						const bool isAwake = (b2Type == b2_dynamicBody);
+
 						const Tmx::Polygon *pPoly = pMapObj->m_pObject->GetPolygon();
 						if (pPoly)
 						{
@@ -219,14 +315,16 @@ void CController::tick() noexcept
 							for (int i=0; i<pPoly->GetNumPoints(); i++)
 								points.push_back(sf::Vector2f(pPoly->GetPoint(i).x, pPoly->GetPoint(i).y));
 
-							const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, b2Type, CAT_BUILD);
-							pMapObj->m_pEntity = new CB2Polygon(
+							const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, 0.0f, b2Type, CAT_BUILD);
+							CEntity *pEnt = new CB2Polygon(
 									sf::Vector2f(globalBounds.left, globalBounds.top),
 									points,
+									objRot,
 									colorGeom,
 									bodyInfo);
-							pMapObj->m_pEntity->m_ContactFx = onContactFx;
-							pMapObj->m_pEntity->getBody()->SetAwake(false);
+							pEnt->m_ContactFx = onContactFx;
+							pEnt->getBody()->SetAwake(isAwake);
+							pMapObj->m_EntID = pEnt->getID();
 							ups::msgDebug("GameContext", "Polygon Created! [#%d]", objId);
 						}
 						else
@@ -234,14 +332,16 @@ void CController::tick() noexcept
 							const Tmx::Ellipse *pEllipse = pMapObj->m_pObject->GetEllipse();
 							if (pEllipse)
 							{
-								const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, b2Type, CAT_BUILD);
-								pMapObj->m_pEntity = new CB2Circle(
+								const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, 0.0f, b2Type, CAT_BUILD);
+								CEntity *pEnt = new CB2Circle(
 										worldPosObj,
 										pEllipse->GetRadiusX(),
+										objRot,
 										colorGeom,
 										bodyInfo);
-								pMapObj->m_pEntity->m_ContactFx = onContactFx;
-								pMapObj->m_pEntity->getBody()->SetAwake(false);
+								pEnt->m_ContactFx = onContactFx;
+								pEnt->getBody()->SetAwake(isAwake);
+								pMapObj->m_EntID = pEnt->getID();
 								ups::msgDebug("GameContext", "Ellipse Created: %s [#%d]", pMapObj->m_pObject->GetType().c_str(), objId);
 							}
 							else
@@ -253,78 +353,41 @@ void CController::tick() noexcept
 									for (int i=0; i<pPolyline->GetNumPoints(); ++i)
 										points.push_back(sf::Vector2f(pPolyline->GetPoint(i).x, pPolyline->GetPoint(i).y));
 
-									const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, b2Type, CAT_BUILD);
-									pMapObj->m_pEntity = new CB2Chain(
+									const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, 0.0f, b2Type, CAT_BUILD);
+									CEntity *pEnt = new CB2Chain(
 											worldPosObj,
 											points,
+											objRot,
 											colorGeom,
 											bodyInfo);
-									pMapObj->m_pEntity->m_ContactFx = onContactFx;
-									pMapObj->m_pEntity->getBody()->SetAwake(false);
+									pEnt->m_ContactFx = onContactFx;
+									pEnt->getBody()->SetAwake(isAwake);
+									pMapObj->m_EntID = pEnt->getID();
 									ups::msgDebug("GameContext", "PolyLine Created! [#%d]", objId);
 								}
 								else
 								{
-									const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, b2Type, CAT_BUILD);
-									pMapObj->m_pEntity = new CB2Polygon(
+									const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.85f, 0.1f, 0.0f, b2Type, CAT_BUILD);
+									CEntity *pEnt = new CB2Polygon(
 											worldPosObj,
 											sizeObj,
+											objRot,
 											colorGeom,
 											bodyInfo);
-									pMapObj->m_pEntity->m_ContactFx = onContactFx;
-									pMapObj->m_pEntity->getBody()->SetAwake(false);
+									pEnt->m_ContactFx = onContactFx;
+									pEnt->getBody()->SetAwake(isAwake);
+									pMapObj->m_EntID = pEnt->getID();
 									ups::msgDebug("GameContext", "Rectangle Created! [#%d]", objId);
 								}
 							}
 						}
 					}
 				}
-			} else if (!pMapObj->m_pEntity)
-			{
-
 			}
 
 			++itob;
 		}
 	}
-
-
-	std::vector<CEntity*> &vpEntities = Context()->getEntities();
-
-	// Entities
-    std::vector<CEntity*>::iterator itE = vpEntities.begin();
-    while (itE != vpEntities.end())
-    {
-    	CEntity *pEnt = (*itE);
-    	if (pEnt->isToDelete())
-    	{
-    		// Is a MapObject Entity?
-			if (Context()->Map().isMapLoaded())
-			{
-				// TODO: Add a flag for know if is a map object entity
-				std::list<CMapRenderObject*> mapObjs = Context()->Map().getObjects()->queryAll();
-				std::list<CMapRenderObject*>::iterator itObj = mapObjs.begin();
-				while (itObj != mapObjs.end())
-				{
-					if ((*itObj)->m_pEntity == pEnt)
-					{
-						(*itObj)->m_pEntity = nullptr;
-						break;
-					}
-					++itObj;
-				}
-			}
-
-    		delete pEnt;
-    		pEnt = nullptr;
-    		itE = vpEntities.erase(itE);
-    	}
-    	else
-    	{
-    		(*itE)->tick();
-    		++itE;
-    	}
-    }
 
 	// Weather
 	if (Context()->getWeather() == WEATHER_RAIN)
@@ -357,6 +420,21 @@ void CController::tick() noexcept
 		createSnowBack(sf::Vector2f(startX+rand()%(endX-startX), startY+rand()%(endY-startY)), 5.0f);
 		createSnowFront(sf::Vector2f(startX+rand()%(endX-startX), startY+rand()%(endY-startY)), 2.0f);
 	}
+
+	// Remove Entities
+    std::vector<CEntity*>::iterator itE = p_vpEntities->begin();
+    while (itE != p_vpEntities->end())
+    {
+    	CEntity *pEnt = static_cast<CEntity*>(*itE);
+    	if (pEnt->isToDelete())
+    	{
+    		delete pEnt;
+    		pEnt = nullptr;
+    		itE = p_vpEntities->erase(itE);
+    	}
+    	else
+    		++itE;
+    }
 }
 
 void CController::onStart() noexcept
@@ -439,13 +517,14 @@ void CController::createBlood(const sf::Vector2f &worldPos) noexcept
 	}
 }
 
-void CController::createFireBall(class CEntity *pTarget, const sf::Vector2f &offSet) noexcept
+void CController::createFireBall(class CEntity *pTarget, float duration, const sf::Vector2f &offSet) noexcept
 {
 	if (!pTarget->getBody() || Game()->Client()->isClipped(CSystemBox2D::b2ToSf(pTarget->getBody()->GetPosition())+offSet, 128.0f))
 		return;
 
 	CParticle *pParticle = new CParticle(sf::BlendAdd, RENDER_FRONT, true, CAssetManager::SHADER_BLUR);
 	pParticle->m_pTarget = pTarget;
+	pParticle->m_Pos = CSystemBox2D::b2ToSf(pTarget->getBody()->GetPosition());
 	pParticle->m_SizeInit = sf::Vector2f(32.0f, 32.0f);
 	pParticle->m_SizeEnd = sf::Vector2f(64.0f, 64.0f);
 	pParticle->m_ColorInit = sf::Color(10, 75, 205);
@@ -454,7 +533,7 @@ void CController::createFireBall(class CEntity *pTarget, const sf::Vector2f &off
 	pParticle->m_Offset = offSet;
 	pParticle->m_Luminance = true;
 	pParticle->m_VelRot = upm::randInt(0, 2) == 1?-2.45f:2.45f;
-	pParticle->m_Duration = 0.75f;
+	pParticle->m_Duration = duration;
 	pParticle->m_TextId = CAssetManager::TEXTURE_SMOKE_WHITE;
 }
 
@@ -465,28 +544,30 @@ void CController::createFireTrailLarge(const sf::Vector2f &worldPos) noexcept
 
 	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_FRONT);
 	pParticle->m_Pos = worldPos;
-	pParticle->m_SizeInit = sf::Vector2f(4.0f, 4.0f);
-	pParticle->m_SizeEnd = sf::Vector2f(12.0f, 12.0f);
+	pParticle->m_SizeInit = sf::Vector2f(24.0f, 24.0f);
+	pParticle->m_SizeEnd = sf::Vector2f(64.0f, 64.0f);
 	pParticle->m_ColorInit = sf::Color(125, 125, 125, 200);
 	pParticle->m_ColorEnd = sf::Color::Black;
 	pParticle->m_ColorEnd.a = 0;
 	pParticle->m_VelRot = upm::randInt(0, 2) == 1?-2.45f:2.45f;
 	pParticle->m_Dir = sf::Vector2f(upm::floatRand(-1.0f, 1.0f), upm::floatRand(-1.0f, 1.0f));
 	pParticle->m_Vel = upm::floatRand(0.001f, 0.01f);
-	pParticle->m_Duration = upm::floatRand(0.1f, 0.55f);
+	pParticle->m_Duration = upm::floatRand(0.35f, 0.85f);
+	pParticle->m_Luminance = true;
 	pParticle->m_TextId = CAssetManager::TEXTURE_SMOKE_WHITE;
 
 	pParticle = new CParticle(sf::BlendAdd, RENDER_FRONT);
 	pParticle->m_Pos = worldPos;
-	pParticle->m_SizeInit = sf::Vector2f(4.0f, 4.0f);
-	pParticle->m_SizeEnd = sf::Vector2f(12.0f, 12.0f);
+	pParticle->m_SizeInit = sf::Vector2f(24.0f, 24.0f);
+	pParticle->m_SizeEnd = sf::Vector2f(64.0f, 64.0f);
 	pParticle->m_ColorInit = sf::Color(251, 104, 4);
 	pParticle->m_ColorEnd = sf::Color(251, 216, 4);
 	pParticle->m_ColorEnd.a = 0;
 	pParticle->m_VelRot = upm::randInt(0, 2) == 1?-2.45f:2.45f;
 	pParticle->m_Dir = sf::Vector2f(upm::floatRand(-1.0f, 1.0f), upm::floatRand(-1.0f, 1.0f));
 	pParticle->m_Vel = upm::floatRand(0.001f, 0.01f);
-	pParticle->m_Duration = upm::floatRand(0.05f, 0.25f);
+	pParticle->m_Duration = upm::floatRand(0.2f, 0.6f);
+	pParticle->m_Luminance = true;
 	pParticle->m_TextId = CAssetManager::TEXTURE_SMOKE_WHITE;
 }
 

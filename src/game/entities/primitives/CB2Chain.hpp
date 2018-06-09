@@ -10,7 +10,7 @@
 class CB2Chain : public CEntity
 {
 public:
-	CB2Chain(sf::Vector2f worldPos, const std::vector<sf::Vector2f> points, const sf::Color, const CB2BodyInfo &bodyInfo, int entityType = CEntity::B2CHAIN) noexcept;
+	CB2Chain(const sf::Vector2f &worldPos, const std::vector<sf::Vector2f> &points, float rot, const sf::Color &color, const CB2BodyInfo &bodyInfo, int entityType = CEntity::B2CHAIN) noexcept;
 	virtual ~CB2Chain() noexcept;
 
 	virtual void tick() noexcept;

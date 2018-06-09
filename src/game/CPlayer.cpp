@@ -24,7 +24,7 @@ CEntity* CPlayer::createCharacter(const sf::Vector2f &pos) noexcept
 	if (m_pCharacter)
 		return m_pCharacter;
 
-	m_pCharacter = new CCharacter(pos, this);
+	m_pCharacter = new CCharacter(pos, 0.0f, this);
 	return m_pCharacter;
 }
 void CPlayer::destroyCharacter() noexcept

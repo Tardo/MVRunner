@@ -21,6 +21,7 @@
 #include <game/components/CCamera.hpp>
 #include <game/components/CDebuggerRender.hpp>
 #include <game/components/CLightRender.hpp>
+#include <game/components/CFluidRender.hpp>
 #include <game/CController.hpp>
 #include <game/CEntity.hpp>
 #include <Zpg/Zpg.hpp>
@@ -116,6 +117,7 @@ private:
 	CUI m_UI;
 	CPlayerRender m_PlayerRender;
 	CItemRender m_ItemRender;
+	CFluidRender m_FluidRender;
 	CParticleRender m_ParticleRenderBack;
 	CParticleRender m_ParticleRenderFront;
 	CParticleRender m_ParticleRenderForeground;

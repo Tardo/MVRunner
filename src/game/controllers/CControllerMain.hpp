@@ -50,7 +50,8 @@ public:
 	virtual void onCharacterDeath(CCharacter *pVictim, CPlayer *pKiller) noexcept final;
 
 private:
-	std::vector<sf::Vector2f> m_vSpawnsCharacter;
+	CSpawn m_PlayerSpawnPos;
+	std::vector<CSpawnCanon> m_vPlayerCanonSpawns;
 	std::map<int,CTeleport> m_vTeleports;
 	sf::Int64 m_TimerFreezed;
 	sf::Vector2f m_LastCheckPoint;

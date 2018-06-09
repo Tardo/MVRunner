@@ -14,9 +14,9 @@
 const float CCharacter::SIZE = 28.0f;
 const long CCharacter::ANIM_TIME = 150;
 const unsigned int CCharacter::ANIM_SUBRECTS = 4;
-const CB2BodyInfo CCharacter::ms_BodyInfo = CB2BodyInfo(1.5f, 0.7f, 0.1f, b2_dynamicBody, CAT_CHARACTER_PLAYER);
-CCharacter::CCharacter(const sf::Vector2f &pos, class CPlayer *pPlayer) noexcept
-: CB2Circle(pos, SIZE, sf::Color::White, ms_BodyInfo, CEntity::CHARACTER)
+const CB2BodyInfo CCharacter::ms_BodyInfo = CB2BodyInfo(1.5f, 1.25f, 0.1f, 0.0f, b2_dynamicBody, CAT_CHARACTER_PLAYER);
+CCharacter::CCharacter(const sf::Vector2f &pos, float rot, class CPlayer *pPlayer) noexcept
+: CB2Circle(pos, SIZE, rot, sf::Color::White, ms_BodyInfo, CEntity::CHARACTER)
 {
 	m_pPlayer = pPlayer;
 	m_Visible = true;
@@ -91,11 +91,11 @@ void CCharacter::tick() noexcept
 
 			pGame->Client()->getSystem<CSystemSound>()->play(CAssetManager::SOUND_KILL, shapePos, 15.0f, 20.0f);
 			// Gore
-			new CHitBox(shapePos, sf::Vector2f(6.0f, 6.0f), sf::Vector2f(upm::floatRand(-1.0f,1.0f), upm::floatRand(-1.0f,1.0f)), upm::floatRand(6.0f, 12.0f), g_Config.m_HitBoxGoreDuration, HITBOX_CHARACTER_HEAD);
+			new CHitBox(shapePos, sf::Vector2f(6.0f, 6.0f), upm::floatRand(0.0f,360.0f), sf::Vector2f(upm::floatRand(-1.0f,1.0f), upm::floatRand(-1.0f,1.0f)), upm::floatRand(6.0f, 12.0f), g_Config.m_HitBoxGoreDuration, HITBOX_CHARACTER_HEAD);
 			for (int i=0; i<2; i++)
-				new CHitBox(shapePos, sf::Vector2f(4.0f, 8.0f), sf::Vector2f(upm::floatRand(-1.0f,1.0f), upm::floatRand(-1.0f,1.0f)), upm::floatRand(6.0f, 12.0f), g_Config.m_HitBoxGoreDuration, HITBOX_CHARACTER_LEG);
+				new CHitBox(shapePos, sf::Vector2f(4.0f, 8.0f), upm::floatRand(0.0f,360.0f), sf::Vector2f(upm::floatRand(-1.0f,1.0f), upm::floatRand(-1.0f,1.0f)), upm::floatRand(6.0f, 12.0f), g_Config.m_HitBoxGoreDuration, HITBOX_CHARACTER_LEG);
 			for (int i=0; i<4; i++)
-				new CHitBox(shapePos, sf::Vector2f(4.0f, 4.0f), sf::Vector2f(upm::floatRand(-1.0f,1.0f), upm::floatRand(-1.0f,1.0f)), upm::floatRand(6.0f, 12.0f), g_Config.m_HitBoxGoreDuration, HITBOX_CHARACTER_BODY);
+				new CHitBox(shapePos, sf::Vector2f(4.0f, 4.0f), upm::floatRand(0.0f,360.0f), sf::Vector2f(upm::floatRand(-1.0f,1.0f), upm::floatRand(-1.0f,1.0f)), upm::floatRand(6.0f, 12.0f), g_Config.m_HitBoxGoreDuration, HITBOX_CHARACTER_BODY);
 
 			pGame->Client()->Controller()->onCharacterDeath(this, nullptr);
 		}
@@ -125,12 +125,12 @@ void CCharacter::doFire() noexcept
 		{
 			case WEAPON_GRENADE_LAUNCHER:
 			{
-				new CProjectile(CharPos+CharDir*(CCharacter::SIZE), sf::Vector2f(30.0f, 22.0f), CharDir, g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_Speed, getOwner(), m_ActiveWeapon, 0);
+				new CProjectile(CharPos+CharDir*(CCharacter::SIZE), sf::Vector2f(30.0f, 22.0f), 0.0f, CharDir, g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_Speed, getOwner(), m_ActiveWeapon, g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_LifeTime, 0);
 			} break;
 			case WEAPON_JET_PACK:
 			{
-				m_pBody->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(-CharDir*g_Config.m_WeaponJetPackEnergy), true);
-				new CFire(CharPos+CharDir*(CCharacter::SIZE), CharDir, 40.f, 1.5f);
+				m_pBody->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(-CharDir*g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_Energy), true);
+				new CFire(CharPos+CharDir*(CCharacter::SIZE), 0.0f, CharDir, g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_Speed, g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_LifeTime);
 			} break;
 		}
 
@@ -273,24 +273,5 @@ void CCharacter::onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexc
 	{
 		CGame *pGame = CGame::getInstance();
 		pGame->Client()->Controller()->createSmokeImpact(worldPos, sf::Vector2f(1.0f, 0.0f), upm::vectorLength(charVel)/500.0f);
-	}
-}
-
-/** SENSOR **/
-void CCharacter::onSensorIn(CEntity *pEntity) noexcept
-{
-	m_vpSensorEntities.push_back(pEntity);
-}
-void CCharacter::onSensorOut(CEntity *pEntity) noexcept
-{
-	std::vector<CEntity*>::iterator itEnt = m_vpSensorEntities.begin();
-	while (itEnt != m_vpSensorEntities.end())
-	{
-		if ((*itEnt) == pEntity)
-		{
-			itEnt = m_vpSensorEntities.erase(itEnt);
-			continue;
-		}
-		++itEnt;
 	}
 }

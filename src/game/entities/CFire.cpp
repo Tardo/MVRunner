@@ -6,9 +6,9 @@
 #include <engine/CSystemBox2D.hpp>
 
 const float CFire::SIZE = 8.0f;
-const CB2BodyInfo CFire::ms_BodyInfo = CB2BodyInfo(0.2f, 0.7f, 0.1f, b2_dynamicBody, CAT_FIRE, false, CAT_FIRE|CAT_BUILD|CAT_GENERIC);
-CFire::CFire(const sf::Vector2f &pos, const sf::Vector2f &dir, float force, float lifeTime) noexcept
-: CB2Circle(pos, SIZE, sf::Color::Transparent, ms_BodyInfo, CEntity::FIRE)
+const CB2BodyInfo CFire::ms_BodyInfo = CB2BodyInfo(0.2f, 0.7f, 0.1f, 0.0f, b2_kinematicBody, CAT_FIRE, false, CAT_FIRE|CAT_BUILD|CAT_GENERIC);
+CFire::CFire(const sf::Vector2f &pos, float rot, const sf::Vector2f &dir, float force, float lifeTime) noexcept
+: CB2Circle(pos, SIZE, rot, sf::Color::Transparent, ms_BodyInfo, CEntity::FIRE)
 {
 	m_LifeTime = lifeTime;
 	m_Dir = dir;
@@ -16,7 +16,7 @@ CFire::CFire(const sf::Vector2f &pos, const sf::Vector2f &dir, float force, floa
 
 	CGame *pGame = CGame::getInstance();
 
-	pGame->Client()->Controller()->createFireBall(this);
+	pGame->Client()->Controller()->createFireBall(this, lifeTime-0.01f);
 	if (getBody())
 	{
 		getBody()->SetBullet(true);

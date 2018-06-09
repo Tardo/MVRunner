@@ -26,7 +26,7 @@ enum
 class CHitBox final : public CB2Polygon
 {
 public:
-	CHitBox(const sf::Vector2f &pos, const sf::Vector2f &size, const sf::Vector2f &dir, float force, float lifeTime, unsigned int typeHitBox, unsigned int level = 0u, const sf::Color &color = sf::Color::White, int textureId = -1) noexcept;
+	CHitBox(const sf::Vector2f &pos, const sf::Vector2f &size, float rot, const sf::Vector2f &dir, float force, float lifeTime, unsigned int typeHitBox, unsigned int level = 0u, const sf::Color &color = sf::Color::White, int textureId = -1) noexcept;
 	~CHitBox() noexcept;
 
 	virtual void tick() noexcept final;

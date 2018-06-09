@@ -13,7 +13,7 @@ class CFire final : public CB2Circle
 public:
 	static const float SIZE;
 
-	CFire(const sf::Vector2f &pos, const sf::Vector2f &dir, float force, float lifeTime) noexcept;
+	CFire(const sf::Vector2f &pos, float rot, const sf::Vector2f &dir, float force, float lifeTime) noexcept;
 	~CFire() noexcept;
 
 	virtual void tick() noexcept final;

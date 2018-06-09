@@ -22,6 +22,7 @@ CGameClient::CGameClient() noexcept
   m_UI(this),
   m_PlayerRender(this),
   m_ItemRender(this),
+  m_FluidRender(this),
   m_ParticleRenderBack(this, RENDER_BACK),
   m_ParticleRenderFront(this, RENDER_FRONT),
   m_ParticleRenderForeground(this, RENDER_FOREGROUND),
@@ -195,8 +196,8 @@ void CGameClient::reset() noexcept
 bool CGameClient::init() noexcept
 {
 	setVerticalSyncEnabled(g_Config.m_VSync);
-	setMouseCursorVisible(false);
-	setMouseCursorGrabbed(true);
+	setMouseCursorVisible(g_Config.m_CursorShow);
+	setMouseCursorGrabbed(g_Config.m_CursorGrab);
 
 	m_RenderPhaseTexture.create(g_Config.m_ScreenWidth, g_Config.m_ScreenHeight);
 	m_RenderPhase.setTexture(m_RenderPhaseTexture.getTexture(), true);
@@ -270,6 +271,7 @@ bool CGameClient::init() noexcept
 	m_vpComponents.push_back(&m_PlayerRender);
 	m_vpComponents.push_back(&m_ParticleRenderFront);
 	m_vpComponents.push_back(&m_ItemRender);
+	m_vpComponents.push_back(&m_FluidRender);
 	m_vpComponents.push_back(&m_LightRender);
 	m_vpComponents.push_back(&m_MapRenderFront);
 	m_vpComponents.push_back(&m_ParticleRenderForeground);

@@ -10,7 +10,7 @@
 class CB2Circle : public CEntity
 {
 public:
-	CB2Circle(sf::Vector2f worldPos, float radius, sf::Color, const CB2BodyInfo &bodyInfo, int entityType = CEntity::B2CIRCLE) noexcept;
+	CB2Circle(const sf::Vector2f &worldPos, float radius, float rot, const sf::Color &color, const CB2BodyInfo &bodyInfo, int entityType = CEntity::B2CIRCLE) noexcept;
 	virtual ~CB2Circle() noexcept;
 
 	virtual void tick() noexcept;

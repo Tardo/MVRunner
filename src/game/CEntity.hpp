@@ -21,6 +21,7 @@ enum _entityCategory
 	CAT_FIRE = 2<<7,
 	CAT_SIGN = 2<<8,
 	CAT_CHAIN = 2<<9,
+	CAT_WATER = 2<<10,
 };
 
 class CEntity
@@ -41,6 +42,7 @@ public:
 		SIGN,
 		LIGHT,
 		PARTICLE,
+		WATER,
 
 		NUM_ENTITIES,
 
@@ -58,7 +60,7 @@ public:
 	int getHealth() const noexcept { return m_Health; }
 	virtual void setHealth(int health) noexcept { m_Health = health; }
 	virtual void increaseHealth(int amount) noexcept { m_Health += amount; }
-	int getID() const noexcept { return m_Id; }
+	sf::Uint64 getID() const noexcept { return m_Id; }
 
 	b2Body* getBody() noexcept { return m_pBody; }
 
@@ -76,7 +78,7 @@ public:
 
 protected:
 	int m_Health;
-	int m_Id;
+	sf::Uint64 m_Id;
 	sf::Int64 m_TimerStateAction;
 	b2Body *m_pBody;
 
