@@ -35,7 +35,6 @@ void CLightRender::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void CLightRender::renderLight(sf::RenderTarget& target, sf::RenderStates states, CLight *pLight) const noexcept
 {
-	// Render Light
 	if (pLight->m_Active && !pLight->m_Blinked)
 	{
 		if (Client()->isClipped(pLight->m_Position, SCREEN_MARGIN_DRAW))

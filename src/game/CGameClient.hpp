@@ -30,7 +30,7 @@
 #include <deque>
 
 #define SCREEN_MARGIN_DRAW			128.0f
-#define SCREEN_MARGIN_DESTRUCTION	512.0f
+#define SCREEN_MARGIN_DESTRUCTION	MARGIN_CREATE_OBJECTS + 250.0f
 
 enum
 {
@@ -65,6 +65,9 @@ public:
 		}
 		return 0x0;
 	}
+
+	const int getNumComponents() const noexcept { return m_vpComponents.size(); }
+	const int getNumSystems() const noexcept { return m_vpSystems.size(); }
 
 	void reset() noexcept;
 	void run() noexcept;

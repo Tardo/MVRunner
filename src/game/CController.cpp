@@ -20,8 +20,6 @@
 #include <game/CController.hpp>
 #include <engine/CSystemBox2D.hpp>
 
-#define MARGIN_CREATE_OBJECTS	0.0f
-
 
 CController::CController() noexcept
 {
@@ -162,11 +160,9 @@ bool CController::isStaticObject(const char *pType) const noexcept
 
 void CController::tick() noexcept
 {
-	std::vector<CEntity*> *p_vpEntities = &Context()->getEntities();
-    // Tick Entities
-    std::vector<CEntity*>::const_iterator citE = p_vpEntities->begin();
-    while (citE != p_vpEntities->end())
-		(*citE++)->tick();
+    // Update Entities
+	Context()->clearTrash();
+	Context()->tick();
 
 	// Camera Pos
 	updateCamera(Game()->Client()->getDeltaTime());
@@ -175,7 +171,7 @@ void CController::tick() noexcept
 	{
 		// Create Map Objects
 		sf::FloatRect screenArea;
-		Game()->Client()->getViewportGlobalBounds(&screenArea, Game()->Client()->Camera(), 0.0f); // MARGIN_CREATE_OBJECTS
+		Game()->Client()->getViewportGlobalBounds(&screenArea, Game()->Client()->Camera(), MARGIN_CREATE_OBJECTS);
 		screenArea.width = screenArea.width - screenArea.left;
 		screenArea.height = screenArea.height - screenArea.top;
 
@@ -299,6 +295,7 @@ void CController::tick() noexcept
 						const Tmx::Color color = GeomProps.GetColorProperty("color", Tmx::Color(255, 255, 255, 0));
 						const sf::Color colorGeom(color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
 						const int onContactFx = GeomProps.GetIntProperty("on_contact_fx", CEntity::FX_NONE);
+						const int textureId = GeomProps.GetIntProperty("texture_id", -1);
 
 						b2BodyType b2Type = b2_dynamicBody;
 						if (pMapObj->m_pObject->GetType().compare("static") == 0)
@@ -323,6 +320,7 @@ void CController::tick() noexcept
 									colorGeom,
 									bodyInfo);
 							pEnt->m_ContactFx = onContactFx;
+							pEnt->m_TextureId = textureId;
 							pEnt->getBody()->SetAwake(isAwake);
 							pMapObj->m_EntID = pEnt->getID();
 							ups::msgDebug("GameContext", "Polygon Created! [#%d]", objId);
@@ -340,6 +338,7 @@ void CController::tick() noexcept
 										colorGeom,
 										bodyInfo);
 								pEnt->m_ContactFx = onContactFx;
+								pEnt->m_TextureId = textureId;
 								pEnt->getBody()->SetAwake(isAwake);
 								pMapObj->m_EntID = pEnt->getID();
 								ups::msgDebug("GameContext", "Ellipse Created: %s [#%d]", pMapObj->m_pObject->GetType().c_str(), objId);
@@ -361,6 +360,7 @@ void CController::tick() noexcept
 											colorGeom,
 											bodyInfo);
 									pEnt->m_ContactFx = onContactFx;
+									pEnt->m_TextureId = textureId;
 									pEnt->getBody()->SetAwake(isAwake);
 									pMapObj->m_EntID = pEnt->getID();
 									ups::msgDebug("GameContext", "PolyLine Created! [#%d]", objId);
@@ -375,6 +375,7 @@ void CController::tick() noexcept
 											colorGeom,
 											bodyInfo);
 									pEnt->m_ContactFx = onContactFx;
+									pEnt->m_TextureId = textureId;
 									pEnt->getBody()->SetAwake(isAwake);
 									pMapObj->m_EntID = pEnt->getID();
 									ups::msgDebug("GameContext", "Rectangle Created! [#%d]", objId);
@@ -420,21 +421,6 @@ void CController::tick() noexcept
 		createSnowBack(sf::Vector2f(startX+rand()%(endX-startX), startY+rand()%(endY-startY)), 5.0f);
 		createSnowFront(sf::Vector2f(startX+rand()%(endX-startX), startY+rand()%(endY-startY)), 2.0f);
 	}
-
-	// Remove Entities
-    std::vector<CEntity*>::iterator itE = p_vpEntities->begin();
-    while (itE != p_vpEntities->end())
-    {
-    	CEntity *pEnt = static_cast<CEntity*>(*itE);
-    	if (pEnt->isToDelete())
-    	{
-    		delete pEnt;
-    		pEnt = nullptr;
-    		itE = p_vpEntities->erase(itE);
-    	}
-    	else
-    		++itE;
-    }
 }
 
 void CController::onStart() noexcept
@@ -454,27 +440,30 @@ void CController::onResetGame() noexcept
 	onStart();
 }
 
-void CController::onCharacterDeath(CCharacter *pChar, CPlayer *pKiller) noexcept
+void CController::onCharacterDeath(CCharacter *pVictim, CPlayer *pKiller) noexcept
 {
 
 }
 
 void CController::createImpactSparkMetal(const sf::Vector2f &worldPos) noexcept
 {
-	for (int i=0; i<6; i++)
+	for (int i=0; i<12; i++)
 	{
 		CParticle *pParticle = new CParticle(sf::BlendAdd, RENDER_FRONT);
 		pParticle->m_Pos = worldPos;
-		pParticle->m_SizeInit = sf::Vector2f(32.0f, 32.0f);
+		pParticle->m_SizeInit = sf::Vector2f(18.0f, 18.0f);
 		pParticle->m_SizeEnd = VECTOR_ZERO;
 		pParticle->m_ColorInit = sf::Color::White;
-		pParticle->m_ColorEnd = sf::Color::White;
+		pParticle->m_ColorEnd = sf::Color::Black;
 		pParticle->m_ColorEnd.a = 0;
-		pParticle->m_Duration = 0.15f;
+		pParticle->m_Duration = upm::floatRand(0.2f, 1.8f);
 		pParticle->m_Luminance = true;
+		pParticle->m_ApplyForces = true;
+		pParticle->m_Collide = true;
+		pParticle->m_VelType = CParticle::VEL_LINEAL;
 		pParticle->m_TextId = CAssetManager::TEXTURE_BULLET_SPARK;
 		pParticle->m_Dir = sf::Vector2f(upm::floatRand(-1.0f, 1.0f), upm::floatRand(-1.0f, 1.0f));
-		pParticle->m_Vel = upm::floatRand(60.5f, 80.5f);
+		pParticle->m_Vel = upm::floatRand(4.0f, 9.0f);
 	}
 }
 
@@ -717,7 +706,7 @@ void CController::createStorm() noexcept
 {
 	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_FOREGROUND);
 	pParticle->m_Pos = sf::Vector2f(0.0f,0.0f);
-	const sf::Vector2f size = sf::Vector2f(Game()->Client()->getView().getSize().x, Game()->Client()->getView().getSize().y);
+	const sf::Vector2f size = sf::Vector2f(Game()->Client()->Camera().getSize().x, Game()->Client()->Camera().getSize().y);
 	pParticle->m_SizeInit = size;
 	pParticle->m_SizeEnd = size;
 	pParticle->m_ColorInit.a = 80;

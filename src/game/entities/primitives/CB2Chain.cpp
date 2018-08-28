@@ -21,15 +21,18 @@ CB2Chain::~CB2Chain() noexcept
 void CB2Chain::tick() noexcept
 {
 	CGame *pGame = CGame::getInstance();
-	bool needDelete = true;
-	b2ChainShape *pChainShape = static_cast<b2ChainShape*>(m_pBody->GetFixtureList()[0].GetShape());
-	for (int i=0; i<pChainShape->m_count; ++i)
+	if (canSelfDelete())
 	{
-		if (!pGame->Client()->isClipped(CSystemBox2D::b2ToSf(m_pBody->GetPosition()+pChainShape->m_vertices[i]), SCREEN_MARGIN_DESTRUCTION))
-			needDelete = false;
+		bool needDelete = true;
+		b2ChainShape *pChainShape = static_cast<b2ChainShape*>(m_pBody->GetFixtureList()[0].GetShape());
+		for (int i=0; i<pChainShape->m_count; ++i)
+		{
+			if (!pGame->Client()->isClipped(CSystemBox2D::b2ToSf(m_pBody->GetPosition()+pChainShape->m_vertices[i]), SCREEN_MARGIN_DESTRUCTION))
+				needDelete = false;
+		}
+		if (needDelete)
+			destroy();
 	}
-	if (needDelete)
-		destroy();
 }
 
 void CB2Chain::onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexcept

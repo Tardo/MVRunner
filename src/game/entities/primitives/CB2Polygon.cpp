@@ -28,13 +28,16 @@ CB2Polygon::~CB2Polygon() noexcept
 void CB2Polygon::tick() noexcept
 {
 	CGame *pGame = CGame::getInstance();
-	bool needDelete = true;
-	b2PolygonShape *pPolyShape = static_cast<b2PolygonShape*>(m_pBody->GetFixtureList()[0].GetShape());
-	for (int i=0; i<pPolyShape->m_count; ++i)
+	if (canSelfDelete())
 	{
-		if (!pGame->Client()->isClipped(CSystemBox2D::b2ToSf(m_pBody->GetPosition()+pPolyShape->m_vertices[i]), SCREEN_MARGIN_DESTRUCTION))
-			needDelete = false;
+		bool needDelete = true;
+		b2PolygonShape *pPolyShape = static_cast<b2PolygonShape*>(m_pBody->GetFixtureList()[0].GetShape());
+		for (int i=0; i<pPolyShape->m_count; ++i)
+		{
+			if (!pGame->Client()->isClipped(CSystemBox2D::b2ToSf(m_pBody->GetPosition()+pPolyShape->m_vertices[i]), SCREEN_MARGIN_DESTRUCTION))
+				needDelete = false;
+		}
+		if (needDelete)
+			destroy();
 	}
-	if (needDelete)
-		destroy();
 }

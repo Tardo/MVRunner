@@ -39,11 +39,17 @@ public:
 	    MOVE_STATE_DOWN = 2<<2,
 	    MOVE_STATE_LEFT = 2<<3,
 	    MOVE_STATE_UP = 2<<4,
+
+		HOOK_STATE_RETRACTED=0,
+		HOOK_STATE_RETRACTING,
+		HOOK_STATE_FLYING,
+		HOOK_STATE_ATTACHED,
 	};
 
 	static const float SIZE;
 	static const long ANIM_TIME;
 	static const unsigned int ANIM_SUBRECTS;
+	static const sf::Vector2f BASE_ANTENNA_SIZE;
 
 	CCharacter(const sf::Vector2f &pos, float rot, class CPlayer *pPlayer) noexcept;
 	~CCharacter() noexcept;
@@ -73,10 +79,10 @@ public:
     bool isVisible() const { return m_Visible; }
     void giveHealth(int amount) noexcept;
     void doFire() noexcept;
-    void doHook() noexcept;
+    void doHook(bool state) noexcept;
     void setVisible(bool visible) noexcept;
 
-    void move(int moveState) noexcept;
+    void setMoveState(int moveState) noexcept;
     void teleport(const sf::Vector2f &worldPosTo) noexcept;
 
     int getCharacterState() const { return m_CharacterState; }
@@ -88,6 +94,14 @@ public:
 	sf::Int64 m_TimerDamageIndicator;
 	sf::Int64 m_TimerHeartbeat;
 	sf::Int64 m_TimerCharacterState;
+
+	int m_HookState;
+	CEntity *m_pHookTarget;
+	sf::Vector2f m_HookDir;
+	sf::Vector2f m_HookInitPos;
+	sf::Vector2f m_HookPos;
+	float m_HookLength;
+	b2Joint *m_pHookJoint;
 
 protected:
 	class CPlayer *m_pPlayer;

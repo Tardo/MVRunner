@@ -16,7 +16,8 @@ public:
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept final;
 
 private:
-	void renderBox2D(sf::RenderTarget& target, sf::RenderStates states) const noexcept;
+	void renderBox2DBodies(sf::RenderTarget& target, sf::RenderStates states) const noexcept;
+	void renderBox2DJoints(sf::RenderTarget& target, sf::RenderStates states) const noexcept;
 	void renderQuadTree(sf::RenderTarget& target, sf::RenderStates states, CQuadTree<CMapRenderObject*> *pQuadTree) const noexcept;
 };
 

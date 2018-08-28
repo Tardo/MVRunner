@@ -194,6 +194,14 @@ void CSystemBox2D::destroyBody(b2Body *pBody) noexcept
 	m_World.DestroyBody(pBody);
 }
 
+void CSystemBox2D::destroyJoint(b2Joint *pJoint) noexcept
+{
+	if (!pJoint)
+		return;
+
+	m_World.DestroyJoint(pJoint);
+}
+
 void CSystemBox2D::applyBlastImpulse(b2Body *pBody, const sf::Vector2f &blastCenter, const sf::Vector2f &applyPoint, float blastPower)
 {
 	b2Vec2 blastDir = sfToB2(applyPoint) - sfToB2(blastCenter);

@@ -14,7 +14,11 @@ public:
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept final;
 
+protected:
+	sf::Sprite *m_pSpriteHookBody;
+
 private:
+	void renderHook(sf::RenderTarget& target, sf::RenderStates states, CCharacter *pChar) const noexcept;
 	void renderPlayer(sf::RenderTarget& target, sf::RenderStates states, CCharacter *pChar) const noexcept;
 	void renderPlayerLights(sf::RenderTarget& target, sf::RenderStates states, CCharacter *pChar) const noexcept;
 };

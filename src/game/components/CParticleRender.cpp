@@ -43,7 +43,7 @@ void CParticleRender::draw(sf::RenderTarget& target, sf::RenderStates states) co
 
 void CParticleRender::renderParticle(sf::RenderTarget& target, sf::RenderStates states, CParticle *pParticle) const noexcept
 {
-	const sf::Vector2f particlePos = pParticle->m_Pos+(pParticle->m_FixedPos?Client()->getView().getCenter():sf::Vector2f(0.0f,0.0f));
+	const sf::Vector2f particlePos = pParticle->m_Pos+(pParticle->m_FixedPos?target.getView().getCenter():VECTOR_ZERO);
 	if (Client()->isClipped(particlePos, SCREEN_MARGIN_DRAW))
 		return;
 

@@ -38,6 +38,8 @@ public:
     bool m_Animated;
     bool m_FixedPos;
     bool m_Luminance;
+    bool m_ApplyForces;
+    bool m_Collide;
     int m_VelType;
     int m_TextId;
     sf::Int64 m_Timer;
@@ -46,6 +48,7 @@ public:
 
 private:
     sf::Vector2f m_Disp;
+    bool m_isCollide;
 };
 
 #endif

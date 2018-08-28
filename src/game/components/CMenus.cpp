@@ -37,13 +37,14 @@ void CMenus::draw(sf::RenderTarget& target, sf::RenderStates states) const noexc
 	target.setView(Client()->getHudView());
 
 	static bool inMenu = false;
-	if (!inMenu && Client()->getElapsedTime() > 4.0f)
+	//if (!inMenu && Client()->getElapsedTime() > 4.0f)
+	if (!inMenu)
 	{
 		Client()->Menus().setActive(CMenus::MAIN);
 		inMenu = true;
 	}
-	else if (!inMenu)
-		renderMenuIntro(target, states);
+	//else if (!inMenu)
+	//	renderMenuIntro(target, states);
 
 
 	if (m_ActiveMenu == MAIN)
@@ -175,25 +176,25 @@ void CMenus::renderMenuMain(sf::RenderTarget& target, sf::RenderStates states) c
 	text.setFillColor(sf::Color::White);
 	target.draw(text, states);
 
-	if (Client()->UI().doButton(target, states,  _("Start Game"), sf::FloatRect(rectArea.width-100.0f, rectArea.height-200.0f, 80.0f, 35.0f), 64, CUI::ALIGN_RIGHT))
+	if (Client()->UI().doButton(target, states,  _("START GAME"), sf::FloatRect(rectArea.width-270.0f, rectArea.height-220.0f, 250.0f, 35.0f), 64, CUI::ALIGN_CENTER))
 	{
 		Client()->initializeGameMode("main");
 		Client()->getSystem<CSystemSound>()->play(CAssetManager::SOUND_MOUSE_CLICK);
 	}
 
-	if (Client()->UI().doButton(target, states,  _("Controls"), sf::FloatRect(rectArea.width-100.0f, rectArea.height-140.0f, 80.0f, 35.0f), 64, CUI::ALIGN_RIGHT))
+	if (Client()->UI().doButton(target, states,  _("CONTROLS"), sf::FloatRect(rectArea.width-270.0f, rectArea.height-160.0f, 250.0f, 35.0f), 64, CUI::ALIGN_CENTER))
 	{
 		Client()->getSystem<CSystemSound>()->play(CAssetManager::SOUND_MOUSE_CLICK);
 		Client()->Menus().setActive(CONTROLS);
 	}
 
-	if (Client()->UI().doButton(target, states,  _("Credits"), sf::FloatRect(rectArea.width-100.0f, rectArea.height-110.0f, 80.0f, 35.0f), 64, CUI::ALIGN_RIGHT))
+	if (Client()->UI().doButton(target, states,  _("CREDITS"), sf::FloatRect(rectArea.width-270.0f, rectArea.height-120.0f, 250.0f, 35.0f), 64, CUI::ALIGN_CENTER))
 	{
 		Client()->getSystem<CSystemSound>()->play(CAssetManager::SOUND_MOUSE_CLICK);
 		Client()->Menus().setActive(CREDITS);
 	}
 
-	if (Client()->UI().doButton(target, states,  _("EXIT"), sf::FloatRect(rectArea.width-100.0f, rectArea.height-50.0f, 80.0f, 35.0f), 64, CUI::ALIGN_RIGHT))
+	if (Client()->UI().doButton(target, states,  _("EXIT"), sf::FloatRect(rectArea.width-270.0f, rectArea.height-60.0f, 250.0f, 35.0f), 64, CUI::ALIGN_CENTER))
 	{
 		Client()->getSystem<CSystemSound>()->play(CAssetManager::SOUND_MOUSE_CLICK);
 		Client()->close();

@@ -36,6 +36,9 @@ public:
 	}
 	std::vector<CEntity*>& getEntities() noexcept { return m_vpEntities; }
 
+	void tick() noexcept;
+	void clearTrash() noexcept;
+
 	void setWeather(int weather) { m_Weather = weather; }
 	int getWeather() const { return m_Weather; }
 

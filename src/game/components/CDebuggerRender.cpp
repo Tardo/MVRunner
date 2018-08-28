@@ -22,13 +22,28 @@ void CDebuggerRender::draw(sf::RenderTarget& target, sf::RenderStates states) co
 		return;
 
 	target.setView(Client()->Camera());
-	renderBox2D(target, states);
+	renderBox2DBodies(target, states);
+	renderBox2DJoints(target, states);
 
 	if (Client()->Controller() && Client()->Controller()->Context())
 		renderQuadTree(target, states, Client()->Controller()->Context()->Map().getObjects());
 }
 
-void CDebuggerRender::renderBox2D(sf::RenderTarget& target, sf::RenderStates states) const noexcept
+void CDebuggerRender::renderBox2DJoints(sf::RenderTarget& target, sf::RenderStates states) const noexcept
+{
+	CSystemBox2D *pSystemBox2D = Client()->getSystem<CSystemBox2D>();
+	for (b2Joint *pJoint = pSystemBox2D->getWorld()->GetJointList(); pJoint; pJoint = pJoint->GetNext())
+	{
+		sf::VertexArray VArray(sf::LineStrip, 2);
+		VArray[0].color = sf::Color::Magenta;
+		VArray[0].position = CSystemBox2D::b2ToSf(pJoint->GetAnchorA());
+		VArray[1].color = sf::Color::Magenta;
+		VArray[1].position = CSystemBox2D::b2ToSf(pJoint->GetAnchorB());
+		target.draw(VArray, states);
+	}
+}
+
+void CDebuggerRender::renderBox2DBodies(sf::RenderTarget& target, sf::RenderStates states) const noexcept
 {
 	CSystemBox2D *pSystemBox2D = Client()->getSystem<CSystemBox2D>();
 	for (b2Body *pBody = pSystemBox2D->getWorld()->GetBodyList(); pBody; pBody = pBody->GetNext())

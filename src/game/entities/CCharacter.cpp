@@ -14,6 +14,7 @@
 const float CCharacter::SIZE = 28.0f;
 const long CCharacter::ANIM_TIME = 150;
 const unsigned int CCharacter::ANIM_SUBRECTS = 4;
+const sf::Vector2f CCharacter::BASE_ANTENNA_SIZE = sf::Vector2f(5.0f, 2.0f);
 const CB2BodyInfo CCharacter::ms_BodyInfo = CB2BodyInfo(1.5f, 1.25f, 0.1f, 0.0f, b2_dynamicBody, CAT_CHARACTER_PLAYER);
 CCharacter::CCharacter(const sf::Vector2f &pos, float rot, class CPlayer *pPlayer) noexcept
 : CB2Circle(pos, SIZE, rot, sf::Color::White, ms_BodyInfo, CEntity::CHARACTER)
@@ -31,6 +32,9 @@ CCharacter::CCharacter(const sf::Vector2f &pos, float rot, class CPlayer *pPlaye
 	m_TimerHeartbeat = 0;
 	m_CharacterState = STATE_NORMAL;
 
+	m_HookState = HOOK_STATE_RETRACTED;
+	m_HookDir = VECTOR_ZERO;
+	m_pHookJoint = nullptr;
 	//CGame *pGame = CGame::getInstance();
 
 	//getBody()->SetFixedRotation(true);
@@ -53,10 +57,54 @@ void CCharacter::tick() noexcept
 		return;
 
 	CGame *pGame = CGame::getInstance();
+	const sf::Vector2f shapePos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
 
 	if (isAlive())
 	{
-		const sf::Vector2f shapePos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
+		// Apply Movement
+		const sf::Vector2f charVel = CSystemBox2D::b2ToSf(m_pBody->GetLinearVelocity());
+	    const float v = g_Config.m_CharacterImpulse;
+	    sf::Vector2f force = VECTOR_ZERO;
+	    // Can't impulse in air
+	    if ((m_State&MOVE_STATE_LEFT) || (m_State&MOVE_STATE_RIGHT))
+	    {
+			CGame *pGame = CGame::getInstance();
+			CSystemBox2D *pB2Engine = pGame->Client()->getSystem<CSystemBox2D>();
+			const sf::Vector2f charPos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
+			const sf::Vector2f groundColPos = charPos + sf::Vector2f(0.0f, CCharacter::SIZE+5.0f);
+			const bool isGrounded = (pB2Engine->checkIntersectLine(charPos, groundColPos, 0x0, getBody(), CAT_CHARACTER_PLAYER) != 0x0);
+			if (!isGrounded)
+				m_pBody->ApplyAngularImpulse((m_State&MOVE_STATE_LEFT)?-0.00008:0.00008, true);
+			else
+				m_pBody->ApplyAngularImpulse((m_State&MOVE_STATE_LEFT)?-0.00001:0.00001, true);
+			force.x = (m_State&MOVE_STATE_LEFT)?-v:v;
+
+			const sf::Vector2f endPos = charPos + sf::Vector2f((CCharacter::SIZE+5.0f)*(m_State&MOVE_STATE_LEFT?-1.0f:1.0f), 0.0f);
+			if (pB2Engine->checkIntersectLine(charPos, endPos, 0x0, getBody()) != 0x0)
+				force.x = 0.0f;
+
+			const sf::Vector2f dir = upm::vectorNormalize(charVel);
+			if ((isGrounded && abs(charVel.x) >= g_Config.m_CharacterMaxVelocity) || (!isGrounded && abs(charVel.x) >= g_Config.m_CharacterMaxVelocity/2.0f))
+			{
+				if (((m_State&MOVE_STATE_LEFT) && dir.x < 0) || ((m_State&MOVE_STATE_RIGHT) && dir.x > 0))
+					force.x = 0.0f;
+			}
+	    }
+
+	    // Only can jump one time
+	    if ((m_State&MOVE_STATE_UP) && m_Jumps < 2 && !(m_LastState&MOVE_STATE_UP))
+	    {
+	    	++m_Jumps;
+	    	//if (m_pBody->IsFixedRotation())
+	    	{
+	    		const sf::Vector2f vel(charVel.x, -g_Config.m_CharacterJumpImpulse);
+	    		m_pBody->SetLinearVelocity(CSystemBox2D::sfToB2(vel));
+	    	}
+	    } else
+	    {
+	    	if (!(m_CharacterState&STATE_ROTATE))
+	    		m_pBody->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(force), true);
+	    }
 
 		// Check Ground
 		CSystemBox2D *pB2Engine = pGame->Client()->getSystem<CSystemBox2D>();
@@ -71,8 +119,8 @@ void CCharacter::tick() noexcept
 			}
 			else
 			{
-				m_pBody->SetLinearDamping((m_State == MOVE_STATE_STOP)?15.0f:1.5f);
-				m_pBody->SetAngularDamping((m_State == MOVE_STATE_STOP)?15.0f:1.5f);
+				m_pBody->SetLinearDamping((m_State == MOVE_STATE_STOP)?15.0f:0.0f);
+				m_pBody->SetAngularDamping((m_State == MOVE_STATE_STOP)?15.0f:0.0f);
 			}
 			m_Jumps = 0;
 		} else {
@@ -99,6 +147,65 @@ void CCharacter::tick() noexcept
 
 			pGame->Client()->Controller()->onCharacterDeath(this, nullptr);
 		}
+
+		if (m_HookState != HOOK_STATE_RETRACTED)
+		{
+			if (m_HookState == HOOK_STATE_FLYING)
+			{
+				m_HookPos = m_HookInitPos + m_HookDir * m_HookLength;
+				CSystemBox2D *pSystemBox2D = pGame->Client()->getSystem<CSystemBox2D>();
+				if (m_HookLength < g_Config.m_CharacterHookMaxLength)
+				{
+					m_HookLength += g_Config.m_CharacterHookFlyVel;
+					CEntity *pEnt = pSystemBox2D->checkIntersectLine(shapePos, m_HookPos, &m_HookPos, this->getBody());
+					if (pEnt)
+					{
+						pGame->Client()->Controller()->createImpactSparkMetal(m_HookPos);
+						pGame->Client()->Controller()->createSmokeImpact(m_HookPos, -m_HookDir, 1.0f);
+						m_HookState = HOOK_STATE_ATTACHED;
+						m_HookLength = upm::vectorLength(m_HookPos - shapePos);
+						b2DistanceJointDef jointDef;
+						jointDef.collideConnected = true;
+						jointDef.frequencyHz = g_Config.m_CharacterHookFrequency;
+						jointDef.dampingRatio = g_Config.m_CharacterHookDampingRatio;
+						jointDef.Initialize(getBody(), pEnt->getBody(), getBody()->GetWorldCenter(), CSystemBox2D::sfToB2(m_HookPos-m_HookDir*3.0f));
+						m_pHookJoint = pGame->Client()->getSystem<CSystemBox2D>()->getWorld()->CreateJoint(&jointDef);
+					}
+				}
+				else
+				{
+					m_HookState = HOOK_STATE_RETRACTING;
+				}
+			} else if (m_HookState == HOOK_STATE_RETRACTING)
+			{
+				m_HookPos = m_HookInitPos + m_HookDir * m_HookLength;
+				if (m_pHookJoint)
+				{
+					pGame->Client()->getSystem<CSystemBox2D>()->destroyJoint(m_pHookJoint);
+					m_pHookJoint = nullptr;
+				}
+
+				m_HookLength -= g_Config.m_CharacterHookRetractVel;
+				if (m_HookLength <= 0.0f)
+				{
+					m_HookState = HOOK_STATE_RETRACTED;
+				}
+			} else if (m_HookState == HOOK_STATE_ATTACHED && m_pHookJoint)
+			{
+				m_HookPos = CSystemBox2D::b2ToSf(m_pHookJoint->GetAnchorB());
+				b2DistanceJoint *pDistanceJoint = static_cast<b2DistanceJoint*>(m_pHookJoint);
+				float curLength = pDistanceJoint->GetLength();
+				if (CSystemBox2D::b2ToSf(curLength) > CCharacter::SIZE)
+				{
+					curLength -= g_Config.m_CharacterHookForce;
+					pDistanceJoint->SetLength(curLength);
+				}
+				m_HookLength = CSystemBox2D::b2ToSf(curLength);
+				m_HookDir = upm::vectorNormalize(m_HookPos-shapePos);
+			}
+		}
+
+		m_LastState = m_State;
 	}
 }
 
@@ -130,7 +237,7 @@ void CCharacter::doFire() noexcept
 			case WEAPON_JET_PACK:
 			{
 				m_pBody->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(-CharDir*g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_Energy), true);
-				new CFire(CharPos+CharDir*(CCharacter::SIZE), 0.0f, CharDir, g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_Speed, g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_LifeTime);
+				new CFire(CharPos+CharDir*15.0f, 0.0f, CharDir, g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_Speed, g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_LifeTime);
 			} break;
 		}
 
@@ -140,9 +247,21 @@ void CCharacter::doFire() noexcept
 	m_Fire = true;
 }
 
-void CCharacter::doHook() noexcept
+void CCharacter::doHook(bool state) noexcept
 {
-
+	if (state && m_HookState == HOOK_STATE_RETRACTED)
+	{
+		m_HookState = HOOK_STATE_FLYING;
+		CGame *pGame = CGame::getInstance();
+		const sf::Vector2f CharPos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
+		m_HookDir = upm::vectorNormalize(pGame->Client()->mapPixelToCoords(pGame->Client()->Controls().getMousePos(), pGame->Client()->Camera()) - CharPos);
+		m_HookLength = 0.0f;
+		m_HookInitPos = CharPos;
+	}
+	else if (!state && m_HookState != HOOK_STATE_RETRACTED)
+	{
+		m_HookState = HOOK_STATE_RETRACTING;
+	}
 }
 
 void CCharacter::setVisible(bool visible) noexcept
@@ -172,7 +291,7 @@ void CCharacter::doImpulse(sf::Vector2f dir, float energy) noexcept
 	m_pBody->ApplyForceToCenter(CSystemBox2D::sfToB2(dir*energy), true);
 }
 
-void CCharacter::move(int state) noexcept
+void CCharacter::setMoveState(int state) noexcept
 {
 	m_State = state;
 	if (state == MOVE_STATE_STOP)
@@ -180,52 +299,6 @@ void CCharacter::move(int state) noexcept
 		m_LastState = m_State;
 		return;
 	}
-
-	const sf::Vector2f charVel = CSystemBox2D::b2ToSf(m_pBody->GetLinearVelocity());
-    const float v = g_Config.m_CharacterImpulse;
-    sf::Vector2f force = VECTOR_ZERO;
-    // Can't impulse in air
-    if ((m_State&MOVE_STATE_LEFT) || (m_State&MOVE_STATE_RIGHT))
-    {
-		CGame *pGame = CGame::getInstance();
-		CSystemBox2D *pB2Engine = pGame->Client()->getSystem<CSystemBox2D>();
-		const sf::Vector2f charPos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
-		const sf::Vector2f groundColPos = charPos + sf::Vector2f(0.0f, CCharacter::SIZE+5.0f);
-		const bool isGrounded = (pB2Engine->checkIntersectLine(charPos, groundColPos, 0x0, getBody(), CAT_CHARACTER_PLAYER) != 0x0);
-		if (!isGrounded)
-			m_pBody->ApplyAngularImpulse((m_State&MOVE_STATE_LEFT)?-0.00008:0.00008, true);
-		else
-			m_pBody->ApplyAngularImpulse((m_State&MOVE_STATE_LEFT)?-0.00001:0.00001, true);
-		force.x = (m_State&MOVE_STATE_LEFT)?-v:v;
-
-		const sf::Vector2f endPos = charPos + sf::Vector2f((CCharacter::SIZE+5.0f)*(m_State&MOVE_STATE_LEFT?-1.0f:1.0f), 0.0f);
-		if (pB2Engine->checkIntersectLine(charPos, endPos, 0x0, getBody()) != 0x0)
-			force.x = 0.0f;
-
-		const sf::Vector2f dir = upm::vectorNormalize(charVel);
-		if ((isGrounded && abs(charVel.x) >= g_Config.m_CharacterMaxVelocity) || (!isGrounded && abs(charVel.x) >= g_Config.m_CharacterMaxVelocity/2.0f))
-		{
-			if (((m_State&MOVE_STATE_LEFT) && dir.x < 0) || ((m_State&MOVE_STATE_RIGHT) && dir.x > 0))
-				force.x = 0.0f;
-		}
-    }
-
-    // Only can jump one time
-    if ((m_State&MOVE_STATE_UP) && m_Jumps < 2 && !(m_LastState&MOVE_STATE_UP))
-    {
-    	++m_Jumps;
-    	//if (m_pBody->IsFixedRotation())
-    	{
-    		const sf::Vector2f vel(charVel.x, -g_Config.m_CharacterJumpImpulse);
-    		m_pBody->SetLinearVelocity(CSystemBox2D::sfToB2(vel));
-    	}
-    } else
-    {
-    	if (!(m_CharacterState&STATE_ROTATE))
-    		m_pBody->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(force), true);
-    }
-
-    m_LastState = m_State;
 }
 
 void teleport(const sf::Vector2f &worldPosTo) noexcept

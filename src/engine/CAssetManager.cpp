@@ -58,7 +58,14 @@ void CAssetManager::load() noexcept
 	LOAD_TEXTURE(TEXTURE_WATER_SHADER, "data/fx/water_shader.png")
 	LOAD_TEXTURE(TEXTURE_GRENADE, "data/objects/grenade.png")
 	LOAD_TEXTURE(TEXTURE_CANON_BALL, "data/objects/canon_ball.png")
+	LOAD_TEXTURE(TEXTURE_METAL_BOX, "data/fx/metal_box.png")
 	LOAD_TEXTURE(TEXTURE_SKIN_DEFAULT, "data/skins/default.png")
+	LOAD_TEXTURE(TEXTURE_HOOK_DEFAULT_HEAD, "data/hooks/default_head.png")
+	m_vTextures[TEXTURE_HOOK_DEFAULT_HEAD].setRepeated(true);
+	m_vTextures[TEXTURE_HOOK_DEFAULT_HEAD].setSmooth(false);
+	LOAD_TEXTURE(TEXTURE_HOOK_DEFAULT_BODY, "data/hooks/default_body.png")
+	m_vTextures[TEXTURE_HOOK_DEFAULT_BODY].setRepeated(true);
+	m_vTextures[TEXTURE_HOOK_DEFAULT_BODY].setSmooth(false);
 
 	LOAD_SOUND(SOUND_MOUSE_CLICK, "data/sfx/mouse_click.wav")
 	LOAD_SOUND(SOUND_GAMEOVER, "data/sfx/gameover.wav")

@@ -1,5 +1,6 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
+#include <engine/CConfig.hpp>
 #include <engine/CGame.hpp>
 #include "CUI.hpp"
 
@@ -10,6 +11,7 @@ CUI::CUI(CGameClient *pGameClient) noexcept
 	m_BroadcastDuration = 0.0f;
 	m_aHelpMsg[0] = 0;
 	m_aBroadcastMsg[0] = 0;
+	m_HotControl = -1;
 }
 CUI::~CUI() noexcept
 {
@@ -28,6 +30,15 @@ void CUI::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
 	drawCursor(target, states);
 }
 
+bool CUI::isMouseInsideControl(sf::Shape *pControlShape) const noexcept
+{
+	return pControlShape->getGlobalBounds().contains((sf::Vector2f)Client()->Controls().getMousePos());
+}
+bool CUI::isMouseInsideControl(sf::Text *pControlShape) const noexcept
+{
+	return pControlShape->getGlobalBounds().contains((sf::Vector2f)Client()->Controls().getMousePos());
+}
+
 void CUI::showBroadcastMessage(const char *pMsg, float duration) noexcept
 {
 	m_TimerBroadcast = ups::timeGet();
@@ -42,21 +53,30 @@ void CUI::showHelpMessage(const char *pMsg) noexcept
 
 bool CUI::doButton(sf::RenderTarget& target, sf::RenderStates states, const char* pText, const sf::FloatRect &bounds, unsigned int fontSize, int align) const noexcept
 {
+	sf::RectangleShape button(sf::Vector2f(bounds.width, bounds.height));
+	button.setPosition(bounds.left, bounds.top);
+	const bool isMouseInside = isMouseInsideControl(&button);
+	button.setFillColor(isMouseInside?g_Config.m_ButtonFocusFillColor:g_Config.m_ButtonNormalFillColor);
+	button.setOutlineThickness(2.0f);
+	button.setOutlineColor(sf::Color::Black);
+	target.draw(button, states);
+
 	sf::Text text;
 	text.setFont(Client()->Assets().getDefaultFont());
 	text.setCharacterSize(fontSize);
 	text.setString(pText);
-	const float textW = text.getLocalBounds().width;
+	const sf::Vector2f textSize(text.getLocalBounds().width, text.getLocalBounds().height);
+	text.setOrigin(textSize.x/2.0f, textSize.y/2.0f);
 	if (align == ALIGN_RIGHT)
-		text.setPosition(bounds.left+bounds.width-textW, bounds.top+bounds.height/2.0f-fontSize);
+		text.setPosition(bounds.left+bounds.width-textSize.x/2.0f, bounds.top-bounds.height/2.0f-textSize.y/2.0f);
 	else if (align == ALIGN_CENTER)
-		text.setPosition(bounds.left+bounds.width/2.0f-textW/2.0f, bounds.top+bounds.height/2.0f-fontSize);
+		text.setPosition(bounds.left+bounds.width/2.0f, bounds.top-bounds.height/2.0f-textSize.y/2.0f);
 	else
-		text.setPosition(bounds.left, bounds.top+bounds.height/2.0f-fontSize);
-	text.setFillColor((text.getGlobalBounds().contains((sf::Vector2f)Client()->Controls().getMousePos()))?sf::Color::Red:sf::Color::White);
+		text.setPosition(bounds.left+textSize.x/2.0f, bounds.top-bounds.height/2.0f-textSize.y/2.0f);
+	text.setFillColor(isMouseInside?g_Config.m_ButtonFocusTextColor:g_Config.m_ButtonNormalTextColor);
 	target.draw(text, states);
 
-	return (Client()->Controls().isMouseLeftClicked() && text.getGlobalBounds().contains((sf::Vector2f)Client()->Controls().getMousePos()));
+	return (Client()->Controls().isMouseLeftClicked() && isMouseInside);
 }
 
 void CUI::drawCursor(sf::RenderTarget& target, sf::RenderStates states) const noexcept
@@ -134,17 +154,28 @@ void CUI::drawDebugInfo(sf::RenderTarget& target, sf::RenderStates states) const
 	sfStr.setCharacterSize(62);
 
 	#ifdef __LP64__
-	snprintf(aBuff, sizeof(aBuff), "Entidades: %lu", Client()->Controller()->Context()->getEntities().size());
+	snprintf(aBuff, sizeof(aBuff), "Entities: %lu", Client()->Controller()->Context()->getEntities().size());
 	#else
-	snprintf(aBuff, sizeof(aBuff), "Entidades: %u", Client()->Controller()->Context()->getEntities().size());
+	snprintf(aBuff, sizeof(aBuff), "Entities: %u", Client()->Controller()->Context()->getEntities().size());
 	#endif
 	sfStr.setString(aBuff);
 	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 30.0f);
 	sfStr.setFillColor(sf::Color::Red);
 	target.draw(sfStr, states);
 
-	snprintf(aBuff, sizeof(aBuff), "Sonidos: %d", pSystemSound->getNumPlayingSound());
+	snprintf(aBuff, sizeof(aBuff), "Components: %d", Client()->getNumComponents());
+	sfStr.setString(aBuff);
+	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 60.0f);
+	sfStr.setFillColor(sf::Color::Red);
+	target.draw(sfStr, states);
 
+	snprintf(aBuff, sizeof(aBuff), "Systems: %d", Client()->getNumSystems());
+	sfStr.setString(aBuff);
+	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 90.0f);
+	sfStr.setFillColor(sf::Color::Red);
+	target.draw(sfStr, states);
+
+	snprintf(aBuff, sizeof(aBuff), "Sounds: %d", pSystemSound->getNumPlayingSound());
 	sfStr.setString(aBuff);
 	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 120.0f);
 	sfStr.setFillColor(sf::Color::Red);

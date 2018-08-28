@@ -85,9 +85,12 @@ public:
 	void createExplosion(const sf::Vector2f &worldPos, float energy, float radius, b2Body *pNotThis = nullptr) noexcept;
 
 	void destroyBody(b2Body *pBody) noexcept;
+	void destroyJoint(b2Joint *pJoint) noexcept;
 
 	static inline b2Vec2 sfToB2(const sf::Vector2f &vector) noexcept { return b2Vec2(vector.x*MPP, vector.y*MPP); }
+	static inline float sfToB2(float num) noexcept { return num*MPP; }
 	static inline sf::Vector2f b2ToSf(const b2Vec2 &vector) noexcept { return sf::Vector2f(vector.x*PPM, vector.y*PPM); }
+	static inline float b2ToSf(float num) noexcept { return num*PPM; }
 	static inline sf::FloatRect b2ToSf(const b2AABB &aabb) noexcept { return sf::FloatRect(aabb.lowerBound.x*PPM, aabb.lowerBound.y*PPM, aabb.upperBound.x*PPM, aabb.upperBound.y*PPM); }
 	static bool findIntersectionOfFixtures(b2Fixture *pFA, b2Fixture *pFB, std::vector<b2Vec2> *pOutputVertices) noexcept;
 	static b2Vec2 computeCentroid(const std::vector<b2Vec2> &vs, float *pArea) noexcept;

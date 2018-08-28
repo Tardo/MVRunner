@@ -6,6 +6,7 @@
 #include <game/CGameClient.hpp>
 #include <cstdlib>
 
+
 class CGame final
 {
 	static CGame *ms_pCoreInstance;

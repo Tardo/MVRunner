@@ -148,7 +148,8 @@ void CGameClient::doRender()
 {
     // Render Components
     // Normal Mode
-    m_RenderPhaseTexture.clear(CMap::tmxToSf(Controller()->Context()->Map().GetBackgroundColor()));
+	const bool mapLoaded = Controller()->Context()->Map().isMapLoaded();
+    m_RenderPhaseTexture.clear(mapLoaded?CMap::tmxToSf(Controller()->Context()->Map().GetBackgroundColor()):sf::Color::Black);
     renderComponentsPhase(RENDER_MODE_NORMAL);
     draw(m_RenderPhase);
 

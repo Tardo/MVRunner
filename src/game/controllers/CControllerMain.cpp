@@ -83,11 +83,23 @@ void CControllerMain::tick() noexcept
 						else if (Game()->Client()->Controls().isKeyPressed("right"))
 							moveState |= CCharacter::MOVE_STATE_RIGHT;
 
-						pChar->move(moveState);
+						pChar->setMoveState(moveState);
 
-						// Player Shoot
+						static bool hookUsed = false;
+						// Player Shoot & Hook
 						if (Game()->Client()->Controls().isMousePressed("fire") && !(charState&CCharacter::STATE_ROTATE))
 							pChar->doFire();
+						else if (!hookUsed && Game()->Client()->Controls().isMousePressed("hook") && !(charState&CCharacter::STATE_ROTATE))
+						{
+							pChar->doHook(true);
+							hookUsed = true;
+						}
+						else if (!Game()->Client()->Controls().isMousePressed("hook"))
+						{
+							hookUsed = false;
+							if (pChar->m_HookState != CCharacter::HOOK_STATE_RETRACTED || pChar->m_HookState != CCharacter::HOOK_STATE_RETRACTING)
+								pChar->doHook(false);
+						}
 					}
 
 					// Player Select Weapon

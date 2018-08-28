@@ -87,6 +87,8 @@ void CItemRender::renderPrimitive(sf::RenderTarget& target, sf::RenderStates sta
 		Shape.setPosition(CSystemBox2D::b2ToSf(pEntity->getBody()->GetPosition()));
 		Shape.setRotation(upm::radToDeg(pEntity->getBody()->GetAngle()));
 		Shape.setFillColor(pEntity->m_Color);
+		if (pEntity->m_TextureId != -1)
+			Shape.setTexture(Client()->Assets().getTexture(pEntity->m_TextureId));
 
 		target.draw(Shape, states);
 	}
@@ -97,6 +99,8 @@ void CItemRender::renderPrimitive(sf::RenderTarget& target, sf::RenderStates sta
 		Shape.setPosition(CSystemBox2D::b2ToSf(pEntity->getBody()->GetPosition()));
 		Shape.setRotation(upm::radToDeg(pEntity->getBody()->GetAngle()));
 		Shape.setFillColor(pEntity->m_Color);
+		if (pEntity->m_TextureId != -1)
+			Shape.setTexture(Client()->Assets().getTexture(pEntity->m_TextureId));
 
 		target.draw(Shape, states);
 	}

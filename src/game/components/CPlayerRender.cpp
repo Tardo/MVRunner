@@ -7,12 +7,17 @@
 
 CPlayerRender::CPlayerRender(CGameClient *pGameClient) noexcept
 : CComponent(pGameClient)
-{ }
+{
+	m_pSpriteHookBody = new sf::Sprite(*Client()->Assets().getTexture(CAssetManager::TEXTURE_HOOK_DEFAULT_BODY));
+}
 CPlayerRender::~CPlayerRender() noexcept
 {
 	#ifdef DEBUG_DESTRUCTORS
 	ups::msgDebug("CPlayerRender", "Deleted");
 	#endif
+
+	if (m_pSpriteHookBody)
+		delete m_pSpriteHookBody;
 }
 
 void CPlayerRender::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
@@ -23,17 +28,40 @@ void CPlayerRender::draw(sf::RenderTarget& target, sf::RenderStates states) cons
 	target.setView(Client()->Camera());
 
 	if (Client()->getRenderMode() == RENDER_MODE_NORMAL)
+	{
+		renderHook(target, states, Client()->Controller()->Context()->getPlayer()->getCharacter());
 		renderPlayer(target, states, Client()->Controller()->Context()->getPlayer()->getCharacter());
+	}
 	else if (Client()->getRenderMode() == RENDER_MODE_LIGHTING)
 		renderPlayerLights(target, states, Client()->Controller()->Context()->getPlayer()->getCharacter());
 }
 
+void CPlayerRender::renderHook(sf::RenderTarget& target, sf::RenderStates states, CCharacter *pChar) const noexcept
+{
+	if (!pChar->isVisible() || pChar->m_HookState == CCharacter::HOOK_STATE_RETRACTED || pChar->m_HookLength == 0.0f)
+		return;
+
+	const sf::Vector2f charPos = CSystemBox2D::b2ToSf(pChar->getBody()->GetPosition());
+	const float hookLength = upm::vectorLength(pChar->m_HookPos - charPos);
+
+	m_pSpriteHookBody->setTextureRect({0, 0, (int)hookLength, 16});
+	m_pSpriteHookBody->setOrigin(0.0f, 8.0f);
+	m_pSpriteHookBody->setPosition(charPos);
+	m_pSpriteHookBody->setRotation(upm::vectorAngle(pChar->m_HookDir));
+	target.draw(*m_pSpriteHookBody, states);
+
+	sf::RectangleShape hookHead(sf::Vector2f(16.0f, 16.0f));
+	hookHead.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_HOOK_DEFAULT_HEAD));
+	hookHead.setOrigin(0.0f, 8.0f);
+	hookHead.setPosition(charPos + pChar->m_HookDir * hookLength);
+	hookHead.setRotation(upm::vectorAngle(pChar->m_HookDir));
+	target.draw(hookHead, states);
+}
 void CPlayerRender::renderPlayer(sf::RenderTarget& target, sf::RenderStates states, CCharacter *pChar) const noexcept
 {
 	if (!pChar->isVisible())
 		return;
 
-	// TODO: Create a component for this stuff... not use "draw"
 	sf::Color bodyInColor = sf::Color::White;
 	sf::Color bodyOutColor = sf::Color::Black;
 	if (pChar->getCharacterState()&CCharacter::STATE_ROTATE)

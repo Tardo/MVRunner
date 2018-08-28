@@ -1,6 +1,7 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
 #include <engine/CGame.hpp>
+#include <engine/CSystemBox2D.hpp>
 #include <game/CGameClient.hpp>
 #include "CParticle.hpp"
 
@@ -28,6 +29,9 @@ CParticle::CParticle(sf::BlendMode blendMode, int render, bool luminance, int sh
     m_VelType = VEL_INCREASE;
     m_Rotation = 0.0f;
     m_TextId = -1;
+    m_ApplyForces = false;
+    m_Collide = false;
+    m_isCollide = false;
 }
 CParticle::~CParticle() noexcept
 {
@@ -39,7 +43,7 @@ CParticle::~CParticle() noexcept
 void CParticle::tick() noexcept
 {
 	CGame *pGame = CGame::getInstance();
-	if (pGame->Client()->isClipped(m_Pos, SCREEN_MARGIN_DESTRUCTION))
+	if (!m_FixedPos && pGame->Client()->isClipped(m_Pos, SCREEN_MARGIN_DESTRUCTION))
 		destroy();
 
     if (pGame->Client()->m_Paused)
@@ -52,21 +56,35 @@ void CParticle::tick() noexcept
 	if (elapsedSeconds >= m_Duration)
 		destroy();
 
+	// Move attached to entity
     if (m_pTarget)
     {
     	if (m_pTarget->isToDelete())
     		m_pTarget = nullptr;
     	else if (m_pTarget->getBody())
-    	{
     		m_Pos = CSystemBox2D::b2ToSf(m_pTarget->getBody()->GetPosition());
-    	}
     }
 
-    if (m_VelType == VEL_LINEAL)
-    	m_Disp = m_Dir*m_Vel;
-    else if (m_VelType == VEL_INCREASE)
-    	m_Disp += (m_Dir*m_Vel)*elapsedSeconds;
+    // Move Step
+    if (!m_Collide || (m_Collide && !m_isCollide))
+    {
+		if (m_VelType == VEL_LINEAL)
+			m_Disp = m_Dir*m_Vel;
+		else if (m_VelType == VEL_INCREASE)
+			m_Disp += (m_Dir*m_Vel)*elapsedSeconds;
 
-    m_Pos += m_Disp + m_Offset;
+		m_Pos += m_Disp + m_Offset;
+	    if (m_ApplyForces)
+	    	m_Pos.y += GRAVITY;
+    }
+
+    // Collision
+    if (m_Collide)
+    {
+    	const int tileIndex = pGame->Client()->Controller()->Context()->Map().getWorldTileIndex(m_Pos, pGame->Client()->Controller()->Context()->Map().getGameLayer());
+    	if (tileIndex == TILE_SOLID)
+    		m_isCollide = true;
+    }
+
     m_Rotation += m_VelRot;
 }

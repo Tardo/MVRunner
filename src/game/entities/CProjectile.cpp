@@ -76,7 +76,7 @@ void CProjectile::tick() noexcept
 			if (m_pEntTouch->getType() == CEntity::CHARACTER)
 			{
 				CCharacter *pChar = static_cast<CCharacter*>(m_pEntTouch);
-				pChar->move(CCharacter::MOVE_STATE_UP);
+				pChar->setMoveState(CCharacter::MOVE_STATE_UP);
 			}
 		}
 	}

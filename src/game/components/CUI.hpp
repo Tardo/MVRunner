@@ -16,7 +16,7 @@ public:
 	{
 		ALIGN_LEFT=0,
 		ALIGN_RIGHT,
-		ALIGN_CENTER
+		ALIGN_CENTER,
 	};
 
 
@@ -30,11 +30,17 @@ public:
 	void showBroadcastMessage(const char *pMsg, float duration) noexcept;
 	void showHelpMessage(const char *pMsg) noexcept;
 
+protected:
+	int m_HotControl;
+
 private:
 	sf::Int64 m_TimerBroadcast;
 	float m_BroadcastDuration;
 	char m_aBroadcastMsg[BROADCAST_MAX_LENGTH];
 	char m_aHelpMsg[HELP_TEXT_MAX_LENGTH];
+
+	bool isMouseInsideControl(sf::Shape *pControlShape) const noexcept;
+	bool isMouseInsideControl(sf::Text *pControlShape) const noexcept;
 
 	void drawHUD(sf::RenderTarget& target, sf::RenderStates states) const noexcept;
 	void drawCursor(sf::RenderTarget& target, sf::RenderStates states) const noexcept;

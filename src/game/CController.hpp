@@ -9,6 +9,8 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
+#define MARGIN_CREATE_OBJECTS	800.0f
+
 
 class CSpawn
 {

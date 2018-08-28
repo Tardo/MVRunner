@@ -22,6 +22,7 @@ enum _entityCategory
 	CAT_SIGN = 2<<8,
 	CAT_CHAIN = 2<<9,
 	CAT_WATER = 2<<10,
+	CAT_ANTENNA = 2<<11,
 };
 
 class CEntity
@@ -43,6 +44,7 @@ public:
 		LIGHT,
 		PARTICLE,
 		WATER,
+		ANTENNA,
 
 		NUM_ENTITIES,
 
@@ -56,6 +58,9 @@ public:
 	int getType() const noexcept { return m_Type; }
 	virtual void destroy() noexcept { m_ToDelete = true; }
 	bool isToDelete() const noexcept { return m_ToDelete; }
+
+	virtual void setSelfDelete(bool status) noexcept { m_SelfDelete = status; }
+	bool canSelfDelete() const noexcept { return m_SelfDelete; }
 
 	int getHealth() const noexcept { return m_Health; }
 	virtual void setHealth(int health) noexcept { m_Health = health; }
@@ -74,6 +79,7 @@ public:
 	virtual void onPostSolve(CEntity* pEntity, const sf::Vector2f &worldPos, float impulse) noexcept { }
 
 	sf::Color m_Color;
+	int m_TextureId;
 	int m_ContactFx;
 
 protected:
@@ -85,6 +91,7 @@ protected:
 private:
 	int m_Type;
 	bool m_ToDelete;
+	bool m_SelfDelete;
 };
 
 #endif

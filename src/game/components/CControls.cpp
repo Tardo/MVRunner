@@ -26,6 +26,7 @@ void CControls::init() noexcept
 	m_mCmdBinds.insert(std::pair<std::string, int>("left", sf::Keyboard::A));
 	m_mCmdBinds.insert(std::pair<std::string, int>("right", sf::Keyboard::D));
 	m_mCmdBinds.insert(std::pair<std::string, int>("fire", (sf::Mouse::Left+2) * -1)); // FIXME: Workaround for use Keyboard+Mouse binds
+	m_mCmdBinds.insert(std::pair<std::string, int>("hook", (sf::Mouse::Right+2) * -1)); // FIXME: Workaround for use Keyboard+Mouse binds
 }
 
 void CControls::processEvent(const sf::Event &ev) noexcept

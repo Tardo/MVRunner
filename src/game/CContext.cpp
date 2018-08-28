@@ -18,15 +18,13 @@ CContext::~CContext() noexcept
 	if (m_pPlayer)
 		delete m_pPlayer;
 
-	m_pPlayer = nullptr;
-
     std::vector<CEntity*>::iterator itEnt = m_vpEntities.begin();
     while (itEnt != m_vpEntities.end())
     {
     	CEntity *pEnty = (*itEnt);
+    	itEnt = m_vpEntities.erase(itEnt);
     	delete pEnty;
     	pEnty = nullptr;
-    	itEnt = m_vpEntities.erase(itEnt);
     }
     m_vpEntities.clear();
 
@@ -43,4 +41,29 @@ int CContext::addEntity(CEntity *pEntity) noexcept
 		return m_GID++;
 	}
 	return -1;
+}
+
+void CContext::tick() noexcept
+{
+	std::vector<CEntity*> ents = m_vpEntities; // Copy fixed list FIXME: tick can create new entities...
+    std::vector<CEntity*>::const_iterator citE = ents.begin();
+    while (citE != ents.end())
+    	(*citE++)->tick();
+}
+
+void CContext::clearTrash() noexcept
+{
+	std::vector<CEntity*>::iterator itE = m_vpEntities.begin();
+    while (itE != m_vpEntities.end())
+    {
+    	CEntity *pEnt = static_cast<CEntity*>(*itE);
+    	if (pEnt->isToDelete())
+    	{
+    		itE = m_vpEntities.erase(itE);
+    		delete pEnt;
+    		pEnt = nullptr;
+    	}
+    	else
+    		++itE;
+    }
 }
