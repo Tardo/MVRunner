@@ -428,7 +428,7 @@ void CController::onStart() noexcept
 	Game()->Client()->Menus().setActive(CMenus::NONE);
 }
 
-void CController::onResetGame() noexcept
+void CController::onReset() noexcept
 {
 	if (m_pGameContext)
 	{
@@ -437,7 +437,7 @@ void CController::onResetGame() noexcept
 	}
 
 	m_pGameContext = new CContext();
-	onStart();
+	//onStart();
 }
 
 void CController::onCharacterDeath(CCharacter *pVictim, CPlayer *pKiller) noexcept
@@ -447,9 +447,10 @@ void CController::onCharacterDeath(CCharacter *pVictim, CPlayer *pKiller) noexce
 
 void CController::createImpactSparkMetal(const sf::Vector2f &worldPos) noexcept
 {
+	CSystemBox2D *pSystemBox2D = Game()->Client()->getSystem<CSystemBox2D>();
 	for (int i=0; i<12; i++)
 	{
-		CParticle *pParticle = new CParticle(sf::BlendAdd, RENDER_FRONT);
+		CSimpleParticle *pParticle = new CSimpleParticle(sf::BlendAdd, RENDER_FRONT);
 		pParticle->m_Pos = worldPos;
 		pParticle->m_SizeInit = sf::Vector2f(18.0f, 18.0f);
 		pParticle->m_SizeEnd = VECTOR_ZERO;
@@ -460,11 +461,31 @@ void CController::createImpactSparkMetal(const sf::Vector2f &worldPos) noexcept
 		pParticle->m_Luminance = true;
 		pParticle->m_ApplyForces = true;
 		pParticle->m_Collide = true;
-		pParticle->m_VelType = CParticle::VEL_LINEAL;
+		pParticle->m_VelType = CSimpleParticle::VEL_LINEAL;
 		pParticle->m_TextId = CAssetManager::TEXTURE_BULLET_SPARK;
 		pParticle->m_Dir = sf::Vector2f(upm::floatRand(-1.0f, 1.0f), upm::floatRand(-1.0f, 1.0f));
 		pParticle->m_Vel = upm::floatRand(4.0f, 9.0f);
+
+		b2ParticleDef pd;
+		pd.flags = b2_waterParticle;
+		pd.color.Set(255, 0, 255, 255);
+		pd.position = CSystemBox2D::sfToB2(worldPos);
+		pd.userData = pParticle;
+		pd.lifetime = 5.0f;
+		pSystemBox2D->getParticleSystem(CSystemBox2D::PARTICLE_SYSTEM_WATER)->CreateParticle(pd);
 	}
+
+	b2PolygonShape polyShape;
+	polyShape.SetAsBox(CSystemBox2D::sfToB2(80.0f), CSystemBox2D::sfToB2(80.0f));
+	b2ParticleGroupDef pdg;
+	pdg.flags = b2_waterParticle;
+//	pdg.flags = b2_springParticle;
+//	pdg.groupFlags = b2_solidParticleGroup;
+	pdg.shape = &polyShape;
+	pdg.position = CSystemBox2D::sfToB2(worldPos);
+	pdg.color.Set(0, 0, 255, 255);
+	pdg.lifetime = 5.0f;
+	pSystemBox2D->getParticleSystem(CSystemBox2D::PARTICLE_SYSTEM_WATER)->CreateParticleGroup(pdg);
 }
 
 void CController::createBloodSpark(const sf::Vector2f &worldPos, float duration) noexcept
@@ -472,7 +493,7 @@ void CController::createBloodSpark(const sf::Vector2f &worldPos, float duration)
 	if (!Game()->Client()->canAdd50Hz() || Game()->Client()->isClipped(worldPos, 128.0f))
 		return;
 
-	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_BACK);
+	CSimpleParticle *pParticle = new CSimpleParticle(sf::BlendAlpha, RENDER_BACK);
 	pParticle->m_Pos = worldPos;
 	pParticle->m_SizeInit = sf::Vector2f(2.0f, 2.0f);
 	pParticle->m_SizeEnd = sf::Vector2f(4.0f, 4.0f);
@@ -491,7 +512,7 @@ void CController::createBlood(const sf::Vector2f &worldPos) noexcept
 
 	for (int i=0; i<2; i++)
 	{
-		CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_BACK);
+		CSimpleParticle *pParticle = new CSimpleParticle(sf::BlendAlpha, RENDER_BACK);
 		pParticle->m_Pos = worldPos;
 		pParticle->m_SizeInit = sf::Vector2f(20.0f, 20.0f);
 		pParticle->m_SizeEnd = sf::Vector2f(40.0f, 40.0f);
@@ -511,7 +532,7 @@ void CController::createFireBall(class CEntity *pTarget, float duration, const s
 	if (!pTarget->getBody() || Game()->Client()->isClipped(CSystemBox2D::b2ToSf(pTarget->getBody()->GetPosition())+offSet, 128.0f))
 		return;
 
-	CParticle *pParticle = new CParticle(sf::BlendAdd, RENDER_FRONT, true, CAssetManager::SHADER_BLUR);
+	CSimpleParticle *pParticle = new CSimpleParticle(sf::BlendAdd, RENDER_FRONT, true, CAssetManager::SHADER_BLUR);
 	pParticle->m_pTarget = pTarget;
 	pParticle->m_Pos = CSystemBox2D::b2ToSf(pTarget->getBody()->GetPosition());
 	pParticle->m_SizeInit = sf::Vector2f(32.0f, 32.0f);
@@ -531,7 +552,7 @@ void CController::createFireTrailLarge(const sf::Vector2f &worldPos) noexcept
 	if (!Game()->Client()->canAdd100Hz() || Game()->Client()->isClipped(worldPos, 128.0f))
 		return;
 
-	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_FRONT);
+	CSimpleParticle *pParticle = new CSimpleParticle(sf::BlendAlpha, RENDER_FRONT);
 	pParticle->m_Pos = worldPos;
 	pParticle->m_SizeInit = sf::Vector2f(24.0f, 24.0f);
 	pParticle->m_SizeEnd = sf::Vector2f(64.0f, 64.0f);
@@ -545,7 +566,7 @@ void CController::createFireTrailLarge(const sf::Vector2f &worldPos) noexcept
 	pParticle->m_Luminance = true;
 	pParticle->m_TextId = CAssetManager::TEXTURE_SMOKE_WHITE;
 
-	pParticle = new CParticle(sf::BlendAdd, RENDER_FRONT);
+	pParticle = new CSimpleParticle(sf::BlendAdd, RENDER_FRONT);
 	pParticle->m_Pos = worldPos;
 	pParticle->m_SizeInit = sf::Vector2f(24.0f, 24.0f);
 	pParticle->m_SizeEnd = sf::Vector2f(64.0f, 64.0f);
@@ -565,7 +586,7 @@ void CController::createFireTrailSmall(const sf::Vector2f &worldPos) noexcept
 	if (!Game()->Client()->canAdd100Hz() || Game()->Client()->isClipped(worldPos, 128.0f))
 		return;
 
-	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_FRONT);
+	CSimpleParticle *pParticle = new CSimpleParticle(sf::BlendAlpha, RENDER_FRONT);
 	pParticle->m_Pos = worldPos;
 	pParticle->m_SizeInit = sf::Vector2f(8.0f, 8.0f);
 	pParticle->m_SizeEnd = sf::Vector2f(12.0f, 12.0f);
@@ -578,7 +599,7 @@ void CController::createFireTrailSmall(const sf::Vector2f &worldPos) noexcept
 	pParticle->m_Duration = upm::floatRand(0.05f, 0.1f);
 	pParticle->m_TextId = CAssetManager::TEXTURE_SMOKE_WHITE;
 
-	pParticle = new CParticle(sf::BlendAdd, RENDER_FRONT);
+	pParticle = new CSimpleParticle(sf::BlendAdd, RENDER_FRONT);
 	pParticle->m_Pos = worldPos;
 	pParticle->m_SizeInit = sf::Vector2f(8.0f, 8.0f);
 	pParticle->m_SizeEnd = sf::Vector2f(12.0f, 12.0f);
@@ -597,7 +618,7 @@ void CController::createSmokeCarDamaged(const sf::Vector2f &worldPos, bool fire)
 	if (!Game()->Client()->canAdd100Hz() || Game()->Client()->isClipped(worldPos, 128.0f))
 		return;
 
-	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_FRONT);
+	CSimpleParticle *pParticle = new CSimpleParticle(sf::BlendAlpha, RENDER_FRONT);
 	pParticle->m_Pos = worldPos;
 	pParticle->m_SizeInit = VECTOR_ZERO;
 	pParticle->m_SizeEnd = sf::Vector2f(42.0f, 42.0f);
@@ -612,7 +633,7 @@ void CController::createSmokeCarDamaged(const sf::Vector2f &worldPos, bool fire)
 
 	if (fire)
 	{
-		pParticle = new CParticle(sf::BlendAdd, RENDER_FRONT);
+		pParticle = new CSimpleParticle(sf::BlendAdd, RENDER_FRONT);
 		pParticle->m_Pos = worldPos;
 		pParticle->m_SizeInit = sf::Vector2f(4.0f, 4.0f);
 		pParticle->m_SizeEnd = sf::Vector2f(12.0f, 12.0f);
@@ -629,7 +650,7 @@ void CController::createSmokeCarDamaged(const sf::Vector2f &worldPos, bool fire)
 
 void CController::createPoints(const sf::Vector2f &worldPos, int points) noexcept
 {
-	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_FOREGROUND);
+	CSimpleParticle *pParticle = new CSimpleParticle(sf::BlendAlpha, RENDER_FOREGROUND);
 	pParticle->m_ModeText = true;
 	char buff[5];
 	if (points >= 0) snprintf(buff, sizeof(buff), "+%d", points);
@@ -651,7 +672,7 @@ void CController::createSmokeImpact(const sf::Vector2f &worldPos, const sf::Vect
 	if (Game()->Client()->isClipped(worldPos, 128.0f))
 		return;
 
-	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_FRONT);
+	CSimpleParticle *pParticle = new CSimpleParticle(sf::BlendAlpha, RENDER_FRONT);
 	pParticle->m_Pos = worldPos;
 	pParticle->m_SizeInit = sf::Vector2f(8.0f, 8.0f);
 	pParticle->m_SizeEnd = sf::Vector2f(92.0f, 92.0f);
@@ -661,7 +682,7 @@ void CController::createSmokeImpact(const sf::Vector2f &worldPos, const sf::Vect
 	pParticle->m_VelRot = upm::randInt(0, 2) == 1?-0.3f:0.3f;
 	pParticle->m_Dir = dir;
 	pParticle->m_Vel = vel;
-	pParticle->m_VelType = CParticle::VEL_LINEAL;
+	pParticle->m_VelType = CSimpleParticle::VEL_LINEAL;
 	pParticle->m_Duration = upm::floatRand(0.25f, 0.5f);
 	pParticle->m_TextId = CAssetManager::TEXTURE_SMOKE_WHITE;
 }
@@ -671,7 +692,7 @@ void CController::createRainBack(const sf::Vector2f &worldPos, float rainVel) no
 	if (!Game()->Client()->canAdd100Hz())
 		return;
 
-	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_BACK);
+	CSimpleParticle *pParticle = new CSimpleParticle(sf::BlendAlpha, RENDER_BACK);
 	pParticle->m_Pos = worldPos;
 	pParticle->m_SizeInit = sf::Vector2f(8.0f, 8.0f);
 	pParticle->m_SizeEnd = sf::Vector2f(1.0f, 1.0f);
@@ -679,7 +700,7 @@ void CController::createRainBack(const sf::Vector2f &worldPos, float rainVel) no
 	pParticle->m_ColorEnd.a = 0;
 	pParticle->m_Duration = 3.0f;
 	pParticle->m_Vel = rainVel;
-	pParticle->m_VelType = CParticle::VEL_LINEAL;
+	pParticle->m_VelType = CSimpleParticle::VEL_LINEAL;
 	pParticle->m_Dir = sf::Vector2f(upm::floatRand(0.35f, 0.4f), 1.0f);
 	pParticle->m_TextId = CAssetManager::TEXTURE_POINT_LIGHT;
 }
@@ -689,7 +710,7 @@ void CController::createRainFront(const sf::Vector2f &worldPos, float rainVel) n
 	if (!Game()->Client()->canAdd50Hz())
 		return;
 
-	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_FOREGROUND);
+	CSimpleParticle *pParticle = new CSimpleParticle(sf::BlendAlpha, RENDER_FOREGROUND);
 	pParticle->m_Pos = worldPos;
 	pParticle->m_SizeInit = sf::Vector2f(2.0f, 32.0f);
 	pParticle->m_SizeEnd = sf::Vector2f(1.0f, 8.0f);
@@ -697,14 +718,14 @@ void CController::createRainFront(const sf::Vector2f &worldPos, float rainVel) n
 	pParticle->m_ColorEnd.a = 0;
 	pParticle->m_Duration = 3.0f;
 	pParticle->m_Vel = rainVel;
-	pParticle->m_VelType = CParticle::VEL_LINEAL;
+	pParticle->m_VelType = CSimpleParticle::VEL_LINEAL;
 	pParticle->m_Dir = sf::Vector2f(upm::floatRand(0.35f, 0.4f), 1.0f);
 	pParticle->m_TextId = CAssetManager::TEXTURE_POINT_LIGHT;
 }
 
 void CController::createStorm() noexcept
 {
-	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_FOREGROUND);
+	CSimpleParticle *pParticle = new CSimpleParticle(sf::BlendAlpha, RENDER_FOREGROUND);
 	pParticle->m_Pos = sf::Vector2f(0.0f,0.0f);
 	const sf::Vector2f size = sf::Vector2f(Game()->Client()->Camera().getSize().x, Game()->Client()->Camera().getSize().y);
 	pParticle->m_SizeInit = size;
@@ -720,7 +741,7 @@ void CController::createSnowBack(const sf::Vector2f &worldPos, float snowVel) no
 	if (!Game()->Client()->canAdd100Hz() || Game()->Client()->isClipped(worldPos, 128.0f))
 		return;
 
-	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_FOREGROUND);
+	CSimpleParticle *pParticle = new CSimpleParticle(sf::BlendAlpha, RENDER_FOREGROUND);
 	pParticle->m_Pos = worldPos;
 	pParticle->m_SizeInit = sf::Vector2f(8.0f, 8.0f);
 	pParticle->m_SizeEnd = sf::Vector2f(1.0f, 1.0f);
@@ -728,7 +749,7 @@ void CController::createSnowBack(const sf::Vector2f &worldPos, float snowVel) no
 	pParticle->m_ColorEnd.a = 0;
 	pParticle->m_Duration = 2.0f;
 	pParticle->m_Vel = snowVel;
-	pParticle->m_VelType = CParticle::VEL_LINEAL;
+	pParticle->m_VelType = CSimpleParticle::VEL_LINEAL;
 	pParticle->m_Dir = sf::Vector2f(upm::floatRand(-0.25f, 0.4f), 1.0f);
 	pParticle->m_TextId = CAssetManager::TEXTURE_POINT_LIGHT;
 }
@@ -738,7 +759,7 @@ void CController::createSnowFront(const sf::Vector2f &worldPos, float snowVel) n
 	if (!Game()->Client()->canAdd50Hz() || Game()->Client()->isClipped(worldPos, 128.0f))
 		return;
 
-	CParticle *pParticle = new CParticle(sf::BlendAlpha, RENDER_FOREGROUND);
+	CSimpleParticle *pParticle = new CSimpleParticle(sf::BlendAlpha, RENDER_FOREGROUND);
 	pParticle->m_Pos = worldPos;
 	pParticle->m_SizeInit = sf::Vector2f(18.0f, 18.0f);
 	pParticle->m_SizeEnd = sf::Vector2f(1.0f, 1.0f);
@@ -746,7 +767,7 @@ void CController::createSnowFront(const sf::Vector2f &worldPos, float snowVel) n
 	pParticle->m_ColorEnd.a = 0;
 	pParticle->m_Duration = 2.0f;
 	pParticle->m_Vel = snowVel;
-	pParticle->m_VelType = CParticle::VEL_LINEAL;
+	pParticle->m_VelType = CSimpleParticle::VEL_LINEAL;
 	pParticle->m_Dir = sf::Vector2f(upm::floatRand(-0.25f, 0.4f), 1.0f);
 	pParticle->m_TextId = CAssetManager::TEXTURE_POINT_LIGHT;
 }
@@ -756,11 +777,11 @@ void CController::createExplosionCar(const sf::Vector2f &worldPos, bool ring) no
 	if (Game()->Client()->isClipped(worldPos, 128.0f))
 		return;
 
-	CParticle *pParticle;
+	CSimpleParticle *pParticle;
 
 	if (ring)
 	{
-		pParticle = new CParticle(sf::BlendAlpha, RENDER_FRONT);
+		pParticle = new CSimpleParticle(sf::BlendAlpha, RENDER_FRONT);
 		pParticle->m_Pos = worldPos;
 		pParticle->m_SizeInit = sf::Vector2f(26.0f, 26.0f);
 		pParticle->m_SizeEnd = sf::Vector2f(95.0f, 95.0f);
@@ -769,7 +790,7 @@ void CController::createExplosionCar(const sf::Vector2f &worldPos, bool ring) no
 		pParticle->m_Luminance = true;
 		pParticle->m_TextId = CAssetManager::TEXTURE_EXPLOSION_RING;
 
-		pParticle = new CParticle();
+		pParticle = new CSimpleParticle();
 		pParticle->m_Pos = worldPos;
 		pParticle->m_SizeInit = sf::Vector2f(26.0f, 26.0f);
 		pParticle->m_SizeEnd = sf::Vector2f(175.0f, 175.0f);
@@ -779,7 +800,7 @@ void CController::createExplosionCar(const sf::Vector2f &worldPos, bool ring) no
 		pParticle->m_TextId = CAssetManager::TEXTURE_EXPLOSION_RING;
 	}
 
-	pParticle = new CParticle(sf::BlendAdd, RENDER_FRONT);
+	pParticle = new CSimpleParticle(sf::BlendAdd, RENDER_FRONT);
 	pParticle->m_Pos = worldPos;
 	pParticle->m_SizeInit = sf::Vector2f(32.0f, 32.0f);
 	pParticle->m_SizeEnd = sf::Vector2f(272.0f, 272.0f);
@@ -792,7 +813,7 @@ void CController::createExplosionCar(const sf::Vector2f &worldPos, bool ring) no
 	pParticle->m_Animated = true;
 	pParticle->m_AnimSize = { 4, 4 };
 
-	pParticle = new CParticle(sf::BlendAlpha, RENDER_FRONT);
+	pParticle = new CSimpleParticle(sf::BlendAlpha, RENDER_FRONT);
 	pParticle->m_Pos = worldPos;
 	pParticle->m_SizeInit = sf::Vector2f(15.0f, 15.0f);
 	pParticle->m_SizeEnd = sf::Vector2f(275.0f, 275.0f);

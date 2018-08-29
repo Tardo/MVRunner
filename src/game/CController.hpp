@@ -70,7 +70,7 @@ public:
 
 	virtual bool onInit() noexcept;
 	virtual void onStart() noexcept;
-	virtual void onResetGame() noexcept;
+	virtual void onReset() noexcept;
 	virtual void onCharacterDeath(CCharacter *pVictim, CPlayer *pKiller) noexcept;
 	virtual bool onMapTile(unsigned int tileId, const sf::Vector2f &pos, unsigned int tileDir, unsigned int modifierId) noexcept;
 	virtual void onMapObject(CMapRenderObject *pMapObj, int objId, const sf::Vector2f &worldPos, const sf::Vector2f &size) noexcept;

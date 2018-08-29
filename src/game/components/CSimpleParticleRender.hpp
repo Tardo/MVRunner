@@ -4,14 +4,14 @@
 #define H_GAME_COMPONENT_PARTICLE_RENDER
 
 #include <game/CComponent.hpp>
-#include <game/entities/CParticle.hpp>
+#include "../entities/CSimpleParticle.hpp"
 
 
-class CParticleRender final : public CComponent
+class CSimpleParticleRender final : public CComponent
 {
 public:
-	CParticleRender(CGameClient *pGameClient, int render) noexcept;
-	~CParticleRender() noexcept;
+	CSimpleParticleRender(CGameClient *pGameClient, int render) noexcept;
+	~CSimpleParticleRender() noexcept;
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept final;
 
@@ -19,7 +19,7 @@ protected:
 	int m_Render;
 
 private:
-	virtual void renderParticle(sf::RenderTarget& target, sf::RenderStates states, CParticle *pParticle) const noexcept final;
+	void renderSimpleParticle(sf::RenderTarget& target, sf::RenderStates states, CSimpleParticle *pSimpleParticle) const noexcept;
 };
 
 #endif

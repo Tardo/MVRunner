@@ -30,6 +30,9 @@ bool CSystemSound::init() noexcept
 	return true;
 }
 
+void CSystemSound::reset() noexcept
+{ }
+
 void CSystemSound::setListenerPosition(const sf::Vector2f &listenerPos) noexcept
 {
 	sf::Listener::setPosition(listenerPos.x, 0.0f, listenerPos.y);

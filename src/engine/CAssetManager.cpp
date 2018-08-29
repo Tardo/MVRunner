@@ -87,6 +87,7 @@ void CAssetManager::load() noexcept
 		LOAD_SHADER(SHADER_CHROMATIC_ABERRATION, "data/shaders/chromatic_aberration.frag", sf::Shader::Fragment)
 		LOAD_SHADER(SHADER_BLUR, "data/shaders/blur.frag", sf::Shader::Fragment)
 		LOAD_SHADER(SHADER_BLOOM, "data/shaders/bloom.frag", sf::Shader::Fragment)
+		LOAD_SHADER(SHADER_METABALL, "data/shaders/metaball.frag", sf::Shader::Fragment)
 	}
 
 	s_Mutex.unlock();

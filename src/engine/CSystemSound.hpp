@@ -17,6 +17,7 @@ public:
 	virtual ~CSystemSound() noexcept final;
 
 	virtual bool init() noexcept final;
+	virtual void reset() noexcept final;
 	virtual void update(float deltaTime) noexcept final;
 
 	void playBackgroundMusic(int id) noexcept;

@@ -29,7 +29,8 @@ CEntity* CPlayer::createCharacter(const sf::Vector2f &pos) noexcept
 }
 void CPlayer::destroyCharacter() noexcept
 {
-	if (m_pCharacter) {
+	if (m_pCharacter)
+	{
 		m_pCharacter->destroy();
 		m_pCharacter = nullptr;
 	}

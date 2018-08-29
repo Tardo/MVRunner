@@ -8,7 +8,7 @@ b2Vec2 CSystemBox2D::ZERO(0.0f, 0.0f);
 CSystemBox2D::CSystemBox2D() noexcept
 : m_World(b2Vec2(0.0f, GRAVITY))
 {
-
+	for (int i=0; i<NUM_PARTICLE_SYSTEMS; m_pParticleSystems[i++]=nullptr);
 }
 CSystemBox2D::~CSystemBox2D() noexcept
 {
@@ -19,6 +19,12 @@ CSystemBox2D::~CSystemBox2D() noexcept
 		pBodyList = pBodyList->GetNext();
 	}
 
+	for (int i=0; i<NUM_PARTICLE_SYSTEMS; ++i)
+	{
+		if (m_pParticleSystems[i])
+			m_World.DestroyParticleSystem(m_pParticleSystems[i]);
+	}
+
 	#ifdef DEBUG_DESTRUCTORS
 	ups::msgDebug("CSystemBox2D", "Deleted");
 	#endif
@@ -27,7 +33,14 @@ CSystemBox2D::~CSystemBox2D() noexcept
 bool CSystemBox2D::init() noexcept
 {
 	m_World.SetContactListener(&m_ContactListener);
+	resetParticleSystems();
+
 	return true;
+}
+
+void CSystemBox2D::reset() noexcept
+{
+	resetParticleSystems();
 }
 
 void CSystemBox2D::update(float deltaTime) noexcept
@@ -36,6 +49,42 @@ void CSystemBox2D::update(float deltaTime) noexcept
 	m_World.ClearForces();
 }
 
+b2ParticleSystem* CSystemBox2D::getParticleSystem(std::size_t index) noexcept
+{
+	if (index >= NUM_PARTICLE_SYSTEMS)
+		return 0x0;
+	return m_pParticleSystems[index];
+}
+
+void CSystemBox2D::resetParticleSystems() noexcept
+{
+	for (int i=0; i<NUM_PARTICLE_SYSTEMS; ++i)
+	{
+		if (!m_pParticleSystems[i])
+			continue;
+
+		m_World.DestroyParticleSystem(m_pParticleSystems[i]);
+	}
+
+	// SPARK SYSTEM
+	{
+		b2ParticleSystemDef particleSystemDef;
+		particleSystemDef.radius = sfToB2(5.0f);
+		m_pParticleSystems[PARTICLE_SYSTEM_SPARK] = m_World.CreateParticleSystem(&particleSystemDef);
+		m_pParticleSystems[PARTICLE_SYSTEM_SPARK]->SetStuckThreshold(5);
+	}
+	// WATER SYSTEM
+	{
+		b2ParticleSystemDef particleSystemDef;
+		particleSystemDef.radius = sfToB2(6.0f);
+		m_pParticleSystems[PARTICLE_SYSTEM_WATER] = m_World.CreateParticleSystem(&particleSystemDef);
+		m_pParticleSystems[PARTICLE_SYSTEM_WATER]->SetStuckThreshold(5);
+	}
+}
+//b2Body* CSystemBox2D::createParticleGroup(const sf::Vector2f &worldPos, const sf::Vector2f &size, float rot, const CB2BodyInfo &bodyInfo) noexcept
+//{
+//
+//}
 
 b2Body* CSystemBox2D::createBoxBody(const sf::Vector2f &worldPos, const sf::Vector2f &size, float rot, const CB2BodyInfo &bodyInfo) noexcept
 {
@@ -256,7 +305,7 @@ void CSystemBox2D::createExplosion(const sf::Vector2f &worldPos, float energy, f
 			float impulse = (1.0f - dist/radius) * energy * 12.0f;
 			sf::Vector2f force = dir * impulse;
 			//applyBlastImpulse(pBody, worldPos, pos, impulse);
-			pBody->ApplyLinearImpulseToCenter(sfToB2(force), true);
+			pBody->ApplyLinearImpulse(sfToB2(force), pBody->GetWorldCenter(), true);
 		}
 	}
 }

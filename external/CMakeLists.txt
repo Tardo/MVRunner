@@ -6,6 +6,9 @@ add_library(Box2D STATIC    Box2D/Box2D.h
                             Box2D/Common/b2Settings.cpp
                             Box2D/Common/b2StackAllocator.cpp
                             Box2D/Common/b2Timer.cpp
+                            Box2D/Common/b2FreeList.cpp
+                            Box2D/Common/b2Stat.cpp
+                            Box2D/Common/b2TrackedBlock.cpp                            
 	                        Box2D/Common/b2BlockAllocator.h
 	                        Box2D/Common/b2Draw.h
 	                        Box2D/Common/b2GrowableStack.h
@@ -13,6 +16,12 @@ add_library(Box2D STATIC    Box2D/Box2D.h
 	                        Box2D/Common/b2Settings.h
 	                        Box2D/Common/b2StackAllocator.h
                             Box2D/Common/b2Timer.h
+                            Box2D/Common/b2GrowableBuffer.h
+                            Box2D/Common/b2GrowableStack.h
+                            Box2D/Common/b2IntrusiveList.h
+                            Box2D/Common/b2SlabAllocator.h
+                            Box2D/Common/b2Stat.h
+                            Box2D/Common/b2TrackedBlock.h
                             Box2D/Dynamics/Joints/b2DistanceJoint.cpp
                             Box2D/Dynamics/Joints/b2FrictionJoint.cpp
                             Box2D/Dynamics/Joints/b2GearJoint.cpp
@@ -90,6 +99,18 @@ add_library(Box2D STATIC    Box2D/Box2D.h
 	                        Box2D/Collision/b2Distance.h
 	                        Box2D/Collision/b2DynamicTree.h
                             Box2D/Collision/b2TimeOfImpact.h
+                            Box2D/Particle/b2Particle.cpp
+							Box2D/Particle/b2Particle.h
+							Box2D/Particle/b2ParticleAssembly.cpp
+							Box2D/Particle/b2ParticleAssembly.h
+							Box2D/Particle/b2ParticleAssembly.neon.s
+							Box2D/Particle/b2ParticleGroup.cpp
+							Box2D/Particle/b2ParticleGroup.h
+							Box2D/Particle/b2ParticleSystem.cpp
+							Box2D/Particle/b2ParticleSystem.h
+							Box2D/Particle/b2StackQueue.h
+							Box2D/Particle/b2VoronoiDiagram.cpp
+							Box2D/Particle/b2VoronoiDiagram.h
                             Box2D/Rope/b2Rope.cpp
                             Box2D/Rope/b2Rope.h)
 set_property(TARGET Box2D PROPERTY CXX_STANDARD 11)

@@ -30,7 +30,7 @@ CEntity::~CEntity()
 	{
 		CGame *pGame = CGame::getInstance();
 		CSystemBox2D *pSystemBox2D = pGame->Client()->getSystem<CSystemBox2D>();
-		if (pGame->Client()->Controller()->Context()->getPlayer()->getCharacter())
+		if (pGame->Client()->Controller()->Context()->getPlayer()->getCharacter() && !pGame->Client()->Controller()->Context()->getPlayer()->getCharacter()->isToDelete())
 		{
 			b2Joint *pJoint = pGame->Client()->Controller()->Context()->getPlayer()->getCharacter()->m_pHookJoint;
 			if (pJoint && (pJoint->GetBodyA() == m_pBody || pJoint->GetBodyB() == m_pBody))

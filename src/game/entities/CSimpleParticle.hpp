@@ -1,11 +1,11 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
-#ifndef H_ENTITY_CPARTICLE
-#define H_ENTITY_CPARTICLE
+#ifndef H_ENTITY_CSIMPLEPARTICLE
+#define H_ENTITY_CSIMPLEPARTICLE
 
 #include <game/CEntity.hpp>
 
-class CParticle final : public CEntity
+class CSimpleParticle final : public CEntity
 {
 public:
 	enum
@@ -14,8 +14,8 @@ public:
 		VEL_INCREASE,
 	};
 
-    CParticle(sf::BlendMode blendMode = sf::BlendAlpha, int render = RENDER_FRONT, bool luminance = false, int shader = -1) noexcept;
-    virtual ~CParticle() noexcept;
+	CSimpleParticle(sf::BlendMode blendMode = sf::BlendAlpha, int render = RENDER_FRONT, bool luminance = false, int shader = -1) noexcept;
+    virtual ~CSimpleParticle() noexcept;
 
     virtual void tick() noexcept final;
 

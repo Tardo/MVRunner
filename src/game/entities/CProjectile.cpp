@@ -30,7 +30,7 @@ CProjectile::CProjectile(const sf::Vector2f &pos, const sf::Vector2f &size, floa
     if (type == WEAPON_GRENADE_LAUNCHER)
     {
     	m_pBody->SetAngularVelocity(upm::floatRand(-8.0f, 8.0f));
-    	m_pBody->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(m_Dir*m_Speed), true);
+    	m_pBody->ApplyLinearImpulse(CSystemBox2D::sfToB2(m_Dir*m_Speed), m_pBody->GetWorldCenter(), true);
     }
     else if (type == WEAPON_CANON_BALL)
     {

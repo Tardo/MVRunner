@@ -18,7 +18,7 @@ CDebuggerRender::~CDebuggerRender() noexcept
 
 void CDebuggerRender::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
 {
-	if (!Client()->m_Debug)
+	if (!Client()->m_Debug || Client()->getRenderMode() != RENDER_MODE_NORMAL)
 		return;
 
 	target.setView(Client()->Camera());

@@ -16,18 +16,19 @@
 #include <game/components/CUI.hpp>
 #include <game/components/CPlayerRender.hpp>
 #include <game/components/CItemRender.hpp>
-#include <game/components/CParticleRender.hpp>
 #include <game/components/CControls.hpp>
 #include <game/components/CCamera.hpp>
 #include <game/components/CDebuggerRender.hpp>
 #include <game/components/CLightRender.hpp>
 #include <game/components/CFluidRender.hpp>
+#include <game/components/CParticleSystemRender.hpp>
 #include <game/CController.hpp>
 #include <game/CEntity.hpp>
 #include <Zpg/Zpg.hpp>
 #include <cstdlib>
 #include <list>
 #include <deque>
+#include "components/CSimpleParticleRender.hpp"
 
 #define SCREEN_MARGIN_DRAW			128.0f
 #define SCREEN_MARGIN_DESTRUCTION	MARGIN_CREATE_OBJECTS + 250.0f
@@ -35,7 +36,8 @@
 enum
 {
 	RENDER_MODE_NORMAL=0,
-	RENDER_MODE_LIGHTING
+	RENDER_MODE_LIGHTING,
+	RENDER_MODE_LIQUID,
 };
 
 class CGameClient final : public sf::RenderWindow
@@ -87,6 +89,7 @@ public:
 	int getRenderMode() const noexcept { return m_RenderMode; }
 	void setRenderMode(int mode) noexcept;
 	sf::RenderTexture* getTexturePhase() { return &m_RenderPhaseTexture; }
+	sf::Sprite* getRenderPhase() { return &m_RenderPhase; }
 
 	bool canAdd100Hz() const noexcept { return m_Add100Hz; }
 	bool canAdd50Hz() const noexcept { return m_Add50Hz; }
@@ -121,9 +124,10 @@ private:
 	CPlayerRender m_PlayerRender;
 	CItemRender m_ItemRender;
 	CFluidRender m_FluidRender;
-	CParticleRender m_ParticleRenderBack;
-	CParticleRender m_ParticleRenderFront;
-	CParticleRender m_ParticleRenderForeground;
+	CSimpleParticleRender m_SimpleParticleRenderBack;
+	CSimpleParticleRender m_SimpleParticleRenderFront;
+	CSimpleParticleRender m_SimpleParticleRenderForeground;
+	CParticleSystemRender m_SimpleParticleSystemRender;
 	CControls m_Controls;
 	CDebuggerRender m_DebuggerRender;
 	CLightRender m_LightRender;

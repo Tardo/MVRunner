@@ -23,9 +23,10 @@ CGameClient::CGameClient() noexcept
   m_PlayerRender(this),
   m_ItemRender(this),
   m_FluidRender(this),
-  m_ParticleRenderBack(this, RENDER_BACK),
-  m_ParticleRenderFront(this, RENDER_FRONT),
-  m_ParticleRenderForeground(this, RENDER_FOREGROUND),
+  m_SimpleParticleRenderBack(this, RENDER_BACK),
+  m_SimpleParticleRenderFront(this, RENDER_FRONT),
+  m_SimpleParticleRenderForeground(this, RENDER_FOREGROUND),
+  m_SimpleParticleSystemRender(this),
   m_Controls(this),
   m_DebuggerRender(this),
   m_LightRender(this, RENDER_FRONT)
@@ -175,6 +176,31 @@ void CGameClient::doRender()
 		draw(m_RenderPhase, sf::BlendAdd);
 	}
 
+	// Liquid Mode
+    m_RenderPhaseTexture.clear(sf::Color::Black);
+    renderComponentsPhase(RENDER_MODE_LIQUID);
+
+	// Metaball Effect
+    sf::Shader *pShaderBloom = Assets().getShader(CAssetManager::SHADER_BLOOM);
+	pShader = Assets().getShader(CAssetManager::SHADER_METABALL);
+	if (pShader)
+	{
+		pShaderBloom->setUniform("iChannel0", sf::Shader::CurrentTexture);
+		pShaderBloom->setUniform("iResolution", sf::Vector2f(m_RenderPhase.getTexture()->getSize().x, m_RenderPhase.getTexture()->getSize().y));
+		static const int sIters = 8;
+		for (int i=0; i<sIters; ++i)
+		{
+			pShaderBloom->setUniform("direction", (i%2 == 0)?sf::Vector2f((sIters-i-1)*upm::floatRand(0.6f, 0.8f), 0):sf::Vector2f(0, (sIters-i-1)*upm::floatRand(0.6f, 0.8f)));
+			m_RenderPhaseTexture.draw(m_RenderPhase, pShaderBloom);
+			m_RenderPhaseTexture.display();
+		}
+
+		pShader->setUniform("texture", sf::Shader::CurrentTexture);
+		m_RenderPhaseTexture.draw(m_RenderPhase, pShader);
+		m_RenderPhaseTexture.display();
+		draw(m_RenderPhase, sf::BlendAdd);
+	}
+
     display();
 }
 
@@ -183,15 +209,20 @@ void CGameClient::renderComponentsPhase(int mode)
     setRenderMode(mode);
     std::deque<CComponent*>::const_iterator itComp = m_vpComponents.cbegin();
 	while (itComp != m_vpComponents.cend())
+	{
 		m_RenderPhaseTexture.draw(*(*itComp++));
-	m_RenderPhaseTexture.display();
+		m_RenderPhaseTexture.display();
+	}
 }
 
 void CGameClient::reset() noexcept
 {
-	if (m_pGameController != nullptr)
-		delete m_pGameController;
-	m_pGameController = nullptr;
+	std::deque<ISystem*>::iterator itEng = m_vpSystems.begin();
+	while (itEng != m_vpSystems.end())
+    	(*itEng++)->reset();
+
+	if (m_pGameController)
+		m_pGameController->onReset();
 }
 
 bool CGameClient::init() noexcept
@@ -268,14 +299,15 @@ bool CGameClient::init() noexcept
 	/**/
 
 	m_vpComponents.push_back(&m_MapRenderBack);
-	m_vpComponents.push_back(&m_ParticleRenderBack);
+	m_vpComponents.push_back(&m_SimpleParticleRenderBack);
 	m_vpComponents.push_back(&m_PlayerRender);
-	m_vpComponents.push_back(&m_ParticleRenderFront);
+	m_vpComponents.push_back(&m_SimpleParticleRenderFront);
 	m_vpComponents.push_back(&m_ItemRender);
+	m_vpComponents.push_back(&m_SimpleParticleSystemRender);
 	m_vpComponents.push_back(&m_FluidRender);
 	m_vpComponents.push_back(&m_LightRender);
 	m_vpComponents.push_back(&m_MapRenderFront);
-	m_vpComponents.push_back(&m_ParticleRenderForeground);
+	m_vpComponents.push_back(&m_SimpleParticleRenderForeground);
 	m_vpComponents.push_back(&m_DebuggerRender);
 	m_vpComponents.push_back(&m_Menus);
 	m_vpComponents.push_back(&m_UI);

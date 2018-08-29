@@ -35,6 +35,7 @@ public:
 	class CEntity* getTarget() noexcept { return m_pTarget; }
 
 	void setZoom(float zoom) noexcept { m_ToZoom = m_Zoom = zoom; }
+	float getZoom() const noexcept { return m_Zoom; }
 	void setSmoothZoom(float tozoom) noexcept { m_ToZoom = tozoom; }
 	bool isZoomStable() const noexcept { return !(m_Zoom < m_ToZoom-0.01f || m_Zoom > m_ToZoom+0.01f); }
 

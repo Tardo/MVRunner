@@ -10,6 +10,7 @@ public:
 	virtual ~ISystem() { }
 
 	virtual bool init() = 0;
+	virtual void reset() = 0;
 	virtual void update(float deltaTime) = 0;
 };
 

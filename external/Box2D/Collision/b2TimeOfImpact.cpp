@@ -16,12 +16,12 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "Box2D/Collision/b2Collision.h"
-#include "Box2D/Collision/b2Distance.h"
-#include "Box2D/Collision/b2TimeOfImpact.h"
-#include "Box2D/Collision/Shapes/b2CircleShape.h"
-#include "Box2D/Collision/Shapes/b2PolygonShape.h"
-#include "Box2D/Common/b2Timer.h"
+#include <Box2D/Collision/b2Collision.h>
+#include <Box2D/Collision/b2Distance.h>
+#include <Box2D/Collision/b2TimeOfImpact.h>
+#include <Box2D/Collision/Shapes/b2CircleShape.h>
+#include <Box2D/Collision/Shapes/b2PolygonShape.h>
+#include <Box2D/Common/b2Timer.h>
 
 #include <stdio.h>
 
@@ -67,6 +67,7 @@ struct b2SeparationFunction
 			b2Vec2 pointB = b2Mul(xfB, localPointB);
 			m_axis = pointB - pointA;
 			float32 s = m_axis.Normalize();
+			m_localPoint = b2Vec2_zero;
 			return s;
 		}
 		else if (cache->indexA[0] == cache->indexA[1])

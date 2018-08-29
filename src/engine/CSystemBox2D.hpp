@@ -13,6 +13,7 @@
 #define VELITER 1
 #define POSITER 1
 #define GRAVITY 9.8f
+#define MAX_PARTICLES 100
 
 #define PPM 128.0f               //PIXELS POR METRO
 #define MPP (1.0f/PPM)          //METROS POR PIXEL
@@ -62,13 +63,25 @@ class CSystemBox2D final : public ISystem
 		virtual bool getSensorAndEntity(b2Contact* pContact, b2Fixture*& sensorEntity, b2Fixture*& objEntity) noexcept final;
 	} m_ContactListener;
 public:
+	enum
+	{
+		PARTICLE_SYSTEM_SPARK=0,
+		PARTICLE_SYSTEM_WATER,
+
+		NUM_PARTICLE_SYSTEMS
+	};
+
 	CSystemBox2D() noexcept;
 	virtual ~CSystemBox2D() noexcept;
 
 	virtual bool init() noexcept final;
+	virtual void reset() noexcept final;
 	virtual void update(float deltaTime) noexcept final;
 
 	b2World* getWorld() noexcept { return &m_World; }
+	b2ParticleSystem* getParticleSystem(std::size_t index) noexcept;
+
+	void resetParticleSystems() noexcept;
 
 	b2Body* createBoxBody(const sf::Vector2f &worldPos, const sf::Vector2f &size, float rot, const CB2BodyInfo &bodyInfo) noexcept;
 	b2Body* createCircleBody(const sf::Vector2f &worldPos, float radius, float rot, const CB2BodyInfo &bodyInfo) noexcept;
@@ -98,6 +111,7 @@ public:
 
 private:
 	b2World m_World;
+	b2ParticleSystem *m_pParticleSystems[NUM_PARTICLE_SYSTEMS];
 
 	static bool inside(const b2Vec2 &cp1, const b2Vec2 &cp2, const b2Vec2 &p) noexcept;
 	static b2Vec2 intersection(const b2Vec2 &cp1, const b2Vec2 &cp2, const b2Vec2 &s, const b2Vec2 &e) noexcept;

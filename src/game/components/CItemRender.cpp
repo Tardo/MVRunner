@@ -18,7 +18,7 @@ CItemRender::~CItemRender() noexcept
 
 void CItemRender::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
 {
-	if (!Client()->Controller() || !Client()->Controller()->Context())
+	if (!Client()->Controller() || !Client()->Controller()->Context() || Client()->getRenderMode() != RENDER_MODE_NORMAL)
 		return;
 
 	target.setView(Client()->Camera());

@@ -47,6 +47,16 @@ bool CControllerMain::onInit() noexcept
 	return CController::onInit();
 }
 
+void CControllerMain::onReset() noexcept
+{
+	Game()->Client()->getSystem<CSystemSound>()->stopBackgroundMusic();
+
+	m_vPlayerCanonSpawns.clear();
+	m_vTeleports.clear();
+
+	return CController::onReset();
+}
+
 void CControllerMain::tick() noexcept
 {
 	CController::tick();
@@ -176,12 +186,12 @@ void CControllerMain::tick() noexcept
 				else if (tileId == TILE_SPEED_SOFT)
 				{
 					const sf::Vector2f tileDir = Context()->Map().getTileDirectionVector(Context()->Map().getMapPos(charPos));
-					pChar->getBody()->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(tileDir*g_Config.m_SpeedSoftImpulse), true);
+					pChar->getBody()->ApplyLinearImpulse(CSystemBox2D::sfToB2(tileDir*g_Config.m_SpeedSoftImpulse), pChar->getBody()->GetWorldCenter(), true);
 				}
 				else if (tileId == TILE_SPEED_HARD)
 				{
 					const sf::Vector2f tileDir = Context()->Map().getTileDirectionVector(Context()->Map().getMapPos(charPos));
-					pChar->getBody()->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(tileDir*g_Config.m_SpeedHardImpulse), true);
+					pChar->getBody()->ApplyLinearImpulse(CSystemBox2D::sfToB2(tileDir*g_Config.m_SpeedHardImpulse), pChar->getBody()->GetWorldCenter(), true);
 				}
 				else if (tileId >= TILE_1 && tileId <= TILE_25)
 				{

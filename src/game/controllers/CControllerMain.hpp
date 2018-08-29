@@ -44,6 +44,7 @@ public:
 
 	virtual void tick() noexcept final;
 	virtual bool onInit() noexcept final;
+	virtual void onReset() noexcept final;
 	virtual void onStart() noexcept final;
 	virtual bool onMapTile(unsigned int tileId, const sf::Vector2f &pos, unsigned int tileDir, unsigned int modifierId) noexcept final;
 	virtual void onSystemEvent(sf::Event *pEvent) noexcept final;

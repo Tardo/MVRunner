@@ -157,7 +157,8 @@ set(GAME_SRC    src/game/components/CMapRender.cpp
                 src/game/components/CUI.cpp
                 src/game/components/CPlayerRender.cpp
                 src/game/components/CItemRender.cpp
-                src/game/components/CParticleRender.cpp
+                src/game/components/CSimpleParticleRender.cpp
+                src/game/components/CParticleSystemRender.cpp
                 src/game/components/CControls.cpp
                 src/game/components/CCamera.cpp
                 src/game/components/CDebuggerRender.cpp
@@ -175,7 +176,7 @@ set(GAME_SRC    src/game/components/CMapRender.cpp
                 src/game/entities/CProjectile.cpp
                 src/game/entities/CSign.cpp
                 src/game/entities/CLight.cpp
-                src/game/entities/CParticle.cpp
+                src/game/entities/CSimpleParticle.cpp
                 src/game/entities/CWater.cpp
                 src/game/CContext.cpp
                 src/game/CController.cpp

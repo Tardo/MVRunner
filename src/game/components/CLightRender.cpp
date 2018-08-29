@@ -18,6 +18,9 @@ CLightRender::~CLightRender() noexcept
 
 void CLightRender::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
 {
+	if (Client()->getRenderMode() != RENDER_MODE_LIGHTING && Client()->getRenderMode() != RENDER_MODE_NORMAL)
+		return;
+
 	target.setView(Client()->Camera());
 
 	std::vector<CEntity*> &vEntities = Client()->Controller()->Context()->getEntities();

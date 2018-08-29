@@ -3,11 +3,11 @@
 #include <engine/CGame.hpp>
 #include <engine/CSystemBox2D.hpp>
 #include <game/CGameClient.hpp>
-#include "CParticle.hpp"
+#include "CSimpleParticle.hpp"
 
 /** PARTICLES **/
-CParticle::CParticle(sf::BlendMode blendMode, int render, bool luminance, int shader) noexcept
-: CEntity(CEntity::PARTICLE)
+CSimpleParticle::CSimpleParticle(sf::BlendMode blendMode, int render, bool luminance, int shader) noexcept
+: CEntity(CEntity::SIMPLE_PARTICLE)
 {
     m_Pos = m_Dir = m_SizeInit = m_SizeEnd = { 0.0f, 0.0f };
     m_ColorInit = m_ColorEnd = { 255, 255, 255, 255 };
@@ -33,14 +33,14 @@ CParticle::CParticle(sf::BlendMode blendMode, int render, bool luminance, int sh
     m_Collide = false;
     m_isCollide = false;
 }
-CParticle::~CParticle() noexcept
+CSimpleParticle::~CSimpleParticle() noexcept
 {
 	#ifdef DEBUG_DESTRUCTORS
-	ups::msgDebug("CParticle", "Deleted");
+	ups::msgDebug("CSimpleParticle", "Deleted");
 	#endif
 }
 
-void CParticle::tick() noexcept
+void CSimpleParticle::tick() noexcept
 {
 	CGame *pGame = CGame::getInstance();
 	if (!m_FixedPos && pGame->Client()->isClipped(m_Pos, SCREEN_MARGIN_DESTRUCTION))

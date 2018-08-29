@@ -24,7 +24,6 @@ CContext::~CContext() noexcept
     	CEntity *pEnty = (*itEnt);
     	itEnt = m_vpEntities.erase(itEnt);
     	delete pEnty;
-    	pEnty = nullptr;
     }
     m_vpEntities.clear();
 

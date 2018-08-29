@@ -103,7 +103,7 @@ void CCharacter::tick() noexcept
 	    } else
 	    {
 	    	if (!(m_CharacterState&STATE_ROTATE))
-	    		m_pBody->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(force), true);
+	    		m_pBody->ApplyLinearImpulse(CSystemBox2D::sfToB2(force), m_pBody->GetWorldCenter(), true);
 	    }
 
 		// Check Ground
@@ -236,7 +236,7 @@ void CCharacter::doFire() noexcept
 			} break;
 			case WEAPON_JET_PACK:
 			{
-				m_pBody->ApplyLinearImpulseToCenter(CSystemBox2D::sfToB2(-CharDir*g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_Energy), true);
+				m_pBody->ApplyLinearImpulse(CSystemBox2D::sfToB2(-CharDir*g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_Energy), m_pBody->GetWorldCenter(), true);
 				new CFire(CharPos+CharDir*15.0f, 0.0f, CharDir, g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_Speed, g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_LifeTime);
 			} break;
 		}

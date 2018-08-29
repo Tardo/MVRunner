@@ -65,7 +65,7 @@ void CMapRender::draw(sf::RenderTarget& target, sf::RenderStates states) const n
 			}
 		}
 	}
-	else if (Client()->getRenderMode() == RENDER_MODE_LIGHTING)
+	else if (Client()->getRenderMode() == RENDER_MODE_LIGHTING || Client()->getRenderMode() == RENDER_MODE_LIQUID)
 	{
 		if (m_Render == RENDER_FRONT)
 		{
