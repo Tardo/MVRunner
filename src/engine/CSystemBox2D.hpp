@@ -65,8 +65,7 @@ class CSystemBox2D final : public ISystem
 public:
 	enum
 	{
-		PARTICLE_SYSTEM_SPARK=0,
-		PARTICLE_SYSTEM_WATER,
+		PARTICLE_SYSTEM_WATER=0,
 
 		NUM_PARTICLE_SYSTEMS
 	};
@@ -131,10 +130,10 @@ public:
 		m_MaskBits = maskBits;
 	}
 
-	float32 ReportFixture(b2Fixture *pFixture, const b2Vec2& point, const b2Vec2& normal, float32 fraction) noexcept
+	virtual float32 ReportFixture(b2Fixture *pFixture, const b2Vec2& point, const b2Vec2& normal, float32 fraction) noexcept final
 	{
 		class CEntity *pEnt = static_cast<class CEntity*>(pFixture->GetBody()->GetUserData());
-		if(!pFixture->IsSensor() && fraction < this->m_Fraction && pEnt && pFixture->GetBody() != m_pNotThis && (pFixture->GetFilterData().maskBits&m_MaskBits))
+		if(!pFixture->IsSensor() && pEnt && fraction < this->m_Fraction && pFixture->GetBody() != m_pNotThis && (pFixture->GetFilterData().maskBits&m_MaskBits))
 		{
 			m_pEntity = static_cast<class CEntity*>(pFixture->GetBody()->GetUserData());
 			m_Point = CSystemBox2D::b2ToSf(point);
@@ -150,6 +149,37 @@ public:
 	class CEntity *m_pEntity;
 	b2Body *m_pNotThis;
 	uint16 m_MaskBits;
+};
+
+class RaysCastParticleSystemCallback final : public b2RayCastCallback
+{
+public:
+	RaysCastParticleSystemCallback(b2Body *pNotThis = nullptr, uint16 maskBits=0xFFF) noexcept
+	{
+		m_Hit = false;
+		m_Fraction = 1.0f;
+		m_Point = VECTOR_ZERO;
+		m_ParticleIndex = -1;
+	}
+
+	virtual float32 ReportFixture(b2Fixture *pFixture, const b2Vec2& point, const b2Vec2& normal, float32 fraction) noexcept final
+	{ return 1; }
+
+	virtual float32 ReportParticle(const b2ParticleSystem *pParticleSystem, int32 index, const b2Vec2& point, const b2Vec2& normal, float32 fraction) noexcept final
+	{
+		if (fraction < this->m_Fraction)
+		{
+			m_Hit = true;
+			m_ParticleIndex = index;
+			m_Point = CSystemBox2D::b2ToSf(point);
+		}
+		return 1;// keep going to get all intersection points
+	}
+
+	bool m_Hit;
+	sf::Vector2f m_Point;
+	float32 m_Fraction;
+	int32 m_ParticleIndex;
 };
 
 class SimpleQueryCallBack final : public b2QueryCallback
@@ -182,6 +212,26 @@ public:
 	}
 
 	std::vector<b2Fixture*> m_vpFixtures;
+};
+
+class MultiQueryParticleSystemCallBack final : public b2QueryCallback
+{
+public:
+	MultiQueryParticleSystemCallBack() noexcept
+	{
+		m_vIndex.clear();
+	}
+	bool ReportFixture(b2Fixture* fixture) noexcept
+	{
+		return false;
+	}
+	virtual bool ReportParticle(const b2ParticleSystem* pParticleSystem, int32 index)
+	{
+		m_vIndex.push_back(index);
+		return true;
+	}
+
+	std::vector<int32> m_vIndex;
 };
 
 #endif

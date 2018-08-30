@@ -117,6 +117,15 @@ void CMapRender::renderTilemap(sf::RenderTarget& target, sf::RenderStates states
 			}
 
 			const Tmx::Tile *pTile = pTileset->GetTile(tileId);
+
+			bool luminance = false;
+			if (pTile)
+			{
+				luminance = pTile->GetProperties().GetBoolProperty("luminance", false);
+				if (luminance && Client()->getRenderMode() != RENDER_MODE_LIGHTING)
+					continue;
+			}
+
 			if (pTile && pTile->IsAnimated() && pTile->GetFrameCount())
 			{
 				CTileAnimInfo *pTileAnimInfo = &(*(*Map.m_mmTileAnims.find(curTile.tilesetId)).second.find(tileId)).second;
@@ -163,13 +172,8 @@ void CMapRender::renderTilemap(sf::RenderTarget& target, sf::RenderStates states
 				vQuad[3].position = Tmp;
 			}
 
-			sf::Color colorQuad = lightColor;
-			if (pTile && Client()->getRenderMode() == RENDER_MODE_LIGHTING)
-			{
-				const bool luminance = pTile->GetProperties().GetBoolProperty("luminance", false);
-				if (luminance)
-					colorQuad = sf::Color::White;
-			}
+			const sf::Color colorQuad = (luminance && Client()->getRenderMode() == RENDER_MODE_LIGHTING)?sf::Color::White:lightColor;
+
 			vQuad[0].color = colorQuad;
 			vQuad[1].color = colorQuad;
 			vQuad[2].color = colorQuad;

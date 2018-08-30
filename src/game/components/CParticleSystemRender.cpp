@@ -27,8 +27,6 @@ void CParticleSystemRender::draw(sf::RenderTarget& target, sf::RenderStates stat
 void CParticleSystemRender::renderParticles(sf::RenderTarget& target, sf::RenderStates states) const noexcept
 {
 	CSystemBox2D *pSystemBox2D = Client()->getSystem<CSystemBox2D>();
-	pSystemBox2D->getWorld()->GetParticleSystemList();
-	const sf::Vector2f particleSize(5.0f, 5.0f);
 	for (b2ParticleSystem *pParticleSystem = pSystemBox2D->getWorld()->GetParticleSystemList(); pParticleSystem; pParticleSystem = pParticleSystem->GetNext())
 	{
 		b2Vec2 *pPos = pParticleSystem->GetPositionBuffer();

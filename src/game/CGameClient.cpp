@@ -159,31 +159,11 @@ void CGameClient::doRender()
     renderComponentsPhase(RENDER_MODE_LIGHTING);
     draw(m_RenderPhase, sf::BlendAdd);
 
-    // Bloom Effect
-	sf::Shader *pShader = Assets().getShader(CAssetManager::SHADER_BLOOM);
-	if (pShader)
-	{
-		pShader->setUniform("iChannel0", sf::Shader::CurrentTexture);
-		pShader->setUniform("iResolution", sf::Vector2f(m_RenderPhase.getTexture()->getSize().x, m_RenderPhase.getTexture()->getSize().y));
-		static const int sIters = 8;
-		for (int i=0; i<sIters; ++i)
-		{
-			pShader->setUniform("direction", (i%2 == 0)?sf::Vector2f((sIters-i-1)*upm::floatRand(0.6f, 0.8f), 0):sf::Vector2f(0, (sIters-i-1)*upm::floatRand(0.6f, 0.8f)));
-			m_RenderPhaseTexture.draw(m_RenderPhase, pShader);
-			m_RenderPhaseTexture.display();
-		}
-
-		draw(m_RenderPhase, sf::BlendAdd);
-	}
-
-	// Liquid Mode
-    m_RenderPhaseTexture.clear(sf::Color::Black);
-    renderComponentsPhase(RENDER_MODE_LIQUID);
-
-	// Metaball Effect
     sf::Shader *pShaderBloom = Assets().getShader(CAssetManager::SHADER_BLOOM);
-	pShader = Assets().getShader(CAssetManager::SHADER_METABALL);
-	if (pShader)
+    sf::Shader *pShaderMetaBall = Assets().getShader(CAssetManager::SHADER_METABALL);
+
+    // Bloom Effect
+	if (pShaderBloom)
 	{
 		pShaderBloom->setUniform("iChannel0", sf::Shader::CurrentTexture);
 		pShaderBloom->setUniform("iResolution", sf::Vector2f(m_RenderPhase.getTexture()->getSize().x, m_RenderPhase.getTexture()->getSize().y));
@@ -194,11 +174,42 @@ void CGameClient::doRender()
 			m_RenderPhaseTexture.draw(m_RenderPhase, pShaderBloom);
 			m_RenderPhaseTexture.display();
 		}
-
-		pShader->setUniform("texture", sf::Shader::CurrentTexture);
-		m_RenderPhaseTexture.draw(m_RenderPhase, pShader);
-		m_RenderPhaseTexture.display();
 		draw(m_RenderPhase, sf::BlendAdd);
+
+		if (pShaderMetaBall)
+		{
+			pShaderMetaBall->setUniform("texture", sf::Shader::CurrentTexture);
+			m_RenderPhaseTexture.draw(m_RenderPhase, pShaderMetaBall);
+			m_RenderPhaseTexture.display();
+			draw(m_RenderPhase, sf::BlendAdd);
+		}
+	}
+
+	// Liquid Mode
+    m_RenderPhaseTexture.clear(sf::Color::Black);
+    renderComponentsPhase(RENDER_MODE_LIQUID);
+    //draw(m_RenderPhase, sf::BlendAdd);
+
+	// Metaball Effect
+	if (pShaderBloom)
+	{
+		pShaderBloom->setUniform("iChannel0", sf::Shader::CurrentTexture);
+		pShaderBloom->setUniform("iResolution", sf::Vector2f(m_RenderPhase.getTexture()->getSize().x, m_RenderPhase.getTexture()->getSize().y));
+		static const int sIters = 7;
+		for (int i=0; i<sIters; ++i)
+		{
+			pShaderBloom->setUniform("direction", (i%2 == 0)?sf::Vector2f((sIters-i-1)*upm::floatRand(0.6f, 0.8f), 0):sf::Vector2f(0, (sIters-i-1)*upm::floatRand(0.6f, 0.8f)));
+			m_RenderPhaseTexture.draw(m_RenderPhase, pShaderBloom);
+			m_RenderPhaseTexture.display();
+		}
+
+		if (pShaderMetaBall)
+		{
+			pShaderMetaBall->setUniform("texture", sf::Shader::CurrentTexture);
+			m_RenderPhaseTexture.draw(m_RenderPhase, pShaderMetaBall);
+			m_RenderPhaseTexture.display();
+			draw(m_RenderPhase, sf::BlendAdd);
+		}
 	}
 
     display();

@@ -66,19 +66,13 @@ void CSystemBox2D::resetParticleSystems() noexcept
 		m_World.DestroyParticleSystem(m_pParticleSystems[i]);
 	}
 
-	// SPARK SYSTEM
-	{
-		b2ParticleSystemDef particleSystemDef;
-		particleSystemDef.radius = sfToB2(5.0f);
-		m_pParticleSystems[PARTICLE_SYSTEM_SPARK] = m_World.CreateParticleSystem(&particleSystemDef);
-		m_pParticleSystems[PARTICLE_SYSTEM_SPARK]->SetStuckThreshold(5);
-	}
 	// WATER SYSTEM
 	{
 		b2ParticleSystemDef particleSystemDef;
-		particleSystemDef.radius = sfToB2(6.0f);
+		particleSystemDef.radius = sfToB2(9.0f);
 		m_pParticleSystems[PARTICLE_SYSTEM_WATER] = m_World.CreateParticleSystem(&particleSystemDef);
 		m_pParticleSystems[PARTICLE_SYSTEM_WATER]->SetStuckThreshold(5);
+		m_pParticleSystems[PARTICLE_SYSTEM_WATER]->SetMaxParticleCount(2000);
 	}
 }
 //b2Body* CSystemBox2D::createParticleGroup(const sf::Vector2f &worldPos, const sf::Vector2f &size, float rot, const CB2BodyInfo &bodyInfo) noexcept
@@ -276,7 +270,7 @@ void CSystemBox2D::createExplosion(const sf::Vector2f &worldPos, float energy, f
 		const b2Vec2 rayDir(sinf(angle), cosf(angle));
 		const b2Vec2 rayEnd = pos + radius * rayDir;
 
-		//check what this ray hits
+		//check what this ray hits (Normal)
 		RaysCastCallback callback;//basic callback to record body and hit point
 		m_World.RayCast(&callback, pos, rayEnd);
 		if (callback.m_pEntity && callback.m_pEntity->getBody() && callback.m_pEntity->getBody()->GetType() == b2_dynamicBody)
@@ -286,6 +280,28 @@ void CSystemBox2D::createExplosion(const sf::Vector2f &worldPos, float energy, f
 			else
 				callback.m_pEntity->getBody()->ApplyLinearImpulse(epenergy * rayDir, sfToB2(callback.m_Point), true);
 				//applyBlastImpulse(callback.m_pEntity->getBody(), worldPos, callback.m_Point, epenergy);
+		}
+	}
+
+	// LiquidFun Particles
+	b2AABB bounds;
+	bounds.lowerBound.Set(pos.x - energy/4.0f, pos.y - energy/4.0f);
+	bounds.upperBound.Set(pos.x + energy/4.0f, pos.y + energy/4.0f);
+	MultiQueryParticleSystemCallBack callbackParticleSystem;
+	for (b2ParticleSystem *pParticleSystem = m_World.GetParticleSystemList(); pParticleSystem; pParticleSystem = pParticleSystem->GetNext())
+	{
+		pParticleSystem->QueryAABB(&callbackParticleSystem, bounds);
+		if (callbackParticleSystem.m_vIndex.size())
+		{
+			for (std::size_t i=0; i<callbackParticleSystem.m_vIndex.size(); ++i)
+			{
+				b2Vec2 *pParticleVel = pParticleSystem->GetVelocityBuffer();
+				b2Vec2 *pCurParticleVel = (pParticleVel+callbackParticleSystem.m_vIndex[i]);
+				const b2Vec2 *pParticlePos = pParticleSystem->GetPositionBuffer();
+				const sf::Vector2f ppos = b2ToSf(*(pParticlePos+callbackParticleSystem.m_vIndex[i]));
+				const sf::Vector2f dir = upm::vectorNormalize(ppos - worldPos);
+				pCurParticleVel->Set(pCurParticleVel->x + energy  * dir.x, pCurParticleVel->y + energy * dir.y);
+			}
 		}
 	}
 

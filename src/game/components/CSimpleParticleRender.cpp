@@ -33,7 +33,7 @@ void CSimpleParticleRender::draw(sf::RenderTarget& target, sf::RenderStates stat
 		{
 			CSimpleParticle *pSimpleParticle = static_cast<CSimpleParticle*>(*cit);
 			if (pSimpleParticle->m_Render == m_Render &&
-					(Client()->getRenderMode() == RENDER_MODE_NORMAL ||
+					((Client()->getRenderMode() == RENDER_MODE_NORMAL && !pSimpleParticle->m_Luminance) ||
 							(Client()->getRenderMode() == RENDER_MODE_LIGHTING && pSimpleParticle->m_Luminance)))
 			{
 				renderSimpleParticle(target, states, pSimpleParticle);

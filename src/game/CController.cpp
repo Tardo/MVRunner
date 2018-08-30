@@ -466,24 +466,27 @@ void CController::createImpactSparkMetal(const sf::Vector2f &worldPos) noexcept
 		pParticle->m_Dir = sf::Vector2f(upm::floatRand(-1.0f, 1.0f), upm::floatRand(-1.0f, 1.0f));
 		pParticle->m_Vel = upm::floatRand(4.0f, 9.0f);
 
-		b2ParticleDef pd;
-		pd.flags = b2_waterParticle;
-		pd.color.Set(255, 0, 255, 255);
-		pd.position = CSystemBox2D::sfToB2(worldPos);
-		pd.userData = pParticle;
-		pd.lifetime = 5.0f;
-		pSystemBox2D->getParticleSystem(CSystemBox2D::PARTICLE_SYSTEM_WATER)->CreateParticle(pd);
+//		b2ParticleDef pd;
+//		pd.flags = b2_waterParticle;
+//		pd.color.Set(255, 0, 255, 255);
+//		pd.position = CSystemBox2D::sfToB2(worldPos);
+//		pd.userData = pParticle;
+//		pd.lifetime = 5.0f;
+//		pSystemBox2D->getParticleSystem(CSystemBox2D::PARTICLE_SYSTEM_WATER)->CreateParticle(pd);
 	}
 
 	b2PolygonShape polyShape;
 	polyShape.SetAsBox(CSystemBox2D::sfToB2(80.0f), CSystemBox2D::sfToB2(80.0f));
 	b2ParticleGroupDef pdg;
+	//pdg.flags = b2_viscousParticle | b2_springParticle;
 	pdg.flags = b2_waterParticle;
 //	pdg.flags = b2_springParticle;
 //	pdg.groupFlags = b2_solidParticleGroup;
 	pdg.shape = &polyShape;
 	pdg.position = CSystemBox2D::sfToB2(worldPos);
-	pdg.color.Set(0, 0, 255, 255);
+	//pdg.strength = 2.0f;
+	pdg.color.Set(upm::randInt(0, 255), upm::randInt(0, 255), upm::randInt(0, 255), 255);
+	//pdg.color.Set(0, 0, 255, 255);
 	pdg.lifetime = 5.0f;
 	pSystemBox2D->getParticleSystem(CSystemBox2D::PARTICLE_SYSTEM_WATER)->CreateParticleGroup(pdg);
 }
