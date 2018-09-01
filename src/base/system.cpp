@@ -148,7 +148,7 @@ namespace ups
 	char* strCopy(char *to, const char *from, unsigned int len) noexcept
 	{
 		#if defined(SFML_SYSTEM_WINDOWS)
-			#error Not Implemented!
+			return strncpy(to, from, len);
 		#else
 			return strncpy(to, from, len);
 		#endif
