@@ -120,7 +120,7 @@ include (FindOpenGL)
 include (FindPkgConfig)
 find_package(ZLIB REQUIRED)
 find_package(Zpg REQUIRED)
-pkg_check_modules (SFML	REQUIRED sfml-graphics>=2.5 sfml-window>=2.5 sfml-audio>=2.5 sfml-system>=2.5)
+pkg_check_modules (SFML	REQUIRED libsfml-graphics>=2.5 libsfml-window>=2.5 libsfml-audio>=2.5 libsfml-system>=2.5)
 
 set(CLIENT_LIBS Box2D 
                 tmxparser
