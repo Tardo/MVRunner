@@ -6,28 +6,28 @@ environment:
       ZPG_ROOT: C:\Program Files (x86)\libZpg
       SFML_ROOT: c:\projects\SFML-2.5.0_win32
       SFML_PACKAGE: SFML-2.5.0-windows-vc15-32-bit.zip
-      CMAKE_GENERATOR: Visual Studio 15 2015
+      CMAKE_GENERATOR: Visual Studio 15 2017
       CMAKE_BUILD_TYPE: Debug
       ZPG_PACKER_NAME: zpg_packer_d
     - ZLIB_ROOT: C:\Program Files (x86)\zlib
       ZPG_ROOT: C:\Program Files (x86)\libZpg
       SFML_ROOT: c:\projects\SFML-2.5.0_win32
       SFML_PACKAGE: SFML-2.5.0-windows-vc15-32-bit.zip
-      CMAKE_GENERATOR: Visual Studio 15 2015
+      CMAKE_GENERATOR: Visual Studio 15 2017
       CMAKE_BUILD_TYPE: Release
       ZPG_PACKER_NAME: zpg_packer
     - ZLIB_ROOT: C:\Program Files\zlib
       ZPG_ROOT: C:\Program Files\libZpg
       SFML_ROOT: c:\projects\SFML-2.5.0_win64
       SFML_PACKAGE: SFML-2.5.0-windows-vc15-64-bit.zip
-      CMAKE_GENERATOR: Visual Studio 15 2015 Win64
+      CMAKE_GENERATOR: Visual Studio 15 2017 Win64
       CMAKE_BUILD_TYPE: Debug
       ZPG_PACKER_NAME: zpg_packer_d
     - ZLIB_ROOT: C:\Program Files\zlib
       ZPG_ROOT: C:\Program Files\libZpg
       SFML_ROOT: c:\projects\SFML-2.5.0_win64
       SFML_PACKAGE: SFML-2.5.0-windows-vc15-64-bit.zip
-      CMAKE_GENERATOR: Visual Studio 15 2015 Win64
+      CMAKE_GENERATOR: Visual Studio 15 2017 Win64
       CMAKE_BUILD_TYPE: Release
       ZPG_PACKER_NAME: zpg_packer
 
