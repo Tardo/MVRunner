@@ -31,6 +31,7 @@ set(ZPG_PACKER_BIN "zpg_packer"
 
 
 # Enable release symbols by default
+set(CMAKE_FIND_FRAMEWORK CACHE STRING "NEVER")
 # must be done before project() statement
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
@@ -42,10 +43,10 @@ set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
 
 # THE PROJECT
 if(POLICY CMP0054)
-  cmake_policy(SET CMP0054 NEW)
+  cmake_policy(SET CMP0054 NEW)	# Ignore Quoted Arguments
 endif()
-if(POLICY CMP0074)
-  cmake_policy(SET CMP0074 NEW)
+if(POLICY CMP0072)
+  cmake_policy(SET CMP0072 NEW) # Ignore Legacy GL
 endif()
 project("MVRunner")
 
@@ -117,15 +118,18 @@ set(SFML_STATIC_LIBRARIES TRUE)
 
 # FIND LIBRARIES
 include (FindOpenGL)
-include (FindPkgConfig)
 find_package(ZLIB REQUIRED)
 find_package(Zpg REQUIRED)
-pkg_check_modules (SFML	REQUIRED sfml-graphics>=2.5 sfml-window>=2.5 sfml-audio>=2.5 sfml-system>=2.5)
+find_package(SFML 2.5 COMPONENTS graphics window audio system)
 
 set(CLIENT_LIBS Box2D 
                 tmxparser
                 tinyxml2
-                ${SFML_LIBRARIES}
+               	#${SFML_LIBRARIES}
+               	sfml-graphics-s
+                sfml-window-s
+                sfml-audio-s
+                sfml-system-s
                 ${ZPG_LIBRARIES}
                 ${OPENGL_glu_LIBRARY}
                 ${SFML_DEPENDENCIES}
