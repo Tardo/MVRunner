@@ -44,7 +44,7 @@ set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
 if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif()
-if (POLICY CMP0074)
+if(POLICY CMP0074)
   cmake_policy(SET CMP0074 NEW)
 endif()
 project("MVRunner")
@@ -120,7 +120,7 @@ include (FindOpenGL)
 include (FindPkgConfig)
 find_package(ZLIB REQUIRED)
 find_package(Zpg REQUIRED)
-pkg_check_modules (SFML	REQUIRED libsfml-graphics>=2.5 libsfml-window>=2.5 libsfml-audio>=2.5 libsfml-system>=2.5)
+pkg_check_modules (SFML	REQUIRED sfml-graphics>=2.5 sfml-window>=2.5 sfml-audio>=2.5 sfml-system>=2.5)
 
 set(CLIENT_LIBS Box2D 
                 tmxparser
