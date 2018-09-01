@@ -39,9 +39,11 @@ script:
     wget -O ~/zpgv1.0.0.zip https://gitlab.com/Tardo/Zpg/-/archive/master/Zpg-master.zip && unzip ~/zpgv1.0.0.zip -d ~/
     cd ~/Zpg-master; cmake -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr . && make Zpg && make zpg_packer && sudo make install
 - |
+    cd ~/Tardo/MVRunner/
     mkdir build-release/ && cd build-release/
     cmake -DCMAKE_BUILD_TYPE:STRING=Release .. && make && make create_zpg
     cpack --debug --verbose -C CPackConfig.cmake
 - |
+    cd ~/Tardo/MVRunner/
     mkdir build-debug/ && cd build-debug/
     cmake -DCMAKE_BUILD_TYPE:STRING=Debug .. && make
