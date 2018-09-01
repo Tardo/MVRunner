@@ -21,6 +21,7 @@ namespace ups
 
 	int strNCaseCmp(const char *a, const char *b, const int num) noexcept;
 	int strCaseCmp(const char *a, const char *b) noexcept;
+	char* strCopy(char *to, const char *from, unsigned int len) noexcept;
 
 	void calcCubicBezier(
 				const sf::Vector2f &start,

@@ -231,8 +231,9 @@ void CCharacter::doFire() noexcept
 		switch (m_ActiveWeapon)
 		{
 			case WEAPON_GRENADE_LAUNCHER:
+			case WEAPON_VISCOSITY_LAUNCHER:
 			{
-				new CProjectile(CharPos+CharDir*(CCharacter::SIZE), sf::Vector2f(30.0f, 22.0f), 0.0f, CharDir, g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_Speed, getOwner(), m_ActiveWeapon, g_Config.m_aWeaponsInfo[m_ActiveWeapon].m_LifeTime, 0);
+				new CProjectile(CharPos+CharDir*(CCharacter::SIZE), sf::Vector2f(30.0f, 22.0f), 0.0f, CharDir, getOwner(), m_ActiveWeapon, 0);
 			} break;
 			case WEAPON_JET_PACK:
 			{

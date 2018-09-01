@@ -113,11 +113,11 @@ set(SFML_STATIC_LIBRARIES TRUE)
 
 
 # FIND LIBRARIES
-find_package(ZLIB REQUIRED)
-find_package(SFML 2.4 COMPONENTS graphics window audio system REQUIRED)
-find_package(Zpg REQUIRED)
 include (FindOpenGL)
-
+include (FindPkgConfig)
+find_package(ZLIB REQUIRED)
+find_package(Zpg REQUIRED)
+pkg_check_modules (SFML	REQUIRED sfml-graphics>=2.5 sfml-window>=2.5 sfml-audio>=2.5 sfml-system>=2.5)
 
 set(CLIENT_LIBS Box2D 
                 tmxparser

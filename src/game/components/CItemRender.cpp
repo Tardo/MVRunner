@@ -62,6 +62,8 @@ void CItemRender::renderProjectile(sf::RenderTarget& target, sf::RenderStates st
 		Shape.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_GRENADE));
 	else if (pProj->getProjType() == WEAPON_CANON_BALL)
 		Shape.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_CANON_BALL));
+	else if (pProj->getProjType() == WEAPON_VISCOSITY_LAUNCHER)
+		Shape.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_GRENADE));
 
 	if (pProj->getDir().x < 0.0f)
 		Shape.setTextureRect(sf::IntRect(0, Shape.getTexture()->getSize().y, Shape.getTexture()->getSize().x, -Shape.getTexture()->getSize().y));

@@ -9,7 +9,7 @@ class CProjectile final : public CB2Polygon
 {
 	static const sf::Vector2f SIZE;
 public:
-	CProjectile(const sf::Vector2f &pos, const sf::Vector2f &size, float rot, const sf::Vector2f &dir, float speed, class CPlayer *pOwner, unsigned int type, float lifeTime, unsigned int subtype) noexcept;
+	CProjectile(const sf::Vector2f &pos, const sf::Vector2f &size, float rot, const sf::Vector2f &dir, class CPlayer *pOwner, unsigned int type, unsigned int subtype) noexcept;
 	~CProjectile() noexcept;
 
 	virtual void tick() noexcept final;
@@ -25,6 +25,8 @@ public:
     unsigned int getProjSubType() const noexcept { return m_ProjSubType; }
 
     class CPlayer *getOwner() const noexcept { return m_pPlayer; }
+
+    void kill() noexcept { m_LifeTime = -1.0f; }
 
 protected:
 	b2Body *m_pBody;

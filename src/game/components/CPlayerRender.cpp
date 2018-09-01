@@ -62,6 +62,29 @@ void CPlayerRender::renderPlayer(sf::RenderTarget& target, sf::RenderStates stat
 	if (!pChar->isVisible())
 		return;
 
+	const sf::Vector2f CharPos = CSystemBox2D::b2ToSf(pChar->getBody()->GetPosition());
+	const float CharRot = pChar->getBody()->GetAngle();
+	const sf::Vector2f CharDir = upm::vectorNormalize(Client()->mapPixelToCoords(Client()->Controls().getMousePos(), Client()->Camera()) - CharPos);
+
+	renderPlayerBody(target, states, pChar, CharPos, CharRot);
+	renderWeapon(target, states, pChar, CharPos, CharDir);
+
+	if (Client()->m_Debug)
+	{
+		sf::Vector2f point = CharPos+sf::Vector2f(0.0f, -1.0f)*(CCharacter::SIZE+g_Config.m_CharacterHitDistance);
+		upm::vectorRotate(CharPos, &point, CharRot);
+		// Direction
+		const sf::Vertex lineDir[] =
+		{
+			sf::Vertex(CharPos, sf::Color::Yellow),
+			sf::Vertex(point, sf::Color::Yellow)
+		};
+		target.draw(lineDir, 2, sf::Lines, states);
+	}
+}
+
+void CPlayerRender::renderPlayerBody(sf::RenderTarget& target, sf::RenderStates states, CCharacter *pChar, const sf::Vector2f &charPos, float charRot) const noexcept
+{
 	sf::Color bodyInColor = sf::Color::White;
 	sf::Color bodyOutColor = sf::Color::Black;
 	if (pChar->getCharacterState()&CCharacter::STATE_ROTATE)
@@ -70,20 +93,17 @@ void CPlayerRender::renderPlayer(sf::RenderTarget& target, sf::RenderStates stat
 		bodyOutColor = sf::Color::White;
 	}
 
-	const sf::Vector2f CharPos = CSystemBox2D::b2ToSf(pChar->getBody()->GetPosition());
-	const float CharRot = pChar->getBody()->GetAngle();
-	const sf::Vector2f CharDir = upm::vectorNormalize(Client()->mapPixelToCoords(Client()->Controls().getMousePos(), Client()->Camera()) - CharPos);
-
-	// Render Body
-	sf::CircleShape ShapeBody(CCharacter::SIZE, 10); // Low Definition
+	static const float playerRadius = CCharacter::SIZE/2.0f;
+	sf::CircleShape ShapeBody(playerRadius, 10); // Low Definition
 	ShapeBody.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_SKIN_DEFAULT));
 	ShapeBody.setTextureRect(sf::IntRect(0, 0, 32, 32));
 	ShapeBody.setFillColor(bodyInColor);
 	ShapeBody.setOutlineColor(bodyOutColor);
-	ShapeBody.setOrigin(CCharacter::SIZE, CCharacter::SIZE);
+	ShapeBody.setOrigin(playerRadius, playerRadius);
 	ShapeBody.setOutlineThickness(3.0f);
-	ShapeBody.setPosition(CharPos);
-	ShapeBody.setRotation(upm::radToDeg(CharRot));
+	ShapeBody.setPosition(charPos);
+	ShapeBody.setScale(2.0f, 2.0f);
+	ShapeBody.setRotation(upm::radToDeg(charRot));
 	target.draw(ShapeBody, states);
 
 	if (pChar->getCharacterState()&CCharacter::STATE_FREEZED)
@@ -96,7 +116,10 @@ void CPlayerRender::renderPlayer(sf::RenderTarget& target, sf::RenderStates stat
 		ShapeTimerIndicator.setScale(ucrad, ucrad);
 		target.draw(ShapeTimerIndicator);
 	}
+}
 
+void CPlayerRender::renderWeapon(sf::RenderTarget& target, sf::RenderStates states, CCharacter *pChar, const sf::Vector2f &charPos, const sf::Vector2f &charDir) const noexcept
+{
 	// Weapon Movement
 	static sf::Int64 TimerShoot = 0;
 	static bool LastFire = false;
@@ -122,37 +145,29 @@ void CPlayerRender::renderPlayer(sf::RenderTarget& target, sf::RenderStates stat
 	// Render Weapon
 	if (!(pChar->getCharacterState()&CCharacter::STATE_ROTATE))
 	{
-		const sf::Vector2f weaponPos = CharPos-CharDir*OffsetWeapon;
+		const sf::Vector2f weaponPos = charPos-charDir*OffsetWeapon;
 		if (g_Config.m_AimLineLength > 0.0f)
 		{
 			sf::VertexArray Line(sf::LinesStrip, 2);
-			Line[0].position = CharPos;
+			Line[0].position = charPos;
 			Line[0].color = g_Config.m_AimLineColor;
-			Line[1].position = weaponPos + CharDir*g_Config.m_AimLineLength;
+			Line[1].position = weaponPos + charDir*g_Config.m_AimLineLength;
 			Line[1].color = sf::Color::Transparent;
 			target.draw(Line, states);
 		}
 
-		sf::CircleShape ShapeWeapon(CCharacter::SIZE, 10); // Low Definition
+		sf::RectangleShape ShapeWeapon(sf::Vector2f(28.0f, 28.0f));
 		ShapeWeapon.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_SKIN_DEFAULT));
-		ShapeWeapon.setTextureRect(sf::IntRect(32, 0, 28, 28));
-		ShapeWeapon.setOrigin(CCharacter::SIZE, CCharacter::SIZE);
+		// FIXME: Change texture distribution to not use conditionals
+		if (pChar->getActiveWeapon() == WEAPON_GRENADE_LAUNCHER || pChar->getActiveWeapon() == WEAPON_JET_PACK)
+			ShapeWeapon.setTextureRect(sf::IntRect(32, 0, 28, 28));
+		else if (pChar->getActiveWeapon() == WEAPON_VISCOSITY_LAUNCHER)
+			ShapeWeapon.setTextureRect(sf::IntRect(69, 0, 28, 28));
+		ShapeWeapon.setOrigin(28.0f/2.0f, 28.0f/2.0f);
 		ShapeWeapon.setPosition(weaponPos);
-		ShapeWeapon.setRotation(upm::vectorAngle(CharDir));
+		ShapeWeapon.setScale(2.0f, 2.0f);
+		ShapeWeapon.setRotation(upm::vectorAngle(charDir));
 		target.draw(ShapeWeapon, states);
-	}
-
-	if (Client()->m_Debug)
-	{
-		sf::Vector2f point = CharPos+sf::Vector2f(0.0f, -1.0f)*(CCharacter::SIZE+g_Config.m_CharacterHitDistance);
-		upm::vectorRotate(CharPos, &point, CharRot);
-		// Direction
-		const sf::Vertex lineDir[] =
-		{
-			sf::Vertex(CharPos, sf::Color::Yellow),
-			sf::Vertex(point, sf::Color::Yellow)
-		};
-		target.draw(lineDir, 2, sf::Lines, states);
 	}
 }
 
@@ -172,12 +187,14 @@ void CPlayerRender::renderPlayerLights(sf::RenderTarget& target, sf::RenderState
 		Rgb = ups::hslToRgb(sf::Vector3f(1.0f, 1.0f, 0.5f));
 	else
 		Rgb = ups::hslToRgb(sf::Vector3f(((CharAngVel * 0.35f) / MaxAngVel), 1.0f, 0.5f));
-	sf::CircleShape ShapeBodyLight(CCharacter::SIZE, 10); // Low Definition
+	static const float playerRadius = CCharacter::SIZE/2.0f;
+	sf::CircleShape ShapeBodyLight(playerRadius, 10); // Low Definition
 	ShapeBodyLight.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_SKIN_DEFAULT));
 	ShapeBodyLight.setTextureRect(sf::IntRect(0, 32, 32, 32));
 	ShapeBodyLight.setFillColor(Rgb);
-	ShapeBodyLight.setOrigin(CCharacter::SIZE, CCharacter::SIZE);
+	ShapeBodyLight.setOrigin(playerRadius, playerRadius);
 	ShapeBodyLight.setPosition(CharPos);
+	ShapeBodyLight.setScale(2.0f, 2.0f);
 	ShapeBodyLight.setRotation(upm::radToDeg(CharRot));
 	target.draw(ShapeBodyLight, states);
 
@@ -208,21 +225,16 @@ void CPlayerRender::renderPlayerLights(sf::RenderTarget& target, sf::RenderState
 	{
 		const sf::Vector2f CharDir = upm::vectorNormalize(Client()->mapPixelToCoords(Client()->Controls().getMousePos(), Client()->Camera()) - CharPos);
 		const sf::Vector2f weaponPos = CharPos-CharDir*OffsetWeapon;
-		if (g_Config.m_AimLineLength > 0.0f)
-		{
-			sf::VertexArray Line(sf::LinesStrip, 2);
-			Line[0].position = CharPos;
-			Line[0].color = g_Config.m_AimLineColor;
-			Line[1].position = weaponPos + CharDir*g_Config.m_AimLineLength;
-			Line[1].color = sf::Color::Transparent;
-			target.draw(Line, states);
-		}
-
-		sf::CircleShape ShapeWeapon(CCharacter::SIZE, 10); // Low Definition
+		sf::RectangleShape ShapeWeapon(sf::Vector2f(28.0f, 28.0f));
 		ShapeWeapon.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_SKIN_DEFAULT));
-		ShapeWeapon.setTextureRect(sf::IntRect(32, 0, 28, 28));
-		ShapeWeapon.setOrigin(CCharacter::SIZE, CCharacter::SIZE);
+		// FIXME: Change texture distribution to not use conditionals
+		if (pChar->getActiveWeapon() == WEAPON_GRENADE_LAUNCHER || pChar->getActiveWeapon() == WEAPON_JET_PACK)
+			ShapeWeapon.setTextureRect(sf::IntRect(32, 0, 28, 28));
+		else if (pChar->getActiveWeapon() == WEAPON_VISCOSITY_LAUNCHER)
+			ShapeWeapon.setTextureRect(sf::IntRect(69, 0, 28, 28));
+		ShapeWeapon.setOrigin(28.0f/2.0f, 28.0f/2.0f);
 		ShapeWeapon.setPosition(weaponPos);
+		ShapeWeapon.setScale(2.0f, 2.0f);
 		ShapeWeapon.setRotation(upm::vectorAngle(CharDir));
 		ShapeWeapon.setFillColor(sf::Color::Black);
 		target.draw(ShapeWeapon, states);

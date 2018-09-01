@@ -72,7 +72,7 @@ void CSystemBox2D::resetParticleSystems() noexcept
 		particleSystemDef.radius = sfToB2(9.0f);
 		m_pParticleSystems[PARTICLE_SYSTEM_WATER] = m_World.CreateParticleSystem(&particleSystemDef);
 		m_pParticleSystems[PARTICLE_SYSTEM_WATER]->SetStuckThreshold(5);
-		m_pParticleSystems[PARTICLE_SYSTEM_WATER]->SetMaxParticleCount(2000);
+		m_pParticleSystems[PARTICLE_SYSTEM_WATER]->SetMaxParticleCount(4000);
 	}
 }
 //b2Body* CSystemBox2D::createParticleGroup(const sf::Vector2f &worldPos, const sf::Vector2f &size, float rot, const CB2BodyInfo &bodyInfo) noexcept
@@ -324,6 +324,34 @@ void CSystemBox2D::createExplosion(const sf::Vector2f &worldPos, float energy, f
 			pBody->ApplyLinearImpulse(sfToB2(force), pBody->GetWorldCenter(), true);
 		}
 	}
+}
+
+void CSystemBox2D::createViscosity(const sf::Vector2f &worldPos, float radius) noexcept
+{
+	b2CircleShape polyShape;
+	polyShape.m_radius = sfToB2(radius);
+	b2ParticleGroupDef pdg;
+	pdg.flags = b2_viscousParticle | b2_springParticle;
+	pdg.groupFlags = b2_solidParticleGroup;
+	pdg.shape = &polyShape;
+	pdg.position = CSystemBox2D::sfToB2(worldPos);
+	pdg.strength = 2.0f;
+	pdg.color.Set(0, upm::randInt(128, 255), 0, 255);
+	pdg.lifetime = 5.0f;
+	getParticleSystem(CSystemBox2D::PARTICLE_SYSTEM_WATER)->CreateParticleGroup(pdg);
+}
+
+void CSystemBox2D::createWater(const sf::Vector2f &worldPos, float radius) noexcept
+{
+	b2CircleShape polyShape;
+	polyShape.m_radius = sfToB2(radius);
+	b2ParticleGroupDef pdg;
+	pdg.flags = b2_waterParticle;
+	pdg.shape = &polyShape;
+	pdg.position = CSystemBox2D::sfToB2(worldPos);
+	pdg.color.Set(upm::randInt(128, 255), upm::randInt(128, 255), upm::randInt(128, 255), 255);
+	pdg.lifetime = 5.0f;
+	getParticleSystem(CSystemBox2D::PARTICLE_SYSTEM_WATER)->CreateParticleGroup(pdg);
 }
 
 b2Fixture* CSystemBox2D::createFixture(b2Body *pBody, const b2Shape &Shape, bool sensor, const b2Filter &filter, void *pUserData, float density, float friction, float restitution) noexcept

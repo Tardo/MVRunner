@@ -89,6 +89,9 @@ public:
 
 	b2Fixture* createFixture(b2Body *pBody, const b2Shape &Shape, bool sensor, const b2Filter &filter, void *pUserData = nullptr, float density = 0.0f, float friction = 0.0f, float restitution = 0.0f) noexcept;
 
+	void createViscosity(const sf::Vector2f &worldPos, float radius) noexcept;
+	void createWater(const sf::Vector2f &worldPos, float radius) noexcept;
+
 	std::vector<b2Body*> getBodiesNear(const sf::Vector2f &worldPos, float margin, sf::Uint16 categoryBits, b2Body *pNotThis = nullptr) noexcept;
 	b2Fixture* getFixtureAt(const sf::Vector2f &worldPos) noexcept;
 

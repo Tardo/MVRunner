@@ -25,13 +25,16 @@ public:
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept final;
 
-	bool doButton(sf::RenderTarget& target, sf::RenderStates states, const char*pText, const sf::FloatRect &bounds, unsigned int fontSize, int align = 0) const noexcept;
+	bool doButton(sf::RenderTarget& target, sf::RenderStates states, const void *pId, const char*pText, const sf::FloatRect &bounds, unsigned int fontSize, int align = 0) noexcept;
+
+	void doLabel(sf::RenderTarget& target, sf::RenderStates states, const char*pText, const sf::FloatRect &bounds, const sf::Color &color, unsigned int fontSize, int align = 0) const noexcept;
+	void doBox(sf::RenderTarget& target, sf::RenderStates states, const sf::FloatRect &bounds, const sf::Color &color, float outline=0.0f, const sf::Color &outlineColor=sf::Color::Transparent) const noexcept;
 
 	void showBroadcastMessage(const char *pMsg, float duration) noexcept;
 	void showHelpMessage(const char *pMsg) noexcept;
 
 protected:
-	int m_HotControl;
+	const void *m_pHotControl;
 
 private:
 	sf::Int64 m_TimerBroadcast;

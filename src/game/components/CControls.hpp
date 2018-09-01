@@ -10,6 +10,11 @@
 class CControls final : public CComponent
 {
 public:
+	enum
+	{
+		MAX_COMMAND_LENGTH = 16
+	};
+
 	CControls(CGameClient *pGameClient) noexcept;
 	virtual ~CControls() noexcept;
 
@@ -21,8 +26,18 @@ public:
 	bool isMouseLeftClicked() const { return m_MouseLeftClicked; }
 	bool isMouseRightClicked() const { return m_MouseRightClicked; }
 
+	std::map<std::string, int>& getCmdBinds() { return m_mCmdBinds; }
+
 	bool isKeyPressed(const char *pCmd);
 	bool isMousePressed(const char *pCmd);
+	bool isButtonPressed(const char *pCmd);
+
+	void setKeyBind(const char *pCmd, int key, bool isMouseButton=false) noexcept;
+	void listenKeyBind(const char *pCmd) noexcept;
+
+	// FIXME: When SFML use the same enum for keyboard and mouse buttons delete this!!
+	static int getRealKey(int key) { return key<0?key * -1 - 2:key; }
+	static const char* getKeyName(int key);
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept final
 	{
@@ -34,6 +49,7 @@ private:
 	bool m_MouseRightClicked;
 	sf::Vector2i m_MousePosition;
 	std::map<std::string, int> m_mCmdBinds;
+	char m_aListenKeyBindCmd[MAX_COMMAND_LENGTH];
 };
 
 #endif

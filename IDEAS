@@ -1,7 +1,7 @@
 + HOJA DE RUTA: DEMO RELEASE
-    -- ARMA PARA LANZAR CHORROS VISCOSOS: UTIL PARA PAREDES DONDE EL GANCHO NO SE PUEDE ANCLAR.                             *
+    -X- ARMA PARA LANZAR CHORROS VISCOSOS: UTIL PARA PAREDES DONDE EL GANCHO NO SE PUEDE ANCLAR.                             *
     -- CARGAR MAPAS DESDE LA CARPETA "/maps" (a mayores de los predefinidos en el juego base)                               *
-    -- PERMITIR ASIGNAR TECLAS A MOVIMIENTOS/ACCIONES                                                                       **
+    -·- PERMITIR ASIGNAR TECLAS A MOVIMIENTOS/ACCIONES                                                                       **
     -- AÑADIR SOPORTE PARA ARTICULACIONES BOX2D DESDE EL EDITOR DE MAPAS TILED (Creacion de elevadores, puertas, etc..)     ***
     -- AÑADIR SOPORTE PARA CREACIÓN DE ELEMENTOS BOX2D DESDE EL EDITOR DE MAPAS TILED (Puentes, etc...)                     ***
     -- AÑADIR SOPORTE PARA CREACIÓN DE EMISORES DE PARTICULAS DESDE EL EDITOR DE MAPAS TILED (Chorros, Chispas, ...)        ***

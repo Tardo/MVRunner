@@ -50,6 +50,11 @@ MACRO_CONFIG_FLOAT(WeaponJetPackSpeed, weapon_jet_pack_speed, 20.0f, 0.0f, 999.0
 MACRO_CONFIG_FLOAT(WeaponCanonBallEnergy, weapon_canon_energy, 12.5f, 0.0f, 999.0f, CConfig::SAVE)
 MACRO_CONFIG_FLOAT(WeaponCanonBallLifeTime, weapon_canon_life_time, 2.0f, 0.0f, 999.0f, CConfig::SAVE)
 MACRO_CONFIG_FLOAT(WeaponCanonBallSpeed, weapon_canon_ball_speed, 10.0f, 0.0f, 999.0f, CConfig::SAVE)
+MACRO_CONFIG_FLOAT(WeaponViscosityLauncherEnergy, weapon_viscosity_launcher_energy, 12.0f, 0.0f, 9999.0f, CConfig::SAVE)
+MACRO_CONFIG_FLOAT(WeaponViscosityLauncherRadius, weapon_viscosity_launcher_radius, 192.0f, 0.0f, 999.0f, CConfig::SAVE)
+MACRO_CONFIG_FLOAT(WeaponViscosityLauncherFireDelay, weapon_viscosity_launcher_fire_delay, 0.45f, 0.0f, 999.0f, CConfig::SAVE)
+MACRO_CONFIG_FLOAT(WeaponViscosityLauncherLifeTime, weapon_viscosity_launcher_life_time, 8.0f, 0.0f, 999.0f, CConfig::SAVE)
+MACRO_CONFIG_FLOAT(WeaponViscosityLauncherSpeed, weapon_viscosity_launcher_speed, 44.0f, 0.0f, 999.0f, CConfig::SAVE)
 
 MACRO_CONFIG_FLOAT(HitBoxGoreDuration, hitbox_gore_duration, 4.0f, 0.0f, 999.9f, CConfig::SAVE)
 

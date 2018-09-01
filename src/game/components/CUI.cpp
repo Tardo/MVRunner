@@ -11,7 +11,7 @@ CUI::CUI(CGameClient *pGameClient) noexcept
 	m_BroadcastDuration = 0.0f;
 	m_aHelpMsg[0] = 0;
 	m_aBroadcastMsg[0] = 0;
-	m_HotControl = -1;
+	m_pHotControl = 0x0;
 }
 CUI::~CUI() noexcept
 {
@@ -24,10 +24,13 @@ void CUI::draw(sf::RenderTarget& target, sf::RenderStates states) const noexcept
 {
 	target.setView(Client()->getHudView());
 
-	drawHUD(target, states);
-	if (Client()->m_Debug)
-		drawDebugInfo(target, states);
-	drawCursor(target, states);
+	if (Client()->getRenderMode() == RENDER_MODE_NORMAL)
+	{
+		drawHUD(target, states);
+		if (Client()->m_Debug)
+			drawDebugInfo(target, states);
+		drawCursor(target, states);
+	}
 }
 
 bool CUI::isMouseInsideControl(sf::Shape *pControlShape) const noexcept
@@ -51,7 +54,44 @@ void CUI::showHelpMessage(const char *pMsg) noexcept
 	strncpy(m_aHelpMsg, pMsg, HELP_TEXT_MAX_LENGTH);
 }
 
-bool CUI::doButton(sf::RenderTarget& target, sf::RenderStates states, const char* pText, const sf::FloatRect &bounds, unsigned int fontSize, int align) const noexcept
+void CUI::doBox(sf::RenderTarget& target, sf::RenderStates states, const sf::FloatRect &bounds, const sf::Color &color, float outline, const sf::Color &outlineColor) const noexcept
+{
+	sf::RectangleShape button(sf::Vector2f(bounds.width, bounds.height));
+	button.setPosition(bounds.left, bounds.top);
+	button.setFillColor(color);
+	button.setOutlineThickness(outline);
+	button.setOutlineColor(outlineColor);
+	target.draw(button, states);
+}
+
+void CUI::doLabel(sf::RenderTarget& target, sf::RenderStates states, const char* pText, const sf::FloatRect &bounds, const sf::Color &color, unsigned int fontSize, int align) const noexcept
+{
+	sf::Text text;
+	text.setFont(Client()->Assets().getDefaultFont());
+	text.setCharacterSize(fontSize);
+	text.setString(pText);
+	text.setFillColor(sf::Color::Red);
+	const sf::Vector2f textSize(text.getLocalBounds().width, text.getLocalBounds().height);
+	text.setOrigin(textSize.x/2.0f, 0.0f);
+	if (align == ALIGN_RIGHT)
+		text.setPosition(bounds.left+bounds.width-textSize.x/2.0f, bounds.top-bounds.height/2.0f-textSize.y/2.0f);
+	else if (align == ALIGN_CENTER)
+		text.setPosition(bounds.left+bounds.width/2.0f, 0.0f);
+	else
+		text.setPosition(bounds.left+textSize.x/2.0f, bounds.top-bounds.height/2.0f-textSize.y/2.0f);
+	target.draw(text, states);
+
+	sf::FloatRect rectArea;
+	Client()->getViewportGlobalBounds(&rectArea, target.getView());
+	rectArea.left += 10.0f;
+	rectArea.top += 10.0f;
+	rectArea.width -= 20.0f;
+	rectArea.height -= 20.0f;
+	doBox(target, states, rectArea, sf::Color::Transparent, 10.0f, sf::Color::Yellow);
+	ups::msgDebug("LABEL", "X: %.2f -- Y: %.2f -- W: %.2f -- H: %.2f", rectArea.left, rectArea.top, rectArea.width, rectArea.height);
+}
+
+bool CUI::doButton(sf::RenderTarget& target, sf::RenderStates states, const void *pId, const char* pText, const sf::FloatRect &bounds, unsigned int fontSize, int align) noexcept
 {
 	sf::RectangleShape button(sf::Vector2f(bounds.width, bounds.height));
 	button.setPosition(bounds.left, bounds.top);
@@ -68,7 +108,7 @@ bool CUI::doButton(sf::RenderTarget& target, sf::RenderStates states, const char
 	const sf::Vector2f textSize(text.getLocalBounds().width, text.getLocalBounds().height);
 	text.setOrigin(textSize.x/2.0f, textSize.y/2.0f);
 	if (align == ALIGN_RIGHT)
-		text.setPosition(bounds.left+bounds.width-textSize.x/2.0f, bounds.top-bounds.height/2.0f-textSize.y/2.0f);
+		text.setPosition(bounds.left+bounds.width-textSize.x/2.0f, bounds.top+bounds.height/2.0f-textSize.y/2.0f);
 	else if (align == ALIGN_CENTER)
 		text.setPosition(bounds.left+bounds.width/2.0f, bounds.top-bounds.height/2.0f-textSize.y/2.0f);
 	else
@@ -76,7 +116,18 @@ bool CUI::doButton(sf::RenderTarget& target, sf::RenderStates states, const char
 	text.setFillColor(isMouseInside?g_Config.m_ButtonFocusTextColor:g_Config.m_ButtonNormalTextColor);
 	target.draw(text, states);
 
-	return (Client()->Controls().isMouseLeftClicked() && isMouseInside);
+	if (Client()->Controls().isMouseLeftClicked() && isMouseInside)
+	{
+		if (pId != m_pHotControl)
+		{
+			m_pHotControl = pId;
+			return true;
+		}
+	} else if (!Client()->Controls().isMouseLeftClicked() && m_pHotControl)
+	{
+		m_pHotControl = 0x0;
+	}
+	return false;
 }
 
 void CUI::drawCursor(sf::RenderTarget& target, sf::RenderStates states) const noexcept
@@ -144,6 +195,7 @@ void CUI::drawDebugInfo(sf::RenderTarget& target, sf::RenderStates states) const
 		return;
 
 	CSystemSound *pSystemSound = Client()->getSystem<CSystemSound>();
+	CSystemBox2D *pSystemBox2D = Client()->getSystem<CSystemBox2D>();
 
 	sf::FloatRect rectArea;
 	Client()->getViewportGlobalBounds(&rectArea, Client()->getHudView());
@@ -178,6 +230,12 @@ void CUI::drawDebugInfo(sf::RenderTarget& target, sf::RenderStates states) const
 	snprintf(aBuff, sizeof(aBuff), "Sounds: %d", pSystemSound->getNumPlayingSound());
 	sfStr.setString(aBuff);
 	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 120.0f);
+	sfStr.setFillColor(sf::Color::Red);
+	target.draw(sfStr, states);
+
+	snprintf(aBuff, sizeof(aBuff), "Liquidfun Particles: %d", pSystemBox2D->getParticleSystem(CSystemBox2D::PARTICLE_SYSTEM_WATER)->GetParticleCount());
+	sfStr.setString(aBuff);
+	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 150.0f);
 	sfStr.setFillColor(sf::Color::Red);
 	target.draw(sfStr, states);
 }

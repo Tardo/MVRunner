@@ -125,6 +125,11 @@ void CControllerMain::tick() noexcept
 						pChar->giveWeapon(WEAPON_JET_PACK, -1, -1);
 						pChar->setActiveWeapon(WEAPON_JET_PACK);
 					}
+					else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3))
+					{
+						pChar->giveWeapon(WEAPON_VISCOSITY_LAUNCHER, -1, -1);
+						pChar->setActiveWeapon(WEAPON_VISCOSITY_LAUNCHER);
+					}
 
 
 					// Player Use Action
@@ -213,7 +218,7 @@ void CControllerMain::tick() noexcept
 		{
 			if (ups::timeGet()-(*it).m_Timer > ups::timeFreq()*(*it).m_Duration)
 			{
-				new CProjectile((*it).m_Pos+(*it).m_Dir*80.0f, sf::Vector2f(64.0f, 40.0f), 0.0f, (*it).m_Dir, g_Config.m_aWeaponsInfo[WEAPON_CANON_BALL].m_Speed, 0x0, WEAPON_CANON_BALL, g_Config.m_aWeaponsInfo[WEAPON_CANON_BALL].m_LifeTime, WEAPON_CANON_BALL);
+				new CProjectile((*it).m_Pos+(*it).m_Dir*80.0f, sf::Vector2f(64.0f, 40.0f), 0.0f, (*it).m_Dir, 0x0, WEAPON_CANON_BALL, WEAPON_CANON_BALL);
 				(*it).m_Timer = ups::timeGet();
 			}
 			++it;

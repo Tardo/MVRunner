@@ -3,7 +3,7 @@
 #include <base/system.hpp>
 #include "CGame.hpp"
 #ifdef SFML_SYSTEM_LINUX
-#include <X11/Xlib.h>
+//#include <X11/Xlib.h>
 #endif
 
 CGame* CGame::ms_pCoreInstance = nullptr;
@@ -33,7 +33,7 @@ void CGame::init() noexcept
 int main()
 {
 #ifdef SFML_SYSTEM_LINUX
-	XInitThreads();
+	//XInitThreads();
 #endif
 
 	CConfig config("game.cfg");

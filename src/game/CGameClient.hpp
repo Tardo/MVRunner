@@ -136,6 +136,7 @@ private:
 	CSystemSound m_SystemSound;
 
 	sf::RenderTexture m_RenderPhaseTexture;
+	sf::RenderTexture m_RenderPhaseTextureFinal;
 	sf::Sprite m_RenderPhase;
 	int m_RenderMode;
 

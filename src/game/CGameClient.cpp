@@ -173,6 +173,11 @@ void CGameClient::doRender()
 			pShaderBloom->setUniform("direction", (i%2 == 0)?sf::Vector2f((sIters-i-1)*upm::floatRand(0.6f, 0.8f), 0):sf::Vector2f(0, (sIters-i-1)*upm::floatRand(0.6f, 0.8f)));
 			m_RenderPhaseTexture.draw(m_RenderPhase, pShaderBloom);
 			m_RenderPhaseTexture.display();
+			m_RenderPhase.setTexture(m_RenderPhaseTextureFinal.getTexture());
+
+			m_RenderPhaseTextureFinal.draw(m_RenderPhase, pShaderBloom);
+			m_RenderPhaseTextureFinal.display();
+			m_RenderPhase.setTexture(m_RenderPhaseTexture.getTexture());
 		}
 		draw(m_RenderPhase, sf::BlendAdd);
 
@@ -181,12 +186,18 @@ void CGameClient::doRender()
 			pShaderMetaBall->setUniform("texture", sf::Shader::CurrentTexture);
 			m_RenderPhaseTexture.draw(m_RenderPhase, pShaderMetaBall);
 			m_RenderPhaseTexture.display();
+			m_RenderPhase.setTexture(m_RenderPhaseTextureFinal.getTexture());
+
+			m_RenderPhaseTextureFinal.draw(m_RenderPhase, pShaderMetaBall);
+			m_RenderPhaseTextureFinal.display();
+			m_RenderPhase.setTexture(m_RenderPhaseTexture.getTexture());
 			draw(m_RenderPhase, sf::BlendAdd);
 		}
 	}
 
 	// Liquid Mode
     m_RenderPhaseTexture.clear(sf::Color::Black);
+    m_RenderPhaseTextureFinal.clear(sf::Color::Black);
     renderComponentsPhase(RENDER_MODE_LIQUID);
     //draw(m_RenderPhase, sf::BlendAdd);
 
@@ -195,12 +206,17 @@ void CGameClient::doRender()
 	{
 		pShaderBloom->setUniform("iChannel0", sf::Shader::CurrentTexture);
 		pShaderBloom->setUniform("iResolution", sf::Vector2f(m_RenderPhase.getTexture()->getSize().x, m_RenderPhase.getTexture()->getSize().y));
-		static const int sIters = 7;
+		static const int sIters = 8;
 		for (int i=0; i<sIters; ++i)
 		{
-			pShaderBloom->setUniform("direction", (i%2 == 0)?sf::Vector2f((sIters-i-1)*upm::floatRand(0.6f, 0.8f), 0):sf::Vector2f(0, (sIters-i-1)*upm::floatRand(0.6f, 0.8f)));
+			pShaderBloom->setUniform("direction", (i%2 == 0)?sf::Vector2f((sIters-i-1)*0.6f, 0):sf::Vector2f(0, (sIters-i-1)*0.6f));
 			m_RenderPhaseTexture.draw(m_RenderPhase, pShaderBloom);
 			m_RenderPhaseTexture.display();
+			m_RenderPhase.setTexture(m_RenderPhaseTextureFinal.getTexture());
+
+			m_RenderPhaseTextureFinal.draw(m_RenderPhase, pShaderBloom);
+			m_RenderPhaseTextureFinal.display();
+			m_RenderPhase.setTexture(m_RenderPhaseTexture.getTexture());
 		}
 
 		if (pShaderMetaBall)
@@ -208,6 +224,12 @@ void CGameClient::doRender()
 			pShaderMetaBall->setUniform("texture", sf::Shader::CurrentTexture);
 			m_RenderPhaseTexture.draw(m_RenderPhase, pShaderMetaBall);
 			m_RenderPhaseTexture.display();
+			m_RenderPhase.setTexture(m_RenderPhaseTextureFinal.getTexture());
+
+			m_RenderPhaseTextureFinal.draw(m_RenderPhase, pShaderMetaBall);
+			m_RenderPhaseTextureFinal.display();
+			m_RenderPhase.setTexture(m_RenderPhaseTexture.getTexture());
+
 			draw(m_RenderPhase, sf::BlendAdd);
 		}
 	}
@@ -244,6 +266,7 @@ bool CGameClient::init() noexcept
 
 	m_RenderPhaseTexture.create(g_Config.m_ScreenWidth, g_Config.m_ScreenHeight);
 	m_RenderPhase.setTexture(m_RenderPhaseTexture.getTexture(), true);
+	m_RenderPhaseTextureFinal.create(g_Config.m_ScreenWidth, g_Config.m_ScreenHeight);
 
 	if (!sf::Shader::isAvailable())
 		g_Config.m_UseShaders = false;
