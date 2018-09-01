@@ -29,14 +29,14 @@ cache:
    - ~/SFML-2.5.0/
 script:
 - |
-    sudo apt-get update && sudo apt-get install -y libjpeg-dev libx11-dev libxrandr-dev libxcb1-dev libx11-xcb-dev libxcb-randr0-dev libxcb-image0-dev libflac-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisfile3 libopenal-dev libudev-dev libsndfile1-dev libglew-dev
+    sudo apt-get update && sudo apt-get install -y libsfml-dev libjpeg-dev libx11-dev libxrandr-dev libxcb1-dev libx11-xcb-dev libxcb-randr0-dev libxcb-image0-dev libflac-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisfile3 libopenal-dev libudev-dev libsndfile1-dev libglew-dev
     
-    # The SFML available in repositories is older than v2.4.2...
-    if [ ! -d ~/SFML-2.5.0 ]; then
-      wget -O ~/sfmlv2.5.0.tar.gz https://github.com/SFML/SFML/archive/2.5.0.tar.gz
-      tar -zxvf ~/sfmlv2.5.0.tar.gz -C ~/
-    fi
-    cd ~/SFML-2.5.0; cmake -DBUILD_SHARED_LIBS:BOOL=FALSE -DCMAKE_INSTALL_PREFIX:PATH=/usr . && make && sudo make install
+    # The SFML available in repositories is older than v2.5.0...
+    #if [ ! -d ~/SFML-2.5.0 ]; then
+    #  wget -O ~/sfmlv2.5.0.tar.gz https://github.com/SFML/SFML/archive/2.5.0.tar.gz
+    #  tar -zxvf ~/sfmlv2.5.0.tar.gz -C ~/
+    #fi
+    #cd ~/SFML-2.5.0; cmake -DBUILD_SHARED_LIBS:BOOL=FALSE -DCMAKE_INSTALL_PREFIX:PATH=/usr . && make && sudo make install
     
     # libZpg (Too old gcc compiler)
     wget -O ~/zpgv1.0.0.zip https://gitlab.com/Tardo/Zpg/-/archive/master/Zpg-master.zip && unzip ~/zpgv1.0.0.zip -d ~/
