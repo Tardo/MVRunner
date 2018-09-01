@@ -101,14 +101,14 @@ void CWater::onSensorOut(CEntity *pEntity) noexcept
 {
 	CB2Polygon::onSensorOut(pEntity);
 
-	std::vector<CEntity*>::const_iterator cit = m_vInEntities.cbegin();
-	while (cit != m_vInEntities.cend())
+	std::vector<CEntity*>::iterator it = m_vInEntities.begin();
+	while (it != m_vInEntities.cend())
 	{
-		if ((*cit) == pEntity)
+		if ((*it) == pEntity)
 		{
-			m_vInEntities.erase(cit);
+			m_vInEntities.erase(it);
 			break;
 		}
-		++cit;
+		++it;
 	}
 }
