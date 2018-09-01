@@ -5,7 +5,7 @@ dependencies:
         sudo apt-get update && sudo apt-get install -y libsfml-dev cmake zlib1g-dev libfreetype6-dev libjpeg-dev libx11-dev libxrandr-dev libxcb1-dev libx11-xcb-dev libxcb-randr0-dev libxcb-image0-dev libflac-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisfile3 libopenal-dev libudev-dev libsndfile1-dev libglew-dev
         
         # libZpg (Too old gcc compiler)
-        wget -O ~/zpgv1.0.0.zip https://github.com/Tardo/Zpg/archive/master.zip && unzip ~/zpgv1.0.0.zip -d ~/
+        wget -O ~/zpgv1.0.0.zip https://gitlab.com/Tardo/Zpg/-/archive/master/Zpg-master.zip && unzip ~/zpgv1.0.0.zip -d ~/
         cd ~/Zpg-master; cmake -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr . && make Zpg && make zpg_packer && sudo make install
   cache_directories:
     #- "~/ZPG-1.0.0/"
