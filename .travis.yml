@@ -24,9 +24,6 @@ addons:
     - libudev-dev
     - libsndfile1-dev
     - libglew-dev
-cache:
-  directories:
-   - ~/SFML-2.5.0/
 before_install:
 - | 
     # The SFML available in repositories is older than v2.5.0...
