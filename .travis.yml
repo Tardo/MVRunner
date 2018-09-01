@@ -29,7 +29,6 @@ cache:
    - ~/SFML-2.5.0/
 script:
 - |
-    pwd
     sudo apt-get update && sudo apt-get install -y libjpeg-dev libx11-dev libxrandr-dev libxcb1-dev libx11-xcb-dev libxcb-randr0-dev libxcb-image0-dev libflac-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisfile3 libopenal-dev libudev-dev libsndfile1-dev libglew-dev
     
     # The SFML available in repositories is older than v2.4.2...
@@ -43,11 +42,11 @@ script:
     wget -O ~/zpgv1.0.0.zip https://gitlab.com/Tardo/Zpg/-/archive/master/Zpg-master.zip && unzip ~/zpgv1.0.0.zip -d ~/
     cd ~/Zpg-master; cmake -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr . && make Zpg && make zpg_packer && sudo make install
 - |
-    cd ~/Tardo/MVRunner/
+    cd ~/build/Tardo/MVRunner/
     mkdir build-release/ && cd build-release/
     cmake -DCMAKE_BUILD_TYPE:STRING=Release .. && make && make create_zpg
     cpack --debug --verbose -C CPackConfig.cmake
 - |
-    cd ~/Tardo/MVRunner/
+    cd ~/build/Tardo/MVRunner/
     mkdir build-debug/ && cd build-debug/
     cmake -DCMAKE_BUILD_TYPE:STRING=Debug .. && make
