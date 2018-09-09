@@ -74,7 +74,7 @@ void CMenus::renderModalKeyBind(sf::RenderTarget& target, sf::RenderStates state
 	const float h = 42.0f;
 	const sf::FloatRect bounds(rectArea.width/2.0f - w/2.0f, rectArea.height/2.0f - h/2.0f, w, h);
 	Client()->UI().doBox(target, states, bounds, sf::Color(36, 36, 36), 1.0f, sf::Color::Cyan);
-	Client()->UI().doLabel(target, states, "PRESS ANY KEY...", bounds, sf::Color::Black, 72u, CUI::ALIGN_CENTER);
+	Client()->UI().doLabel(target, states, "PRESS ANY KEY...", bounds, sf::Color::Black, CUI::TEXT_SIZE_NORMAL, CUI::ALIGN_CENTER);
 }
 
 void CMenus::renderMenuCredits(sf::RenderTarget& target, sf::RenderStates states) const noexcept
@@ -90,7 +90,7 @@ void CMenus::renderMenuCredits(sf::RenderTarget& target, sf::RenderStates states
 	sf::Text text;
 	text.setFont(Client()->Assets().getDefaultFont());
 
-	text.setCharacterSize(142);
+	text.setCharacterSize(CUI::TEXT_SIZE_HEADER);
 	text.setString(_("CREDITS"));
 	textW = text.getLocalBounds().width;
 	text.setPosition(rectArea.width/2.0f-textW/2.0f, -50.0f);
@@ -100,13 +100,13 @@ void CMenus::renderMenuCredits(sf::RenderTarget& target, sf::RenderStates states
 	for (int i=0; i<1; i+=2)
 	{
 		text.setFillColor(sf::Color::Red);
-		text.setCharacterSize(92);
+		text.setCharacterSize(CUI::TEXT_SIZE_NORMAL);
 		text.setString(aMessages[i]);
 		textW = text.getLocalBounds().width;
 		text.setPosition(rectArea.width/2.0f-textW/2.0f, 150.0f+36.0f*i);
 		target.draw(text, states);
 		text.setFillColor(sf::Color::White);
-		text.setCharacterSize(42);
+		text.setCharacterSize(CUI::TEXT_SIZE_NORMAL);
 		text.setString(aMessages[i+1]);
 		textW = text.getLocalBounds().width;
 		text.setPosition(rectArea.width/2.0f-textW/2.0f, 150.0f+36.0f*i+20.0f);
@@ -114,7 +114,7 @@ void CMenus::renderMenuCredits(sf::RenderTarget& target, sf::RenderStates states
 	}
 
 	static int buttonId;
-	if (Client()->UI().doButton(target, states, &buttonId, _("BACK"), sf::FloatRect(rectArea.width-100.0f, rectArea.height-100.0f, 80.0f, 35.0f), 64, CUI::ALIGN_RIGHT))
+	if (Client()->UI().doButton(target, states, &buttonId, _("BACK"), sf::FloatRect(rectArea.width-100.0f, rectArea.height-100.0f, 80.0f, 35.0f), CUI::TEXT_SIZE_NORMAL, CUI::ALIGN_RIGHT))
 	{
 		Client()->Menus().setActive(MAIN);
 		Client()->getSystem<CSystemSound>()->play(CAssetManager::SOUND_MOUSE_CLICK);
@@ -130,7 +130,7 @@ void CMenus::renderMenuControls(sf::RenderTarget& target, sf::RenderStates state
 	sf::Text text;
 	text.setFont(Client()->Assets().getDefaultFont());
 
-	text.setCharacterSize(142);
+	text.setCharacterSize(CUI::TEXT_SIZE_HEADER);
 	text.setString(_("CONTROLS"));
 	textW = text.getLocalBounds().width;
 	text.setPosition(rectArea.width/2.0f-textW/2.0f, -50.0f);
@@ -150,7 +150,7 @@ void CMenus::renderMenuControls(sf::RenderTarget& target, sf::RenderStates state
 		text.setPosition(rectArea.width/2.0f-90.0f, 130.0f+50.0f*i);
 		target.draw(text, states);
 
-		if (Client()->UI().doButton(target, states, &buttonId+i, CControls::getKeyName((*cit).second), sf::FloatRect(rectArea.width/2.0f+30.0f, 150.0f+50.0f*i, 110.0f, 35.0f), 64, CUI::ALIGN_CENTER))
+		if (Client()->UI().doButton(target, states, &buttonId+i, CControls::getKeyName((*cit).second), sf::FloatRect(rectArea.width/2.0f+30.0f, 150.0f+50.0f*i, 110.0f, 35.0f), CUI::TEXT_SIZE_NORMAL, CUI::ALIGN_CENTER))
 		{
 			Client()->Menus().setActiveModal(MODAL_KEY_BIND);
 			Client()->Controls().listenKeyBind((*cit).first.c_str());
@@ -159,7 +159,7 @@ void CMenus::renderMenuControls(sf::RenderTarget& target, sf::RenderStates state
 	}
 
 	static int buttonIdB;
-	if (Client()->UI().doButton(target, states, &buttonIdB, _("BACK"), sf::FloatRect(rectArea.width-100.0f, rectArea.height-100.0f, 80.0f, 35.0f), 64, CUI::ALIGN_RIGHT))
+	if (Client()->UI().doButton(target, states, &buttonIdB, _("BACK"), sf::FloatRect(rectArea.width-100.0f, rectArea.height-100.0f, 80.0f, 35.0f), CUI::TEXT_SIZE_NORMAL, CUI::ALIGN_RIGHT))
 	{
 		Client()->Menus().setActive(MAIN);
 		Client()->getSystem<CSystemSound>()->play(CAssetManager::SOUND_MOUSE_CLICK);
@@ -190,7 +190,7 @@ void CMenus::renderMenuMain(sf::RenderTarget& target, sf::RenderStates states) c
 	sf::Text text;
 	text.setFont(Client()->Assets().getDefaultFont());
 
-	text.setCharacterSize(32);
+	text.setCharacterSize(CUI::TEXT_SIZE_SMALL);
 	char title[128];
 	snprintf(title, sizeof(title), "v%s", GAME_RELEASE_VERSION);
 	text.setString(title);
@@ -200,28 +200,28 @@ void CMenus::renderMenuMain(sf::RenderTarget& target, sf::RenderStates states) c
 	target.draw(text, states);
 
 	static int buttonIdA;
-	if (Client()->UI().doButton(target, states, &buttonIdA, _("START GAME"), sf::FloatRect(rectArea.width-270.0f, rectArea.height-220.0f, 250.0f, 35.0f), 64, CUI::ALIGN_CENTER))
+	if (Client()->UI().doButton(target, states, &buttonIdA, _("START GAME"), sf::FloatRect(rectArea.width-270.0f, rectArea.height-220.0f, 250.0f, 35.0f), CUI::TEXT_SIZE_NORMAL, CUI::ALIGN_CENTER))
 	{
 		Client()->initializeGameMode("main");
 		Client()->getSystem<CSystemSound>()->play(CAssetManager::SOUND_MOUSE_CLICK);
 	}
 
 	static int buttonIdB;
-	if (Client()->UI().doButton(target, states, &buttonIdB, _("CONTROLS"), sf::FloatRect(rectArea.width-270.0f, rectArea.height-160.0f, 250.0f, 35.0f), 64, CUI::ALIGN_CENTER))
+	if (Client()->UI().doButton(target, states, &buttonIdB, _("CONTROLS"), sf::FloatRect(rectArea.width-270.0f, rectArea.height-160.0f, 250.0f, 35.0f), CUI::TEXT_SIZE_NORMAL, CUI::ALIGN_CENTER))
 	{
 		Client()->getSystem<CSystemSound>()->play(CAssetManager::SOUND_MOUSE_CLICK);
 		Client()->Menus().setActive(CONTROLS);
 	}
 
 	static int buttonIdC;
-	if (Client()->UI().doButton(target, states, &buttonIdC, _("CREDITS"), sf::FloatRect(rectArea.width-270.0f, rectArea.height-120.0f, 250.0f, 35.0f), 64, CUI::ALIGN_CENTER))
+	if (Client()->UI().doButton(target, states, &buttonIdC, _("CREDITS"), sf::FloatRect(rectArea.width-270.0f, rectArea.height-120.0f, 250.0f, 35.0f), CUI::TEXT_SIZE_NORMAL, CUI::ALIGN_CENTER))
 	{
 		Client()->getSystem<CSystemSound>()->play(CAssetManager::SOUND_MOUSE_CLICK);
 		Client()->Menus().setActive(CREDITS);
 	}
 
 	static int buttonIdD;
-	if (Client()->UI().doButton(target, states, &buttonIdD, _("EXIT"), sf::FloatRect(rectArea.width-270.0f, rectArea.height-60.0f, 250.0f, 35.0f), 64, CUI::ALIGN_CENTER))
+	if (Client()->UI().doButton(target, states, &buttonIdD, _("EXIT"), sf::FloatRect(rectArea.width-270.0f, rectArea.height-60.0f, 250.0f, 35.0f), CUI::TEXT_SIZE_NORMAL, CUI::ALIGN_CENTER))
 	{
 		Client()->getSystem<CSystemSound>()->play(CAssetManager::SOUND_MOUSE_CLICK);
 		Client()->close();
@@ -244,7 +244,7 @@ void CMenus::renderMenuIntro(sf::RenderTarget& target, sf::RenderStates states) 
 	text.setCharacterSize(92.0f);
 	text.setFillColor(sf::Color(80, 80, 80));
 	text.setPosition(g_Config.m_ScreenWidth/2.0f - text.getLocalBounds().width/2.0f, 180.0f);
-	Client()->getTexturePhase()->draw(text);
+	target.draw(text);
 
 	sf::Sprite SpriteLogo;
 	SpriteLogo.setTexture(*Client()->Assets().getTexture(CAssetManager::TEXTURE_SFML_LOGO));

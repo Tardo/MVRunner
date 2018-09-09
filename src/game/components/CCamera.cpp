@@ -4,10 +4,11 @@
 #include <engine/CLocalization.hpp>
 #include "CCamera.hpp"
 
-CCamera::CCamera(CGameClient *pGameClient) noexcept
+CCamera::CCamera(CGameClient *pGameClient, const sf::Vector2u &screenSize) noexcept
 : CComponent(pGameClient),
   sf::View()
 {
+	m_ScreenSize = screenSize;
 	m_VibrateCamTime = 0.0f;
 	m_VibrateCamIntensity = 0.0f;
 	m_TimerVibrateCam = 0;
@@ -35,7 +36,7 @@ void CCamera::update(float deltaTime) noexcept
     	m_Zoom += CAMERA_ZOOM_FACTOR*deltaTime;
     else if (m_Zoom > m_ToZoom+0.01f)
     	m_Zoom -= CAMERA_ZOOM_FACTOR*deltaTime;
-    setSize(g_Config.m_ScreenWidth, g_Config.m_ScreenHeight);
+    setSize(m_ScreenSize.x, m_ScreenSize.y);
     zoom(m_Zoom);
 
     // Info Cam

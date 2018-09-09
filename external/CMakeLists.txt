@@ -163,4 +163,3 @@ add_library(tmxparser STATIC    tmxparser/miniz.c
                                 tmxparser/base64/base64.cpp
                                 tmxparser/base64/base64.h)
 set_property(TARGET tmxparser PROPERTY CXX_STANDARD 11)
-

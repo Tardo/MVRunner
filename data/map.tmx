@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-up" width="176" height="200" tilewidth="64" tileheight="64" infinite="0" backgroundcolor="#00002c" nextobjectid="82">
+<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-up" width="176" height="200" tilewidth="64" tileheight="64" infinite="0" backgroundcolor="#00002b" nextobjectid="344">
+ <properties>
+  <property name="gravity_x" type="float" value="0"/>
+  <property name="gravity_y" type="float" value="9.8"/>
+  <property name="shadow_background_color" type="color" value="#ff151515"/>
+  <property name="shadow_foreground_color" type="color" value="#ff000000"/>
+  <property name="weather" type="int" value="2"/>
+ </properties>
  <tileset firstgid="1" name="mario" tilewidth="64" tileheight="64" tilecount="256" columns="16">
   <image source="mapres/mario_oldscool.png" width="1024" height="1024"/>
   <tile id="45">
@@ -177,7 +184,45 @@
     <object id="1" type="static" x="0.00390625" y="0.00390625" width="63.9961" height="63.9961"/>
    </objectgroup>
   </tile>
+  <tile id="182">
+   <properties>
+    <property name="block_light" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="183">
+   <properties>
+    <property name="block_light" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="184">
+   <properties>
+    <property name="block_light" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="185">
+   <properties>
+    <property name="block_light" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="186">
+   <properties>
+    <property name="block_light" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="187">
+   <properties>
+    <property name="block_light" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="188">
+   <properties>
+    <property name="block_light" type="bool" value="false"/>
+   </properties>
+  </tile>
   <tile id="189">
+   <properties>
+    <property name="block_light" type="bool" value="false"/>
+   </properties>
    <animation>
     <frame tileid="189" duration="100"/>
     <frame tileid="188" duration="100"/>
@@ -189,12 +234,22 @@
     <frame tileid="182" duration="100"/>
    </animation>
   </tile>
+  <tile id="190">
+   <properties>
+    <property name="block_light" type="bool" value="false"/>
+   </properties>
+  </tile>
  </tileset>
  <tileset firstgid="257" name="entities" tilewidth="64" tileheight="64" tilecount="256" columns="16">
   <image source="mapres/entities.png" width="1024" height="1024"/>
   <tile id="1">
    <objectgroup draworder="index">
-    <object id="1" type="static" x="0.00497159" y="0.00887784" width="63.9901" height="63.9911"/>
+    <object id="1" type="static" x="0.00106534" y="0.00106534" width="63.9979" height="64.0028"/>
+   </objectgroup>
+  </tile>
+  <tile id="3">
+   <objectgroup draworder="index">
+    <object id="1" type="static" x="0.0117667" y="0.0430667" width="64.0598" height="63.9972"/>
    </objectgroup>
   </tile>
  </tileset>
@@ -203,7 +258,7 @@
  </tileset>
  <layer name="Background" width="176" height="200">
   <data encoding="base64" compression="zlib">
-   eJzt2kFKA0EQhtHOYVxl7SpuvYdHca0ewqN4FMlJHMHAIBMZp9pUyn4P/oVMiEJ9Yha2BgAAAAAAAAAAAAAAAAAAAAAAAAAAAABA1M2KZ7vZerwf9HK78tnafte+H2z1NO152su0+5XPTv3Ony/5/n5rnwFwGfuFQRV3C4Mq9Etl+qUy/VKZfqlMv1SmXyrTL5Xpl8r0S09LPX3u0Nr7vrW306avH869NjrY6lxTU7Ov89ft9csV0i+V/bbfv/h+sNUPn38f5//jeGh9WtMvPV36b71+6clnVSrTL5Xpl8r0S2X6pTL9Upl+qUy/VKZfAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYIvj13a77J+kjuM/XyX63Sa7Mav7O3ctsm9m+o3KvpvpNyr7dkZU9v1GH3HZNxx5xGXfcOQRl33DkUdc9g1HHnHZNxx5xGXfcOTRR/YddUBEdn/6JSK7P/0Skd2ffonI7k+/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQxwdrFQVx
+   eJzt2rFNw0AYhuHLMFSpqQIlezAKNTAEozAKyiQYiUgWciLnzs7vn3se6SuQg410L5AipQAAAAAAAAAAAAAAAAAAAAAAAAAAAABc7/HCYOv0yxruZlzbjVZ7P/2yhvuZ1+b2e+5++mUpr8Pehr0Pe5p57dTv+PqUv/c70S/ANuwnBlk8TAyy0C+Z6ZfM9Etm+iUz/ZKZfslMv2SmXzLTL0ua6ulnh1K+9qV8njZ8/Xzuta2DWueaGpr9GL9ur182SL9kdm2/tc+49DyodeH978v4M46HUt+afllL7f/6Jb8Pat2636lnQy39kpl+yUy/ZHarfq9tG+bw95fM9Etm+iUz71UBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAGsff7XbRP0kex3++TPRbJ7oxy/s7txXRZ2b6bRV9bqbfVtFnZ7SKPr/eR7voM+x5tIs+w55Hu+gz7Hm0iz7Dnke76DPsebSLPsOexzKiz1EHtIjuT7+0iO5Pv7SI7k+/tIjuT78AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJDHN5BRK90=
   </data>
  </layer>
  <layer name="GameModifiers" width="176" height="200">
@@ -213,19 +268,962 @@
  </layer>
  <layer name="Game" width="176" height="200">
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
  <layer name="Foreground" width="176" height="200">
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
  <layer name="Animated" width="176" height="200">
   <data encoding="base64" compression="zlib">
-   eJzt2csJgDAQBUBTYEpI+i9DDxHEDygB1+AMPDbq3vJuThMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG9J6RgAAADi5CWlza2y+3a2A9HqJlfvr3Ygmv4CcIf/KQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD0yktKm/nk+cmZ71nvZtTJv9XBw79F909/6RHdP/2lR3T/9BcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMYxA7AEZik=
+   eJzt2UEKgCAQBdA6oEew+x+jFgVSSZSRie/BMNroyr9rGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA+Mo4HgsAAIB6wlJx7am4m+3P5OZX9+BNU1K572dncvOre6kt3/DU0/wC0Bf/UwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoFZaKaw8n+ztr/md7m1Y7fZsaL/pWO3/yS4na+ZNfStTOn/wCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEA7ZiLnbzc=
   </data>
  </layer>
+ <objectgroup name="Zones">
+  <object id="333" type="zone" x="3648.01" y="2047.67" width="447.974" height="320.324">
+   <properties>
+    <property name="gravity_scale" type="float" value="-1"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="Emitters">
+  <object id="82" type="emitter" x="9594.5" y="10057.5" width="45.5" height="39.5">
+   <properties>
+    <property name="color" type="color" value="#ffff0000"/>
+    <property name="delay" type="float" value="1.2"/>
+    <property name="force_y" type="float" value="-600"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="84" type="emitter" x="9596.25" y="9978.25" width="45.5" height="39.5">
+   <properties>
+    <property name="color" type="color" value="#ff0000ff"/>
+    <property name="delay" type="float" value="1.2"/>
+    <property name="force_y" type="float" value="-600"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="85" type="emitter" x="9549.58" y="10017.6" width="45.5" height="39.5">
+   <properties>
+    <property name="color" type="color" value="#ffffff00"/>
+    <property name="delay" type="float" value="1.2"/>
+    <property name="force_x" type="float" value="600"/>
+    <property name="force_y" type="float" value="0"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="86" type="emitter" x="9640.92" y="10018.3" width="45.5" height="39.5">
+   <properties>
+    <property name="color" type="color" value="#ff00ff00"/>
+    <property name="delay" type="float" value="1.2"/>
+    <property name="force_x" type="float" value="-600"/>
+    <property name="force_y" type="float" value="0"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="87" type="emitter" x="7937.92" y="7713.58" width="19.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ff0000ff"/>
+    <property name="delay" type="float" value="0.15"/>
+    <property name="force_x" type="float" value="-300"/>
+    <property name="force_y" type="float" value="0"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="94" type="emitter" x="2568.67" y="3908.08" width="16.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="3"/>
+    <property name="force_x" type="float" value="200"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="95" type="emitter" x="2690.67" y="3914.08" width="35" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="12"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="96" type="emitter" x="2621.17" y="3919.58" width="19.5" height="40.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="20"/>
+    <property name="force_x" type="float" value="-100"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="97" type="emitter" x="2738.67" y="3950.58" width="19.5" height="36">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="6"/>
+    <property name="force_x" type="float" value="-200"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="98" type="emitter" x="2793.17" y="3911.58" width="19.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="16"/>
+    <property name="force_x" type="float" value="150"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="100" type="emitter" x="2140.67" y="3915.42" width="35" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="12"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="102" type="emitter" x="2188.67" y="3951.92" width="19.5" height="36">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="6"/>
+    <property name="force_x" type="float" value="-200"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="103" type="emitter" x="2243.17" y="3912.92" width="19.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="16"/>
+    <property name="force_x" type="float" value="150"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="104" type="emitter" x="6588" y="7694.75" width="16.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="3"/>
+    <property name="force_x" type="float" value="200"/>
+    <property name="force_y" type="float" value="-300"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="105" type="emitter" x="6711" y="7692.75" width="35" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="12"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="-300"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="106" type="emitter" x="6651.5" y="7688.25" width="19.5" height="40.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="20"/>
+    <property name="force_x" type="float" value="-100"/>
+    <property name="force_y" type="float" value="-300"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="107" type="emitter" x="6762" y="7725.25" width="19.5" height="14">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="6"/>
+    <property name="force_x" type="float" value="-200"/>
+    <property name="force_y" type="float" value="-300"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="108" type="emitter" x="6816.5" y="7686.25" width="19.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="16"/>
+    <property name="force_x" type="float" value="150"/>
+    <property name="force_y" type="float" value="-300"/>
+    <property name="lifetime" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="109" type="emitter" x="6311" y="7684.75" width="16.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="3"/>
+    <property name="force_x" type="float" value="200"/>
+    <property name="force_y" type="float" value="-300"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="110" type="emitter" x="6430" y="7686.75" width="35" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="12"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="-300"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="111" type="emitter" x="6364.5" y="7692.25" width="19.5" height="40.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="20"/>
+    <property name="force_x" type="float" value="-100"/>
+    <property name="force_y" type="float" value="-300"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="112" type="emitter" x="6484" y="7720.25" width="19.5" height="14">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="6"/>
+    <property name="force_x" type="float" value="-200"/>
+    <property name="force_y" type="float" value="-300"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="113" type="emitter" x="6532.5" y="7684.25" width="19.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="16"/>
+    <property name="force_x" type="float" value="150"/>
+    <property name="force_y" type="float" value="-300"/>
+    <property name="lifetime" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="114" type="emitter" x="6017" y="7689.75" width="16.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="3"/>
+    <property name="force_x" type="float" value="200"/>
+    <property name="force_y" type="float" value="-300"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="115" type="emitter" x="6154" y="7688.75" width="35" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="12"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="-300"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="116" type="emitter" x="6076.5" y="7689.25" width="19.5" height="40.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="20"/>
+    <property name="force_x" type="float" value="-100"/>
+    <property name="force_y" type="float" value="-300"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="117" type="emitter" x="6205" y="7715.25" width="19.5" height="14">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="6"/>
+    <property name="force_x" type="float" value="-200"/>
+    <property name="force_y" type="float" value="-300"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="118" type="emitter" x="6257.5" y="7694.25" width="19.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="16"/>
+    <property name="force_x" type="float" value="150"/>
+    <property name="force_y" type="float" value="-300"/>
+    <property name="lifetime" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="119" type="emitter" x="5697" y="7677.75" width="16.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="3"/>
+    <property name="force_x" type="float" value="200"/>
+    <property name="force_y" type="float" value="-300"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="120" type="emitter" x="5819" y="7683.75" width="35" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="12"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="-300"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="121" type="emitter" x="5749.5" y="7689.25" width="19.5" height="40.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="20"/>
+    <property name="force_x" type="float" value="-100"/>
+    <property name="force_y" type="float" value="-300"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="122" type="emitter" x="5867" y="7720.25" width="19.5" height="14">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="6"/>
+    <property name="force_x" type="float" value="-200"/>
+    <property name="force_y" type="float" value="-300"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="123" type="emitter" x="5934.5" y="7695.25" width="19.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="16"/>
+    <property name="force_x" type="float" value="150"/>
+    <property name="force_y" type="float" value="-300"/>
+    <property name="lifetime" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="257" type="emitter" x="4844.26" y="7802.37" width="16.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="3"/>
+    <property name="force_x" type="float" value="200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="258" type="emitter" x="4967.26" y="7800.37" width="35" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="12"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="259" type="emitter" x="4907.76" y="7795.87" width="19.5" height="40.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="20"/>
+    <property name="force_x" type="float" value="-100"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="260" type="emitter" x="5018.26" y="7832.87" width="19.5" height="14">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="6"/>
+    <property name="force_x" type="float" value="-200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="261" type="emitter" x="5072.76" y="7793.87" width="19.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="16"/>
+    <property name="force_x" type="float" value="150"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="262" type="emitter" x="4567.26" y="7792.37" width="16.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="3"/>
+    <property name="force_x" type="float" value="200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="263" type="emitter" x="4686.26" y="7794.37" width="35" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="12"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="264" type="emitter" x="4620.76" y="7799.87" width="19.5" height="40.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="20"/>
+    <property name="force_x" type="float" value="-100"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="265" type="emitter" x="4740.26" y="7827.87" width="19.5" height="14">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="6"/>
+    <property name="force_x" type="float" value="-200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="266" type="emitter" x="4788.76" y="7791.87" width="19.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="16"/>
+    <property name="force_x" type="float" value="150"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="267" type="emitter" x="4273.26" y="7797.37" width="16.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="3"/>
+    <property name="force_x" type="float" value="200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="268" type="emitter" x="4410.26" y="7796.37" width="35" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="12"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="269" type="emitter" x="4332.76" y="7796.87" width="19.5" height="40.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="20"/>
+    <property name="force_x" type="float" value="-100"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="270" type="emitter" x="4461.26" y="7822.87" width="19.5" height="14">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="6"/>
+    <property name="force_x" type="float" value="-200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="271" type="emitter" x="4513.76" y="7801.87" width="19.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="16"/>
+    <property name="force_x" type="float" value="150"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="272" type="emitter" x="3953.26" y="7785.37" width="16.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="3"/>
+    <property name="force_x" type="float" value="200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="273" type="emitter" x="4075.26" y="7791.37" width="35" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="12"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="274" type="emitter" x="4005.76" y="7796.87" width="19.5" height="40.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="20"/>
+    <property name="force_x" type="float" value="-100"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="275" type="emitter" x="4123.26" y="7827.87" width="19.5" height="14">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="6"/>
+    <property name="force_x" type="float" value="-200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="276" type="emitter" x="4190.76" y="7802.87" width="19.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="16"/>
+    <property name="force_x" type="float" value="150"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="277" type="emitter" x="3669.26" y="7794.37" width="16.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="3"/>
+    <property name="force_x" type="float" value="200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="278" type="emitter" x="3792.26" y="7792.37" width="35" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="12"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="279" type="emitter" x="3732.76" y="7787.87" width="19.5" height="40.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="20"/>
+    <property name="force_x" type="float" value="-100"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="280" type="emitter" x="3843.26" y="7824.87" width="19.5" height="14">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="6"/>
+    <property name="force_x" type="float" value="-200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="281" type="emitter" x="3897.76" y="7785.87" width="19.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="16"/>
+    <property name="force_x" type="float" value="150"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="282" type="emitter" x="3392.26" y="7784.37" width="16.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="3"/>
+    <property name="force_x" type="float" value="200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="283" type="emitter" x="3511.26" y="7786.37" width="35" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="12"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="284" type="emitter" x="3445.76" y="7791.87" width="19.5" height="40.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="20"/>
+    <property name="force_x" type="float" value="-100"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="285" type="emitter" x="3565.26" y="7819.87" width="19.5" height="14">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="6"/>
+    <property name="force_x" type="float" value="-200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="286" type="emitter" x="3613.76" y="7783.87" width="19.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="16"/>
+    <property name="force_x" type="float" value="150"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="287" type="emitter" x="3098.26" y="7789.37" width="16.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="3"/>
+    <property name="force_x" type="float" value="200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="288" type="emitter" x="3235.26" y="7788.37" width="35" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="12"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="289" type="emitter" x="3157.76" y="7788.87" width="19.5" height="40.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="20"/>
+    <property name="force_x" type="float" value="-100"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="290" type="emitter" x="3286.26" y="7814.87" width="19.5" height="14">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="6"/>
+    <property name="force_x" type="float" value="-200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="291" type="emitter" x="3338.76" y="7793.87" width="19.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="16"/>
+    <property name="force_x" type="float" value="150"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="292" type="emitter" x="2778.26" y="7777.37" width="16.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="3"/>
+    <property name="force_x" type="float" value="200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="293" type="emitter" x="2900.26" y="7783.37" width="35" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="12"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="294" type="emitter" x="2830.76" y="7788.87" width="19.5" height="40.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="20"/>
+    <property name="force_x" type="float" value="-100"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="295" type="emitter" x="2948.26" y="7819.87" width="19.5" height="14">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="6"/>
+    <property name="force_x" type="float" value="-200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="296" type="emitter" x="3015.76" y="7794.87" width="19.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="16"/>
+    <property name="force_x" type="float" value="150"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="297" type="emitter" x="2493.26" y="7791.37" width="16.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="3"/>
+    <property name="force_x" type="float" value="200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="298" type="emitter" x="2616.26" y="7789.37" width="35" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="12"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="299" type="emitter" x="2556.76" y="7784.87" width="19.5" height="40.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="20"/>
+    <property name="force_x" type="float" value="-100"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="300" type="emitter" x="2667.26" y="7821.87" width="19.5" height="14">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="6"/>
+    <property name="force_x" type="float" value="-200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="301" type="emitter" x="2721.76" y="7782.87" width="19.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="16"/>
+    <property name="force_x" type="float" value="150"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="302" type="emitter" x="2216.26" y="7781.37" width="16.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="3"/>
+    <property name="force_x" type="float" value="200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="303" type="emitter" x="2335.26" y="7783.37" width="35" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="12"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="304" type="emitter" x="2269.76" y="7788.87" width="19.5" height="40.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="20"/>
+    <property name="force_x" type="float" value="-100"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="305" type="emitter" x="2389.26" y="7816.87" width="19.5" height="14">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="6"/>
+    <property name="force_x" type="float" value="-200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="306" type="emitter" x="2437.76" y="7780.87" width="19.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="16"/>
+    <property name="force_x" type="float" value="150"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="307" type="emitter" x="2059.26" y="7785.37" width="35" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="12"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="308" type="emitter" x="2110.26" y="7811.87" width="19.5" height="14">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="6"/>
+    <property name="force_x" type="float" value="-200"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="309" type="emitter" x="2162.76" y="7790.87" width="19.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="16"/>
+    <property name="force_x" type="float" value="150"/>
+    <property name="force_y" type="float" value="-400"/>
+    <property name="lifetime" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="310" type="emitter" x="1579.42" y="7854.42" width="16.6667" height="27">
+   <properties>
+    <property name="color" type="color" value="#ff0000ff"/>
+    <property name="delay" type="float" value="0.15"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="0"/>
+    <property name="lifetime" type="float" value="12"/>
+   </properties>
+  </object>
+  <object id="312" type="emitter" x="4128.67" y="3974" width="16.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="3"/>
+    <property name="force_x" type="float" value="200"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="313" type="emitter" x="4181.17" y="3985.5" width="19.5" height="40.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="20"/>
+    <property name="force_x" type="float" value="-100"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="314" type="emitter" x="3111.33" y="3972.08" width="16.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="3"/>
+    <property name="force_x" type="float" value="200"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="315" type="emitter" x="3165.67" y="3945.75" width="35" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="12"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="316" type="emitter" x="3047.5" y="3933.25" width="19.5" height="40.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="20"/>
+    <property name="force_x" type="float" value="-100"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="317" type="emitter" x="3381.33" y="3938.92" width="19.5" height="36">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="6"/>
+    <property name="force_x" type="float" value="-200"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="318" type="emitter" x="3276.5" y="3945.25" width="19.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="16"/>
+    <property name="force_x" type="float" value="150"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="319" type="emitter" x="3231.33" y="3960.75" width="16.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="3"/>
+    <property name="force_x" type="float" value="200"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="320" type="emitter" x="3330" y="3979.42" width="35" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="12"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="321" type="emitter" x="3723.17" y="3943.58" width="19.5" height="40.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="20"/>
+    <property name="force_x" type="float" value="-100"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="322" type="emitter" x="3438.33" y="3975.58" width="19.5" height="36">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="6"/>
+    <property name="force_x" type="float" value="-200"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="323" type="emitter" x="3556.5" y="3957.25" width="19.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="16"/>
+    <property name="force_x" type="float" value="150"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="324" type="emitter" x="3612" y="3941.42" width="16.5" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="3"/>
+    <property name="force_x" type="float" value="200"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="325" type="emitter" x="3500" y="3955.08" width="35" height="23.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="12"/>
+    <property name="force_x" type="float" value="0"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="326" type="emitter" x="3663.5" y="3961.25" width="19.5" height="40.5">
+   <properties>
+    <property name="color" type="color" value="#ffaa0000"/>
+    <property name="delay" type="float" value="20"/>
+    <property name="force_x" type="float" value="-100"/>
+    <property name="force_y" type="float" value="-420"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="339" type="emitter" x="3573.94" y="2210.24" width="31.0609" height="50.0893">
+   <properties>
+    <property name="color" type="color" value="#ff0000ff"/>
+    <property name="delay" type="float" value="0.6"/>
+    <property name="force_x" type="float" value="600"/>
+    <property name="force_y" type="float" value="400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="342" type="emitter" x="4143" y="2209.68" width="31.0609" height="50.0893">
+   <properties>
+    <property name="color" type="color" value="#ffff0000"/>
+    <property name="delay" type="float" value="0.6"/>
+    <property name="force_x" type="float" value="-600"/>
+    <property name="force_y" type="float" value="400"/>
+    <property name="lifetime" type="float" value="3"/>
+   </properties>
+  </object>
+ </objectgroup>
  <objectgroup name="Collisions">
   <object id="18" type="static" x="2331.27" y="4200.72">
    <properties>
@@ -257,7 +1255,7 @@
     <property name="color" type="color" value="#ffffaa00"/>
    </properties>
   </object>
-  <object id="44" type="dynamic" x="3040.58" y="2547.13" width="156" height="44.5717" rotation="40.1238">
+  <object id="44" type="dynamic" x="3084.58" y="2547.13" width="156" height="44.5717" rotation="40.1238">
    <properties>
     <property name="color" type="color" value="#ffaa0000"/>
    </properties>
@@ -266,12 +1264,6 @@
    <properties>
     <property name="color" type="color" value="#ffaa0000"/>
    </properties>
-  </object>
-  <object id="71" type="dynamic" x="3301.68" y="2554.88">
-   <properties>
-    <property name="color" type="color" value="#ffff5500"/>
-   </properties>
-   <polygon points="-55,4 -35.6718,148.788 48.9949,132.727 40.4162,47.7879"/>
   </object>
   <object id="73" type="dynamic" x="2211.2" y="7686.86" width="216.667" height="72.5717">
    <properties>
@@ -304,12 +1296,23 @@
    </properties>
    <polyline points="0,0 130,546 414,1128 948,1622 1630,2018 2672,2306 4568,2674 7104,2930"/>
   </object>
-  <object id="81" type="static" x="8420" y="10428">
+  <object id="81" type="static" x="9911.95" y="10043.9">
    <properties>
     <property name="color" type="color" value="#ffffff7f"/>
     <property name="on_contact_fx" type="int" value="1"/>
    </properties>
-   <polyline points="0,0 328,168 608,360 840,592 960,864 1016,1112 1016,1448 992,1800 936,2016 784,2376 600,2640 352,2888 56,3056 -352,3296 -1072,3488 -1520,3512 -2104,3480 -2512,3112"/>
+   <polyline points="0,0 167.617,61.5084 310.705,131.804 429.264,216.744 490.588,316.329 519.205,407.127 519.205,530.144 506.94,659.018 478.323,738.101 400.646,869.904 306.617,966.56 179.882,1057.36 28.6176,1118.87 -179.882,1206.74 -547.823,1277.03 -776.764,1285.82 -1075.2,1274.1 -1283.7,1139.37"/>
+  </object>
+  <object id="332" type="dynamic" x="3444.01" y="2668.01" rotation="-269.384">
+   <properties>
+    <property name="color" type="color" value="#ffffaa00"/>
+   </properties>
+   <polygon points="0,0 -94,76 3,189"/>
+  </object>
+  <object id="343" type="dynamic" x="3394" y="2276.33" width="83" height="83.3333">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
   </object>
  </objectgroup>
  <objectgroup name="Water">

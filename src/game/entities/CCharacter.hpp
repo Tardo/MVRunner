@@ -81,8 +81,10 @@ public:
     void doFire() noexcept;
     void doHook(bool state) noexcept;
     void setVisible(bool visible) noexcept;
+    void setAlive(bool state) noexcept;
 
     void setMoveState(int moveState) noexcept;
+    void resetJumps() noexcept { m_Jumps = 0; }
     void teleport(const sf::Vector2f &worldPosTo) noexcept;
 
     int getCharacterState() const { return m_CharacterState; }
@@ -98,7 +100,6 @@ public:
 	int m_HookState;
 	CEntity *m_pHookTarget;
 	sf::Vector2f m_HookDir;
-	sf::Vector2f m_HookInitPos;
 	sf::Vector2f m_HookPos;
 	float m_HookLength;
 	b2Joint *m_pHookJoint;

@@ -263,7 +263,6 @@ void CSystemBox2D::createExplosion(const sf::Vector2f &worldPos, float energy, f
 	const float epenergy = (energy / (float)NUM_RAYS);
 	const b2Vec2 pos = sfToB2(worldPos);
 
-	bool isCharacter = false;
 	for (int i = 0; i < NUM_RAYS; ++i)
 	{
 		const float angle = upm::degToRad((i / (float)NUM_RAYS) * 360.0f);
@@ -275,9 +274,7 @@ void CSystemBox2D::createExplosion(const sf::Vector2f &worldPos, float energy, f
 		m_World.RayCast(&callback, pos, rayEnd);
 		if (callback.m_pEntity && callback.m_pEntity->getBody() && callback.m_pEntity->getBody()->GetType() == b2_dynamicBody)
 		{
-			if (callback.m_pEntity->getType() == CEntity::CHARACTER)
-				isCharacter = true;
-			else
+			if (callback.m_pEntity->getType() != CEntity::CHARACTER)
 				callback.m_pEntity->getBody()->ApplyLinearImpulse(epenergy * rayDir, sfToB2(callback.m_Point), true);
 				//applyBlastImpulse(callback.m_pEntity->getBody(), worldPos, callback.m_Point, epenergy);
 		}
@@ -306,52 +303,58 @@ void CSystemBox2D::createExplosion(const sf::Vector2f &worldPos, float energy, f
 	}
 
 	// FIXME: Workaround for stable character impulse
-	if (isCharacter)
+	std::vector<b2Body*> vpBodies = getBodiesNear(worldPos, radius, CAT_CHARACTER_PLAYER, pNotThis);
+	for (std::size_t i=0; i<vpBodies.size(); ++i)
 	{
-		std::vector<b2Body*> vpBodies = getBodiesNear(worldPos, radius, CAT_CHARACTER_PLAYER, pNotThis);
-		for (std::size_t i=0; i<vpBodies.size(); ++i)
-		{
-			b2Body *pBody = vpBodies[i];
-			const sf::Vector2f pos = b2ToSf(pBody->GetPosition());
-			const sf::Vector2f dir = upm::vectorNormalize(pos - worldPos);
-			const float dist = upm::vectorLength(pos - worldPos);
-			if (dist > radius)
-				continue;
+		b2Body *pBody = vpBodies[i];
+		const sf::Vector2f pos = b2ToSf(pBody->GetPosition());
+		const sf::Vector2f dir = upm::vectorNormalize(pos - worldPos);
+		const float dist = upm::vectorLength(pos - worldPos);
+		if (dist > radius)
+			continue;
 
-			float impulse = (1.0f - dist/radius) * energy * 12.0f;
-			sf::Vector2f force = dir * impulse;
-			//applyBlastImpulse(pBody, worldPos, pos, impulse);
-			pBody->ApplyLinearImpulse(sfToB2(force), pBody->GetWorldCenter(), true);
-		}
+		float impulse = (1.0f - dist/radius) * energy * 12.0f;
+		sf::Vector2f force = dir * impulse;
+		//applyBlastImpulse(pBody, worldPos, pos, impulse);
+		pBody->ApplyLinearImpulse(sfToB2(force), pBody->GetWorldCenter(), true);
 	}
 }
 
-void CSystemBox2D::createViscosity(const sf::Vector2f &worldPos, float radius) noexcept
+
+b2ParticleGroup* CSystemBox2D::createLiquidFunParticleGroup(const sf::Vector2f &worldPos, b2Shape *pShape, const b2ParticleColor &color, float lifetime, int flags, const b2Vec2 &vel, float angularVelocity, int groupFlags, float strength) noexcept
 {
-	b2CircleShape polyShape;
-	polyShape.m_radius = sfToB2(radius);
 	b2ParticleGroupDef pdg;
-	pdg.flags = b2_viscousParticle | b2_springParticle;
-	pdg.groupFlags = b2_solidParticleGroup;
-	pdg.shape = &polyShape;
+	pdg.flags = flags;
+	pdg.groupFlags = groupFlags;
+	pdg.shape = pShape;
 	pdg.position = CSystemBox2D::sfToB2(worldPos);
-	pdg.strength = 2.0f;
-	pdg.color.Set(0, upm::randInt(128, 255), 0, 255);
-	pdg.lifetime = 5.0f;
-	getParticleSystem(CSystemBox2D::PARTICLE_SYSTEM_WATER)->CreateParticleGroup(pdg);
+	pdg.color = color;
+	pdg.lifetime = lifetime;
+	pdg.strength = strength;
+	pdg.linearVelocity = vel;
+	pdg.angularVelocity = angularVelocity;
+	return getParticleSystem(CSystemBox2D::PARTICLE_SYSTEM_WATER)->CreateParticleGroup(pdg);
 }
 
-void CSystemBox2D::createWater(const sf::Vector2f &worldPos, float radius) noexcept
+b2ParticleGroup* CSystemBox2D::createViscosity(const sf::Vector2f &worldPos, float radius) noexcept
 {
 	b2CircleShape polyShape;
 	polyShape.m_radius = sfToB2(radius);
-	b2ParticleGroupDef pdg;
-	pdg.flags = b2_waterParticle;
-	pdg.shape = &polyShape;
-	pdg.position = CSystemBox2D::sfToB2(worldPos);
-	pdg.color.Set(upm::randInt(128, 255), upm::randInt(128, 255), upm::randInt(128, 255), 255);
-	pdg.lifetime = 5.0f;
-	getParticleSystem(CSystemBox2D::PARTICLE_SYSTEM_WATER)->CreateParticleGroup(pdg);
+	return createLiquidFunParticleGroup(worldPos, &polyShape, b2ParticleColor(0, upm::randInt(128, 255), 0, 255), 5.0f, b2_viscousParticle | b2_springParticle, b2Vec2_zero, 0.0f, b2_solidParticleGroup, 2.0f);
+}
+
+b2ParticleGroup* CSystemBox2D::createWater(const sf::Vector2f &worldPos, float radius) noexcept
+{
+	b2CircleShape polyShape;
+	polyShape.m_radius = sfToB2(radius);
+	return createLiquidFunParticleGroup(worldPos, &polyShape, b2ParticleColor(upm::randInt(128, 255), upm::randInt(128, 255), upm::randInt(128, 255), 255), 5.0f, b2_waterParticle);
+}
+
+b2ParticleGroup* CSystemBox2D::createBlood(const sf::Vector2f &worldPos, float radius) noexcept
+{
+	b2CircleShape polyShape;
+	polyShape.m_radius = sfToB2(radius);
+	return createLiquidFunParticleGroup(worldPos, &polyShape, b2ParticleColor(95, 75, 35, 255), 5.0f, b2_viscousParticle, b2Vec2(0.0f, -1.0f));
 }
 
 b2Fixture* CSystemBox2D::createFixture(b2Body *pBody, const b2Shape &Shape, bool sensor, const b2Filter &filter, void *pUserData, float density, float friction, float restitution) noexcept

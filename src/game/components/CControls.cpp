@@ -7,9 +7,6 @@
 CControls::CControls(CGameClient *pGameClient) noexcept
 : CComponent(pGameClient)
 {
-	m_MouseLeftClicked = false;
-	m_MouseRightClicked = false;
-	m_MousePosition = sf::Vector2i(0, 0);
 	m_aListenKeyBindCmd[0] = 0x0;
 
 	init();
@@ -92,10 +89,6 @@ void CControls::processEvent(const sf::Event &ev) noexcept
 			Client()->initializeGameMode("main");
 		}
 	}
-	if (ev.type == sf::Event::MouseMoved)
-	{
-		m_MousePosition = sf::Vector2i(ev.mouseMove.x, ev.mouseMove.y);
-	}
 	else if (ev.type == sf::Event::MouseButtonPressed)
 	{
 		if (m_aListenKeyBindCmd[0])
@@ -105,18 +98,6 @@ void CControls::processEvent(const sf::Event &ev) noexcept
 			Client()->Menus().setActiveModal(CMenus::NONE);
 			return;
 		}
-
-		if (ev.mouseButton.button == sf::Mouse::Button::Left)
-			m_MouseLeftClicked = true;
-		else if (ev.mouseButton.button == sf::Mouse::Button::Right)
-			m_MouseRightClicked = true;
-	}
-	else if (ev.type == sf::Event::MouseButtonReleased)
-	{
-		if (ev.mouseButton.button == sf::Mouse::Button::Left)
-			m_MouseLeftClicked = false;
-		else if (ev.mouseButton.button == sf::Mouse::Button::Right)
-			m_MouseRightClicked = false;
 	}
 }
 

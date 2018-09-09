@@ -6,7 +6,7 @@
 #include <engine/CSystemBox2D.hpp>
 #include <engine/CSystemSound.hpp>
 
-const CB2BodyInfo CProjectile::ms_BodyInfo = CB2BodyInfo(0.2f, 1.25f, 0.1f, 0.0f, b2_dynamicBody, CAT_PROJECTILE, false, CAT_FIRE|CAT_BUILD|CAT_GENERIC|CAT_PROJECTILE|CAT_WATER);
+const CB2BodyInfo CProjectile::ms_BodyInfo = CB2BodyInfo(0.2f, 1.25f, 0.1f, 0.0f, b2_dynamicBody, CAT_PROJECTILE, false, CAT_FIRE|CAT_BUILD|CAT_GENERIC|CAT_PROJECTILE|CAT_WATER|CAT_ZONE);
 CProjectile::CProjectile(const sf::Vector2f &pos, const sf::Vector2f &size, float rot, const sf::Vector2f &dir, class CPlayer *pOwner, unsigned int type, unsigned int subtype) noexcept
 : CB2Polygon(pos, size, rot, sf::Color::White, ms_BodyInfo, CEntity::PROJECTILE)
 {
@@ -20,6 +20,7 @@ CProjectile::CProjectile(const sf::Vector2f &pos, const sf::Vector2f &size, floa
     m_HasTouched = false;
     m_pEntTouch = nullptr;
     m_TimerSpawnFire = 0;
+    m_ContactWorldPoint = VECTOR_ZERO;
 
     if (m_pBody)
     {
@@ -72,7 +73,7 @@ void CProjectile::tick() noexcept
 			}
 			getBody()->SetLinearVelocity(CSystemBox2D::sfToB2(m_Dir*m_Speed));
 		}
-		else if (!m_HasTouched)
+		else if (!m_HasTouched && m_pEntTouch->getType() == CEntity::CHARACTER)
 		{
 			m_pBody->SetType(b2_dynamicBody);
 			getBody()->SetFixedRotation(false);
@@ -80,6 +81,7 @@ void CProjectile::tick() noexcept
 			if (m_pEntTouch->getType() == CEntity::CHARACTER)
 			{
 				CCharacter *pChar = static_cast<CCharacter*>(m_pEntTouch);
+				pChar->resetJumps();
 				pChar->setMoveState(CCharacter::MOVE_STATE_UP);
 			}
 		}
@@ -90,7 +92,7 @@ void CProjectile::tick() noexcept
 	if (m_LifeTime < 0.0f || (m_LifeTime != 0.0f && elapsedTicks > ups::timeFreq()*m_LifeTime))
 	{
 		CGame *pGame = CGame::getInstance();
-		const sf::Vector2f ProjPos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
+		const sf::Vector2f ProjPos = m_HasTouched?m_ContactWorldPoint:CSystemBox2D::b2ToSf(getBody()->GetPosition());
 
 		switch (m_ProjType)
 		{
@@ -98,7 +100,6 @@ void CProjectile::tick() noexcept
 			{
 				pGame->Client()->Controller()->createImpactSparkMetal(ProjPos);
 				pGame->Client()->Controller()->createExplosionCar(ProjPos, true);
-				pGame->Client()->getSystem<CSystemBox2D>()->createWater(ProjPos, 80.0f);
 				pGame->Client()->getSystem<CSystemBox2D>()->createExplosion(ProjPos, g_Config.m_aWeaponsInfo[m_ProjType].m_Energy, g_Config.m_aWeaponsInfo[m_ProjType].m_Radius, m_pBody);
 			} break;
 			case WEAPON_VISCOSITY_LAUNCHER:
@@ -118,12 +119,15 @@ void CProjectile::tick() noexcept
 	m_HasTouched = (m_pEntTouch != nullptr);
 }
 
-void CProjectile::onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexcept
+void CProjectile::onPostSolve(CEntity* pEntity, const sf::Vector2f &worldPos, float impulse) noexcept
 {
 	CB2Polygon::onContact(pEntity, worldPos);
 
 	if (pEntity->getType() == CEntity::FIRE)
 		return;
+
+	m_pEntTouch = pEntity;
+	m_ContactWorldPoint = worldPos;
 
 	switch (m_ProjType)
 	{
@@ -134,11 +138,15 @@ void CProjectile::onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noex
 		} break;
 		case WEAPON_CANON_BALL:
 		{
-			if (pEntity->getType() == CEntity::CHARACTER)
-				m_pEntTouch = pEntity;
-			kill();
+			if (pEntity->getType() != CEntity::CHARACTER)
+				kill();
 		} break;
 		default:
 			destroy();
 	}
+}
+
+void CProjectile::onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexcept
+{
+
 }

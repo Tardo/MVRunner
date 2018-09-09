@@ -7,6 +7,7 @@
 #include <game/CContext.hpp>
 #include <game/CGameClient.hpp>
 #include <engine/CLocalization.hpp>
+#include "version.h"
 #include <cstdlib>
 #include <ctime>
 #include <cmath>
@@ -15,23 +16,22 @@
 CGameClient::CGameClient() noexcept
 : sf::RenderWindow(sf::VideoMode(g_Config.m_ScreenWidth, g_Config.m_ScreenHeight), "", g_Config.m_FullScreen?sf::Style::Fullscreen:sf::Style::Close),
   m_AssetManager(&m_Zpg),
-  m_Camera(this),
+  m_Camera(this, this->getSize()),
   m_MapRenderBack(this, RENDER_BACK),
   m_MapRenderFront(this, RENDER_FRONT),
   m_Menus(this),
-  m_UI(this),
   m_PlayerRender(this),
   m_ItemRender(this),
-  m_FluidRender(this),
   m_SimpleParticleRenderBack(this, RENDER_BACK),
   m_SimpleParticleRenderFront(this, RENDER_FRONT),
   m_SimpleParticleRenderForeground(this, RENDER_FOREGROUND),
   m_SimpleParticleSystemRender(this),
   m_Controls(this),
   m_DebuggerRender(this),
-  m_LightRender(this, RENDER_FRONT)
+  m_LightRender(this, RENDER_FRONT),
+  m_HUD(this),
+  m_UI(this->getSize(), m_AssetManager.getDefaultFont())
 {
-	setFramerateLimit(60);
 	m_pGameController = nullptr;
 	m_Debug = false;
 	m_Paused = false;
@@ -41,9 +41,20 @@ CGameClient::CGameClient() noexcept
 	m_MinFPS = 9999;
 	m_RenderMode = RENDER_MODE_NORMAL;
 
+	m_TimerBroadcast = ups::timeGet();
+	m_BroadcastDuration = 0.0f;
+	m_aHelpMsg[0] = 0;
+	m_aBroadcastMsg[0] = 0;
+
+	m_TimerPlayerRun = false;
+	m_TimerPlayerStart = 0;
+	m_TimerPlayerEnd = 0;
+
 	m_TimerGame = ups::timeGet();
 	m_Add100Hz = false;
 	m_Add50Hz = false;
+
+
 }
 CGameClient::~CGameClient() noexcept
 {
@@ -78,6 +89,7 @@ void CGameClient::run() noexcept
         sf::Event event;
         while (pollEvent(event))
         {
+        	m_UI.processEvent(event);
         	if (event.type == sf::Event::Closed)
         		close();
         	else
@@ -150,7 +162,7 @@ void CGameClient::doRender()
     // Render Components
     // Normal Mode
 	const bool mapLoaded = Controller()->Context()->Map().isMapLoaded();
-    m_RenderPhaseTexture.clear(mapLoaded?CMap::tmxToSf(Controller()->Context()->Map().GetBackgroundColor()):sf::Color::Black);
+	m_RenderPhaseTexture.clear(mapLoaded?CMap::tmxToSf(Controller()->Context()->Map().GetBackgroundColor()):sf::Color::Black);
     renderComponentsPhase(RENDER_MODE_NORMAL);
     draw(m_RenderPhase);
 
@@ -160,37 +172,39 @@ void CGameClient::doRender()
     draw(m_RenderPhase, sf::BlendAdd);
 
     sf::Shader *pShaderBloom = Assets().getShader(CAssetManager::SHADER_BLOOM);
+	pShaderBloom->setUniform("iChannel0", sf::Shader::CurrentTexture);
+	pShaderBloom->setUniform("iResolution", sf::Vector2f(g_Config.m_ScreenWidth, g_Config.m_ScreenHeight));
     sf::Shader *pShaderMetaBall = Assets().getShader(CAssetManager::SHADER_METABALL);
+    pShaderMetaBall->setUniform("texture", sf::Shader::CurrentTexture);
 
     // Bloom Effect
 	if (pShaderBloom)
 	{
-		pShaderBloom->setUniform("iChannel0", sf::Shader::CurrentTexture);
-		pShaderBloom->setUniform("iResolution", sf::Vector2f(m_RenderPhase.getTexture()->getSize().x, m_RenderPhase.getTexture()->getSize().y));
 		static const int sIters = 8;
 		for (int i=0; i<sIters; ++i)
 		{
 			pShaderBloom->setUniform("direction", (i%2 == 0)?sf::Vector2f((sIters-i-1)*upm::floatRand(0.6f, 0.8f), 0):sf::Vector2f(0, (sIters-i-1)*upm::floatRand(0.6f, 0.8f)));
-			m_RenderPhaseTexture.draw(m_RenderPhase, pShaderBloom);
-			m_RenderPhaseTexture.display();
-			m_RenderPhase.setTexture(m_RenderPhaseTextureFinal.getTexture());
 
 			m_RenderPhaseTextureFinal.draw(m_RenderPhase, pShaderBloom);
 			m_RenderPhaseTextureFinal.display();
-			m_RenderPhase.setTexture(m_RenderPhaseTexture.getTexture());
+			m_RenderPhase.setTexture(&m_RenderPhaseTexture.getTexture());
+
+			m_RenderPhaseTexture.draw(m_RenderPhase);
+			m_RenderPhaseTexture.display();
+			m_RenderPhase.setTexture(&m_RenderPhaseTextureFinal.getTexture());
 		}
 		draw(m_RenderPhase, sf::BlendAdd);
 
 		if (pShaderMetaBall)
 		{
-			pShaderMetaBall->setUniform("texture", sf::Shader::CurrentTexture);
-			m_RenderPhaseTexture.draw(m_RenderPhase, pShaderMetaBall);
-			m_RenderPhaseTexture.display();
-			m_RenderPhase.setTexture(m_RenderPhaseTextureFinal.getTexture());
-
 			m_RenderPhaseTextureFinal.draw(m_RenderPhase, pShaderMetaBall);
 			m_RenderPhaseTextureFinal.display();
-			m_RenderPhase.setTexture(m_RenderPhaseTexture.getTexture());
+			m_RenderPhase.setTexture(&m_RenderPhaseTexture.getTexture());
+
+			m_RenderPhaseTexture.draw(m_RenderPhase);
+			m_RenderPhaseTexture.display();
+			m_RenderPhase.setTexture(&m_RenderPhaseTextureFinal.getTexture());
+
 			draw(m_RenderPhase, sf::BlendAdd);
 		}
 	}
@@ -204,52 +218,71 @@ void CGameClient::doRender()
 	// Metaball Effect
 	if (pShaderBloom)
 	{
-		pShaderBloom->setUniform("iChannel0", sf::Shader::CurrentTexture);
-		pShaderBloom->setUniform("iResolution", sf::Vector2f(m_RenderPhase.getTexture()->getSize().x, m_RenderPhase.getTexture()->getSize().y));
 		static const int sIters = 8;
 		for (int i=0; i<sIters; ++i)
 		{
 			pShaderBloom->setUniform("direction", (i%2 == 0)?sf::Vector2f((sIters-i-1)*0.6f, 0):sf::Vector2f(0, (sIters-i-1)*0.6f));
-			m_RenderPhaseTexture.draw(m_RenderPhase, pShaderBloom);
-			m_RenderPhaseTexture.display();
-			m_RenderPhase.setTexture(m_RenderPhaseTextureFinal.getTexture());
 
 			m_RenderPhaseTextureFinal.draw(m_RenderPhase, pShaderBloom);
 			m_RenderPhaseTextureFinal.display();
-			m_RenderPhase.setTexture(m_RenderPhaseTexture.getTexture());
+			m_RenderPhase.setTexture(&m_RenderPhaseTexture.getTexture());
+
+			m_RenderPhaseTexture.draw(m_RenderPhase);
+			m_RenderPhaseTexture.display();
+			m_RenderPhase.setTexture(&m_RenderPhaseTextureFinal.getTexture());
 		}
 
 		if (pShaderMetaBall)
 		{
-			pShaderMetaBall->setUniform("texture", sf::Shader::CurrentTexture);
-			m_RenderPhaseTexture.draw(m_RenderPhase, pShaderMetaBall);
-			m_RenderPhaseTexture.display();
-			m_RenderPhase.setTexture(m_RenderPhaseTextureFinal.getTexture());
-
 			m_RenderPhaseTextureFinal.draw(m_RenderPhase, pShaderMetaBall);
 			m_RenderPhaseTextureFinal.display();
-			m_RenderPhase.setTexture(m_RenderPhaseTexture.getTexture());
+			m_RenderPhase.setTexture(&m_RenderPhaseTexture.getTexture());
 
+			m_RenderPhaseTexture.draw(m_RenderPhase);
+			m_RenderPhaseTexture.display();
+			m_RenderPhase.setTexture(&m_RenderPhaseTextureFinal.getTexture());
+
+			m_RenderPhase.setTexture(&m_RenderPhaseTextureFinal.getTexture());
 			draw(m_RenderPhase, sf::BlendAdd);
 		}
 	}
 
+	//ImGUI
+	setView(getHudView());
+	renderCursor();
+
     display();
+}
+
+void CGameClient::renderCursor() noexcept
+{
+	setView(getHudView());
+	sf::Vertex line[] =
+	{
+		sf::Vertex(sf::Vector2f(UI().getMousePos().x-10.0f, UI().getMousePos().y), sf::Color::White),
+		sf::Vertex(sf::Vector2f(UI().getMousePos().x+10.0f, UI().getMousePos().y), sf::Color::White),
+		sf::Vertex(sf::Vector2f(UI().getMousePos().x, UI().getMousePos().y-10.0f), sf::Color::White),
+		sf::Vertex(sf::Vector2f(UI().getMousePos().x, UI().getMousePos().y+10.0f), sf::Color::White)
+	};
+
+	draw(line, 4, sf::Lines);
 }
 
 void CGameClient::renderComponentsPhase(int mode)
 {
     setRenderMode(mode);
     std::deque<CComponent*>::const_iterator itComp = m_vpComponents.cbegin();
+    m_RenderPhase.setTexture(&m_RenderPhaseTexture.getTexture());
 	while (itComp != m_vpComponents.cend())
-	{
 		m_RenderPhaseTexture.draw(*(*itComp++));
-		m_RenderPhaseTexture.display();
-	}
+	m_RenderPhaseTexture.display();
 }
 
 void CGameClient::reset() noexcept
 {
+	m_TimerPlayerRun = false;
+	m_TimerPlayerStart = m_TimerPlayerEnd = 0;
+
 	std::deque<ISystem*>::iterator itEng = m_vpSystems.begin();
 	while (itEng != m_vpSystems.end())
     	(*itEng++)->reset();
@@ -260,13 +293,15 @@ void CGameClient::reset() noexcept
 
 bool CGameClient::init() noexcept
 {
+	setFramerateLimit(60);
 	setVerticalSyncEnabled(g_Config.m_VSync);
 	setMouseCursorVisible(g_Config.m_CursorShow);
 	setMouseCursorGrabbed(g_Config.m_CursorGrab);
 
 	m_RenderPhaseTexture.create(g_Config.m_ScreenWidth, g_Config.m_ScreenHeight);
-	m_RenderPhase.setTexture(m_RenderPhaseTexture.getTexture(), true);
 	m_RenderPhaseTextureFinal.create(g_Config.m_ScreenWidth, g_Config.m_ScreenHeight);
+	m_RenderPhase.setPosition(0.0f, 0.0f);
+	m_RenderPhase.setSize(static_cast<sf::Vector2f>(this->getSize()));
 
 	if (!sf::Shader::isAvailable())
 		g_Config.m_UseShaders = false;
@@ -277,7 +312,7 @@ bool CGameClient::init() noexcept
 		ups::msgDebug("CGame", "Can't found selected language! using english...");
 
 	char title[128];
-	snprintf(title, sizeof(title), "MVRunner");
+	snprintf(title, sizeof(title), "MVRunner v" GAME_RELEASE_VERSION);
 	setTitle(title);
 
 	/** LOADING ASSETS **/
@@ -338,13 +373,12 @@ bool CGameClient::init() noexcept
 	m_vpComponents.push_back(&m_SimpleParticleRenderFront);
 	m_vpComponents.push_back(&m_ItemRender);
 	m_vpComponents.push_back(&m_SimpleParticleSystemRender);
-	m_vpComponents.push_back(&m_FluidRender);
 	m_vpComponents.push_back(&m_LightRender);
 	m_vpComponents.push_back(&m_MapRenderFront);
 	m_vpComponents.push_back(&m_SimpleParticleRenderForeground);
 	m_vpComponents.push_back(&m_DebuggerRender);
 	m_vpComponents.push_back(&m_Menus);
-	m_vpComponents.push_back(&m_UI);
+	m_vpComponents.push_back(&m_HUD);
 
 	m_SystemSound.setAssetManager(&Assets());
 
@@ -449,4 +483,28 @@ bool CGameClient::isClipped(const std::vector<sf::Vector2f> &points, float margi
 	}
 
 	return true;
+}
+
+void CGameClient::showBroadcastMessage(const char *pMsg, float duration) noexcept
+{
+	m_TimerBroadcast = ups::timeGet();
+	m_BroadcastDuration = duration;
+	ups::strCopy(m_aBroadcastMsg, pMsg, BROADCAST_MAX_LENGTH);
+}
+
+void CGameClient::showHelpMessage(const char *pMsg) noexcept
+{
+	ups::strCopy(m_aHelpMsg, pMsg, HELP_TEXT_MAX_LENGTH);
+}
+
+void CGameClient::runPlayerTime(bool state) noexcept
+{
+	m_TimerPlayerRun = state;
+	if (m_TimerPlayerRun)
+	{
+		m_TimerPlayerStart = ups::timeGet();
+		m_TimerPlayerEnd = 0;
+	}
+	else if (m_TimerPlayerStart > 0 && !m_TimerPlayerEnd)
+		m_TimerPlayerEnd = ups::timeGet();
 }

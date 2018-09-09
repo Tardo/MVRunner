@@ -89,8 +89,10 @@ public:
 
 	b2Fixture* createFixture(b2Body *pBody, const b2Shape &Shape, bool sensor, const b2Filter &filter, void *pUserData = nullptr, float density = 0.0f, float friction = 0.0f, float restitution = 0.0f) noexcept;
 
-	void createViscosity(const sf::Vector2f &worldPos, float radius) noexcept;
-	void createWater(const sf::Vector2f &worldPos, float radius) noexcept;
+	b2ParticleGroup* createLiquidFunParticleGroup(const sf::Vector2f &worldPos, b2Shape *pShape, const b2ParticleColor &color, float lifetime, int flags, const b2Vec2 &vel=b2Vec2_zero, float angularVelocity=0.0f, int groupFlags=0, float strength=1.0f) noexcept;
+	b2ParticleGroup* createViscosity(const sf::Vector2f &worldPos, float radius) noexcept;
+	b2ParticleGroup* createWater(const sf::Vector2f &worldPos, float radius) noexcept;
+	b2ParticleGroup* createBlood(const sf::Vector2f &worldPos, float radius) noexcept;
 
 	std::vector<b2Body*> getBodiesNear(const sf::Vector2f &worldPos, float margin, sf::Uint16 categoryBits, b2Body *pNotThis = nullptr) noexcept;
 	b2Fixture* getFixtureAt(const sf::Vector2f &worldPos) noexcept;
@@ -104,9 +106,12 @@ public:
 
 	static inline b2Vec2 sfToB2(const sf::Vector2f &vector) noexcept { return b2Vec2(vector.x*MPP, vector.y*MPP); }
 	static inline float sfToB2(float num) noexcept { return num*MPP; }
+	static inline b2Color sfToB2(const sf::Color &color) noexcept { return b2Color(color.r/255, color.g/255, color.b/255); }
 	static inline sf::Vector2f b2ToSf(const b2Vec2 &vector) noexcept { return sf::Vector2f(vector.x*PPM, vector.y*PPM); }
 	static inline float b2ToSf(float num) noexcept { return num*PPM; }
+	static inline sf::Color b2ToSf(const b2Color &color) noexcept { return sf::Color(color.r*255, color.g*255, color.b*255, 255); }
 	static inline sf::FloatRect b2ToSf(const b2AABB &aabb) noexcept { return sf::FloatRect(aabb.lowerBound.x*PPM, aabb.lowerBound.y*PPM, aabb.upperBound.x*PPM, aabb.upperBound.y*PPM); }
+
 	static bool findIntersectionOfFixtures(b2Fixture *pFA, b2Fixture *pFB, std::vector<b2Vec2> *pOutputVertices) noexcept;
 	static b2Vec2 computeCentroid(const std::vector<b2Vec2> &vs, float *pArea) noexcept;
 	static b2Vec2 ZERO;

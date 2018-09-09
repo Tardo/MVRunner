@@ -137,14 +137,6 @@ void CCharacter::tick() noexcept
 			m_Visible = false;
 			getBody()->SetActive(false);
 
-			pGame->Client()->getSystem<CSystemSound>()->play(CAssetManager::SOUND_KILL, shapePos, 15.0f, 20.0f);
-			// Gore
-			new CHitBox(shapePos, sf::Vector2f(6.0f, 6.0f), upm::floatRand(0.0f,360.0f), sf::Vector2f(upm::floatRand(-1.0f,1.0f), upm::floatRand(-1.0f,1.0f)), upm::floatRand(6.0f, 12.0f), g_Config.m_HitBoxGoreDuration, HITBOX_CHARACTER_HEAD);
-			for (int i=0; i<2; i++)
-				new CHitBox(shapePos, sf::Vector2f(4.0f, 8.0f), upm::floatRand(0.0f,360.0f), sf::Vector2f(upm::floatRand(-1.0f,1.0f), upm::floatRand(-1.0f,1.0f)), upm::floatRand(6.0f, 12.0f), g_Config.m_HitBoxGoreDuration, HITBOX_CHARACTER_LEG);
-			for (int i=0; i<4; i++)
-				new CHitBox(shapePos, sf::Vector2f(4.0f, 4.0f), upm::floatRand(0.0f,360.0f), sf::Vector2f(upm::floatRand(-1.0f,1.0f), upm::floatRand(-1.0f,1.0f)), upm::floatRand(6.0f, 12.0f), g_Config.m_HitBoxGoreDuration, HITBOX_CHARACTER_BODY);
-
 			pGame->Client()->Controller()->onCharacterDeath(this, nullptr);
 		}
 
@@ -152,7 +144,7 @@ void CCharacter::tick() noexcept
 		{
 			if (m_HookState == HOOK_STATE_FLYING)
 			{
-				m_HookPos = m_HookInitPos + m_HookDir * m_HookLength;
+				m_HookPos = shapePos + m_HookDir * m_HookLength;
 				CSystemBox2D *pSystemBox2D = pGame->Client()->getSystem<CSystemBox2D>();
 				if (m_HookLength < g_Config.m_CharacterHookMaxLength)
 				{
@@ -162,14 +154,24 @@ void CCharacter::tick() noexcept
 					{
 						pGame->Client()->Controller()->createImpactSparkMetal(m_HookPos);
 						pGame->Client()->Controller()->createSmokeImpact(m_HookPos, -m_HookDir, 1.0f);
-						m_HookState = HOOK_STATE_ATTACHED;
+
 						m_HookLength = upm::vectorLength(m_HookPos - shapePos);
-						b2DistanceJointDef jointDef;
-						jointDef.collideConnected = true;
-						jointDef.frequencyHz = g_Config.m_CharacterHookFrequency;
-						jointDef.dampingRatio = g_Config.m_CharacterHookDampingRatio;
-						jointDef.Initialize(getBody(), pEnt->getBody(), getBody()->GetWorldCenter(), CSystemBox2D::sfToB2(m_HookPos-m_HookDir*3.0f));
-						m_pHookJoint = pGame->Client()->getSystem<CSystemBox2D>()->getWorld()->CreateJoint(&jointDef);
+				    	const int tileIndex = pGame->Client()->Controller()->Context()->Map().getWorldTileIndex(CSystemBox2D::b2ToSf(pEnt->getBody()->GetPosition()), pGame->Client()->Controller()->Context()->Map().getGameLayer());
+				    	if (tileIndex != TILE_NOHOOK)
+				    	{
+							m_HookState = HOOK_STATE_ATTACHED;
+							b2DistanceJointDef jointDef;
+							jointDef.collideConnected = true;
+							jointDef.frequencyHz = g_Config.m_CharacterHookFrequency;
+							jointDef.dampingRatio = g_Config.m_CharacterHookDampingRatio;
+							jointDef.Initialize(getBody(), pEnt->getBody(), getBody()->GetWorldCenter(), CSystemBox2D::sfToB2(m_HookPos-m_HookDir*3.0f));
+							m_pHookJoint = pGame->Client()->getSystem<CSystemBox2D>()->getWorld()->CreateJoint(&jointDef);
+							b2DistanceJoint *pDistanceJoint = static_cast<b2DistanceJoint*>(m_pHookJoint);
+							pDistanceJoint->SetLength(-g_Config.m_CharacterHookRetractVel);
+				    	} else
+				    	{
+				    		m_HookState = HOOK_STATE_RETRACTING;
+				    	}
 					}
 				}
 				else
@@ -178,7 +180,7 @@ void CCharacter::tick() noexcept
 				}
 			} else if (m_HookState == HOOK_STATE_RETRACTING)
 			{
-				m_HookPos = m_HookInitPos + m_HookDir * m_HookLength;
+				m_HookPos = shapePos + m_HookDir * m_HookLength;
 				if (m_pHookJoint)
 				{
 					pGame->Client()->getSystem<CSystemBox2D>()->destroyJoint(m_pHookJoint);
@@ -192,15 +194,9 @@ void CCharacter::tick() noexcept
 				}
 			} else if (m_HookState == HOOK_STATE_ATTACHED && m_pHookJoint)
 			{
-				m_HookPos = CSystemBox2D::b2ToSf(m_pHookJoint->GetAnchorB());
 				b2DistanceJoint *pDistanceJoint = static_cast<b2DistanceJoint*>(m_pHookJoint);
-				float curLength = pDistanceJoint->GetLength();
-				if (CSystemBox2D::b2ToSf(curLength) > CCharacter::SIZE)
-				{
-					curLength -= g_Config.m_CharacterHookForce;
-					pDistanceJoint->SetLength(curLength);
-				}
-				m_HookLength = CSystemBox2D::b2ToSf(curLength);
+				m_HookPos = CSystemBox2D::b2ToSf(m_pHookJoint->GetAnchorB());
+				m_HookLength = CSystemBox2D::b2ToSf(pDistanceJoint->GetLength());
 				m_HookDir = upm::vectorNormalize(m_HookPos-shapePos);
 			}
 		}
@@ -226,7 +222,7 @@ void CCharacter::doFire() noexcept
 
 		CGame *pGame = CGame::getInstance();
 		const sf::Vector2f CharPos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
-		const sf::Vector2f CharDir = upm::vectorNormalize(pGame->Client()->mapPixelToCoords(pGame->Client()->Controls().getMousePos(), pGame->Client()->Camera()) - CharPos);
+		const sf::Vector2f CharDir = upm::vectorNormalize(pGame->Client()->mapPixelToCoords(pGame->Client()->UI().getMousePos(), pGame->Client()->Camera()) - CharPos);
 
 		switch (m_ActiveWeapon)
 		{
@@ -255,9 +251,8 @@ void CCharacter::doHook(bool state) noexcept
 		m_HookState = HOOK_STATE_FLYING;
 		CGame *pGame = CGame::getInstance();
 		const sf::Vector2f CharPos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
-		m_HookDir = upm::vectorNormalize(pGame->Client()->mapPixelToCoords(pGame->Client()->Controls().getMousePos(), pGame->Client()->Camera()) - CharPos);
+		m_HookDir = upm::vectorNormalize(pGame->Client()->mapPixelToCoords(pGame->Client()->UI().getMousePos(), pGame->Client()->Camera()) - CharPos);
 		m_HookLength = 0.0f;
-		m_HookInitPos = CharPos;
 	}
 	else if (!state && m_HookState != HOOK_STATE_RETRACTED)
 	{
@@ -269,6 +264,15 @@ void CCharacter::setVisible(bool visible) noexcept
 {
 	m_Visible = visible;
 	getBody()->SetActive(m_Visible);
+}
+
+void CCharacter::setAlive(bool state) noexcept
+{
+	m_Alive = state;
+	if (m_Alive)
+		setHealth(MAX_HEALTH_PLAYER);
+	else
+		setHealth(0);
 }
 
 void CCharacter::takeHealth(int amount, class CPlayer *pPlayer) noexcept

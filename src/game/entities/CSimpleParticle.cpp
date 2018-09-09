@@ -82,7 +82,7 @@ void CSimpleParticle::tick() noexcept
     if (m_Collide)
     {
     	const int tileIndex = pGame->Client()->Controller()->Context()->Map().getWorldTileIndex(m_Pos, pGame->Client()->Controller()->Context()->Map().getGameLayer());
-    	if (tileIndex == TILE_SOLID)
+    	if (tileIndex == TILE_SOLID || tileIndex == TILE_NOHOOK)
     		m_isCollide = true;
     }
 

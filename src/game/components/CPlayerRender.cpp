@@ -64,7 +64,7 @@ void CPlayerRender::renderPlayer(sf::RenderTarget& target, sf::RenderStates stat
 
 	const sf::Vector2f CharPos = CSystemBox2D::b2ToSf(pChar->getBody()->GetPosition());
 	const float CharRot = pChar->getBody()->GetAngle();
-	const sf::Vector2f CharDir = upm::vectorNormalize(Client()->mapPixelToCoords(Client()->Controls().getMousePos(), Client()->Camera()) - CharPos);
+	const sf::Vector2f CharDir = upm::vectorNormalize(Client()->mapPixelToCoords(Client()->UI().getMousePos(), Client()->Camera()) - CharPos);
 
 	renderPlayerBody(target, states, pChar, CharPos, CharRot);
 	renderWeapon(target, states, pChar, CharPos, CharDir);
@@ -223,7 +223,7 @@ void CPlayerRender::renderPlayerLights(sf::RenderTarget& target, sf::RenderState
 	// Render Weapon
 	if (!(pChar->getCharacterState()&CCharacter::STATE_ROTATE))
 	{
-		const sf::Vector2f CharDir = upm::vectorNormalize(Client()->mapPixelToCoords(Client()->Controls().getMousePos(), Client()->Camera()) - CharPos);
+		const sf::Vector2f CharDir = upm::vectorNormalize(Client()->mapPixelToCoords(Client()->UI().getMousePos(), Client()->Camera()) - CharPos);
 		const sf::Vector2f weaponPos = CharPos-CharDir*OffsetWeapon;
 		sf::RectangleShape ShapeWeapon(sf::Vector2f(28.0f, 28.0f));
 		ShapeWeapon.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_SKIN_DEFAULT));

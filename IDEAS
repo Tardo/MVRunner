@@ -4,10 +4,10 @@
     -·- PERMITIR ASIGNAR TECLAS A MOVIMIENTOS/ACCIONES                                                                       **
     -- AÑADIR SOPORTE PARA ARTICULACIONES BOX2D DESDE EL EDITOR DE MAPAS TILED (Creacion de elevadores, puertas, etc..)     ***
     -- AÑADIR SOPORTE PARA CREACIÓN DE ELEMENTOS BOX2D DESDE EL EDITOR DE MAPAS TILED (Puentes, etc...)                     ***
-    -- AÑADIR SOPORTE PARA CREACIÓN DE EMISORES DE PARTICULAS DESDE EL EDITOR DE MAPAS TILED (Chorros, Chispas, ...)        ***
+    -X- AÑADIR SOPORTE PARA CREACIÓN DE EMISORES DE PARTICULAS DESDE EL EDITOR DE MAPAS TILED (Chorros, Chispas, ...)        ***
     -- AÑADIR SONIDOS                                                                                                       ***
     -- MEJORAR UI: Menús, elementos (listas, botones, etc..)                                                                ****
-    -- RANKING DE TIEMPOS (¿Online?)                                                                                        **???
+    -·- RANKING DE TIEMPOS (¿Online?)                                                                                        **???
     -- CREAR PRIMER MAPA (PARA PRODUCCIÓN)                                                                                  *****
     -- ¿AÑADIR MÚSICA? (Necesario compositor: Cosa arto jodida que termine en algun sitio)                                  *****!
     

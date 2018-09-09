@@ -44,7 +44,10 @@ void CMapRender::draw(sf::RenderTarget& target, sf::RenderStates states) const n
 			while (it != eit)
 			{
 				if ((*it)->IsVisible() && (*it)->GetLayerType() == Tmx::TMX_LAYERTYPE_TILE)
-					renderTilemap(target, states, mapBounds, layerIndex, Client()->Controller()->Context()->getColorShadow());
+				{
+					const sf::Color backColor = CMap::tmxToSf(Map.GetProperties().GetColorProperty("shadow_background_color", Tmx::Color(32, 32, 32, 255)));
+					renderTilemap(target, states, mapBounds, layerIndex, backColor);
+				}
 
 				++layerIndex;
 				++it;
@@ -58,7 +61,10 @@ void CMapRender::draw(sf::RenderTarget& target, sf::RenderStates states) const n
 			while (it != eit)
 			{
 				if ((*it)->IsVisible() && (*it)->GetLayerType() == Tmx::TMX_LAYERTYPE_TILE)
-					renderTilemap(target, states, mapBounds, layerIndex, Client()->Controller()->Context()->getColorClear());
+				{
+					const sf::Color frontColor = CMap::tmxToSf(Map.GetProperties().GetColorProperty("shadow_foreground_color", Tmx::Color(86, 86, 86, 255)));
+					renderTilemap(target, states, mapBounds, layerIndex, frontColor);
+				}
 
 				++layerIndex;
 				++it;
@@ -119,10 +125,14 @@ void CMapRender::renderTilemap(sf::RenderTarget& target, sf::RenderStates states
 			const Tmx::Tile *pTile = pTileset->GetTile(tileId);
 
 			bool luminance = false;
+			bool block_light = true;
 			if (pTile)
 			{
 				luminance = pTile->GetProperties().GetBoolProperty("luminance", false);
-				if (luminance && Client()->getRenderMode() != RENDER_MODE_LIGHTING)
+				block_light = pTile->GetProperties().GetBoolProperty("block_light", true);
+				if ((luminance && Client()->getRenderMode() != RENDER_MODE_LIGHTING))
+					continue;
+				else if ((Client()->getRenderMode() == RENDER_MODE_LIQUID || Client()->getRenderMode() == RENDER_MODE_LIGHTING) && !luminance && !block_light)
 					continue;
 			}
 

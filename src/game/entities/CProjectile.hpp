@@ -14,6 +14,7 @@ public:
 
 	virtual void tick() noexcept final;
     virtual void onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexcept final;
+    virtual void onPostSolve(CEntity* pEntity, const sf::Vector2f &worldPos, float impulse) noexcept final;
 
     void setDir(sf::Vector2f dir) noexcept { m_Dir = dir; }
     sf::Vector2f getDir() const noexcept { return m_Dir; }
@@ -41,6 +42,7 @@ private:
 	long m_TickStart;
 	CEntity *m_pEntTouch;
 	bool m_HasTouched;
+	sf::Vector2f m_ContactWorldPoint;
 	sf::Int64 m_TimerSpawnFire;
 
 	static const CB2BodyInfo ms_BodyInfo;

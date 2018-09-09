@@ -33,7 +33,7 @@ CControllerMain::~CControllerMain() noexcept
 	m_vTeleports.clear();
 
 	#ifdef DEBUG_DESTRUCTORS
-	ups::msgDebug("CControllerTest", "Deleted");
+	ups::msgDebug("CControllerMain", "Deleted");
 	#endif
 }
 
@@ -80,7 +80,7 @@ void CControllerMain::tick() noexcept
 				// If the camera is in travel not execute player commands
 				if (!(Game()->Client()->Camera().getStatus()&CCamera::TRAVEL) && Game()->Client()->Menus().getActive() == CMenus::NONE)
 				{
-					const sf::Vector2f dir = upm::vectorNormalize(Game()->Client()->mapPixelToCoords(Game()->Client()->Controls().getMousePos(), Game()->Client()->Camera()) - charPos);
+					const sf::Vector2f dir = upm::vectorNormalize(Game()->Client()->mapPixelToCoords(Game()->Client()->UI().getMousePos(), Game()->Client()->Camera()) - charPos);
 
 					// Player Character Movement
 					if (!(charState&CCharacter::STATE_FREEZED))
@@ -205,9 +205,11 @@ void CControllerMain::tick() noexcept
 				else if (tileId == TILE_DEAD)
 				{
 					//pChar->getBody()->SetFixedRotation(true);
-					pChar->getBody()->SetLinearVelocity(b2Vec2(0.0f, 0.0f));
-					pChar->getBody()->SetAngularVelocity(0.0f);
-					pChar->getBody()->SetTransform(CSystemBox2D::sfToB2(m_LastCheckPoint), pChar->getBody()->GetAngle());
+					pChar->kill();
+				}
+				else if (tileId == TILE_START_TIME || tileId == TILE_END_TIME)
+				{
+					Game()->Client()->runPlayerTime(tileId == TILE_START_TIME);
 				}
 			}
 		}
@@ -236,8 +238,6 @@ void CControllerMain::onStart() noexcept
 
 	Game()->Client()->Camera().setTarget(Context()->getPlayer()->getCharacter());
 	Game()->Client()->getSystem<CSystemSound>()->playBackgroundMusic(CAssetManager::MUSIC_FIRST_FLOOR);
-
-	Context()->setWeather(WEATHER_RAIN);
 }
 
 bool CControllerMain::onMapTile(unsigned int tileId, const sf::Vector2f &pos, unsigned int tileDir, unsigned int modifierId) noexcept
@@ -289,4 +289,16 @@ bool CControllerMain::onMapTile(unsigned int tileId, const sf::Vector2f &pos, un
 void CControllerMain::onCharacterDeath(CCharacter *pVictim, CPlayer *pKiller) noexcept
 {
 	CController::onCharacterDeath(pVictim, pKiller);
+
+	if (pVictim->getType() == CEntity::CHARACTER)
+	{
+		CSystemBox2D *pSystemBox2D = Game()->Client()->getSystem<CSystemBox2D>();
+		pSystemBox2D->createBlood(CSystemBox2D::b2ToSf(pVictim->getBody()->GetPosition()), CCharacter::SIZE);
+
+		pVictim->getBody()->SetLinearVelocity(b2Vec2(0.0f, 0.0f));
+		pVictim->getBody()->SetAngularVelocity(0.0f);
+		pVictim->getBody()->SetTransform(CSystemBox2D::sfToB2(m_LastCheckPoint), pVictim->getBody()->GetAngle());
+		pVictim->setVisible(true);
+		pVictim->setAlive(true);
+	}
 }

@@ -23,6 +23,7 @@ enum _entityCategory
 	CAT_CHAIN = 2<<9,
 	CAT_WATER = 2<<10,
 	CAT_ANTENNA = 2<<11,
+	CAT_ZONE = 2<<12,
 };
 
 class CEntity
@@ -45,6 +46,8 @@ public:
 		SIMPLE_PARTICLE,
 		WATER,
 		ANTENNA,
+		SYSTEM_PARTICLE_EMITTER,
+		ZONE,
 
 		NUM_ENTITIES,
 

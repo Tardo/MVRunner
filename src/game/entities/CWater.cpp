@@ -87,6 +87,30 @@ void CWater::tick() noexcept
 		}
 		++cit;
 	}
+
+	CGame *pGame = CGame::getInstance();
+	CSystemBox2D *pSystemBox2D = pGame->Client()->getSystem<CSystemBox2D>();
+	// LiquidFun Particles
+	b2AABB bounds;
+	b2PolygonShape *pShape = static_cast<b2PolygonShape*>(m_pFixture->GetShape());
+	bounds.lowerBound.Set(getBody()->GetPosition().x - pShape->GetVertex(2).x, getBody()->GetPosition().y - pShape->GetVertex(2).y);
+	bounds.upperBound.Set(getBody()->GetPosition().x + pShape->GetVertex(2).x, getBody()->GetPosition().y + pShape->GetVertex(2).y);
+	const float energy = 0.2f;
+	MultiQueryParticleSystemCallBack callbackParticleSystem;
+	for (b2ParticleSystem *pParticleSystem = pSystemBox2D->getWorld()->GetParticleSystemList(); pParticleSystem; pParticleSystem = pParticleSystem->GetNext())
+	{
+		pParticleSystem->QueryAABB(&callbackParticleSystem, bounds);
+		if (callbackParticleSystem.m_vIndex.size())
+		{
+			for (std::size_t i=0; i<callbackParticleSystem.m_vIndex.size(); ++i)
+			{
+				b2Vec2 *pParticleVel = pParticleSystem->GetVelocityBuffer();
+				b2Vec2 *pCurParticleVel = (pParticleVel+callbackParticleSystem.m_vIndex[i]);
+				const sf::Vector2f dir(0.0f, -1.0f);
+				pCurParticleVel->Set(pCurParticleVel->x + energy * dir.x, pCurParticleVel->y + energy * dir.y);
+			}
+		}
+	}
 }
 
 void CWater::onSensorIn(CEntity *pEntity) noexcept

@@ -7,6 +7,8 @@
 #include <game/entities/CSign.hpp>
 #include <game/entities/CAmbientSound.hpp>
 #include <game/entities/CWater.hpp>
+#include <game/entities/CSystemParticleEmitter.hpp>
+#include <game/entities/CZone.hpp>
 #include <tmxparser/TmxObject.h>
 #include <tmxparser/TmxPolygon.h>
 #include <tmxparser/TmxEllipse.h>
@@ -120,6 +122,11 @@ bool CController::onInit() noexcept
 			onMapObject(pMapObj, objId, worldPosObj, sizeObj);
 			++itob;
 		}
+
+		// World Settings
+		const b2Vec2 worldGravity(Context()->Map().GetProperties().GetFloatProperty("gravity_x", 0.0f), Context()->Map().GetProperties().GetFloatProperty("gravity_y", 9.8f));
+		Context()->setWeather(Context()->Map().GetProperties().GetIntProperty("weather", 0));
+		Game()->Client()->getSystem<CSystemBox2D>()->getWorld()->SetGravity(worldGravity);
 	}
 
 	return true;
@@ -193,7 +200,7 @@ void CController::tick() noexcept
 			);
 			const sf::Vector2f worldPosObj(globalBounds.left+pMapObj->m_pObject->GetWidth()/2.0f, globalBounds.top+pMapObj->m_pObject->GetHeight()/2.0f);
 			const sf::Vector2f sizeObj(globalBounds.width, globalBounds.height);
-			const int objId = pMapObj->m_pObject->GetId();
+			//const int objId = pMapObj->m_pObject->GetId();
 			const float objRot = pMapObj->m_pObject->GetRot();
 
 			// Dynamic Objects
@@ -216,6 +223,10 @@ void CController::tick() noexcept
 							}
 						}
 					}
+				}
+				else if (pMapObj->m_pObject->GetPolygon())
+				{
+					canCreate = !Game()->Client()->isClipped(sf::Vector2f(globalBounds.left, globalBounds.top), MARGIN_CREATE_OBJECTS);
 				}
 				else
 					canCreate = !Game()->Client()->isClipped(globalBounds, MARGIN_CREATE_OBJECTS);
@@ -263,9 +274,25 @@ void CController::tick() noexcept
 							pMapObj->m_EntID = pEnt->getID();
 						}
 					}
-					else if (pMapObj->m_pObject->GetType().compare("smoke") == 0)
+					else if (pMapObj->m_pObject->GetType().compare("emitter") == 0)
 					{
-						// TODO
+						const Tmx::PropertySet &emitterProps = pMapObj->m_pObject->GetProperties();
+						const Tmx::Color color = emitterProps.GetColorProperty("color", Tmx::Color(255, 255, 255, 255));
+						const sf::Color colorParticle(color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+						const sf::Vector2f force(emitterProps.GetFloatProperty("force_x", 0.0f), emitterProps.GetFloatProperty("force_y", 0.0f));
+						const float lifetime = emitterProps.GetFloatProperty("lifetime", 0.0f);
+						const float delay = emitterProps.GetFloatProperty("delay", 0.0f);
+
+						CEntity *pEnt = new CSystemParticleEmitter(worldPosObj, force, colorParticle, sizeObj, lifetime, delay);
+						pMapObj->m_EntID = pEnt->getID();
+					}
+					else if (pMapObj->m_pObject->GetType().compare("zone") == 0)
+					{
+						const Tmx::PropertySet &zoneProps = pMapObj->m_pObject->GetProperties();
+						const float gravityScale = zoneProps.GetFloatProperty("gravity_scale", 1.0f);
+
+						CEntity *pEnt = new CZone(worldPosObj, sizeObj, objRot, gravityScale);
+						pMapObj->m_EntID = pEnt->getID();
 					}
 					else if (pMapObj->m_pObject->GetType().compare("water") == 0)
 					{
@@ -304,83 +331,58 @@ void CController::tick() noexcept
 							b2Type = b2_kinematicBody;
 
 						const bool isAwake = (b2Type == b2_dynamicBody);
-
 						const Tmx::Polygon *pPoly = pMapObj->m_pObject->GetPolygon();
+						const Tmx::Ellipse *pEllipse = pMapObj->m_pObject->GetEllipse();
+						const Tmx::Polyline *pPolyline = pMapObj->m_pObject->GetPolyline();
+						CEntity *pEnt = nullptr;
+						const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.85f, 0.1f, 0.0f, b2Type, CAT_BUILD);
+
 						if (pPoly)
 						{
 							std::vector<sf::Vector2f> points;
 							for (int i=0; i<pPoly->GetNumPoints(); i++)
 								points.push_back(sf::Vector2f(pPoly->GetPoint(i).x, pPoly->GetPoint(i).y));
 
-							const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, 0.0f, b2Type, CAT_BUILD);
-							CEntity *pEnt = new CB2Polygon(
+							pEnt = new CB2Polygon(
 									sf::Vector2f(globalBounds.left, globalBounds.top),
 									points,
 									objRot,
 									colorGeom,
 									bodyInfo);
+						}
+						else if (pEllipse)
+						{
+							pEnt = new CB2Circle(worldPosObj, pEllipse->GetRadiusX(), objRot, colorGeom, bodyInfo);
+						}
+						else if (pPolyline)
+						{
+							std::vector<sf::Vector2f> points;
+							for (int i=0; i<pPolyline->GetNumPoints(); ++i)
+								points.push_back(sf::Vector2f(pPolyline->GetPoint(i).x, pPolyline->GetPoint(i).y));
+
+							pEnt = new CB2Chain(worldPosObj, points, objRot, colorGeom, bodyInfo);
+						}
+						else
+						{
+							pEnt = new CB2Polygon(worldPosObj, sizeObj, objRot, colorGeom, bodyInfo);
+
+//							b2DistanceJointDef jointDef;
+//							jointDef.collideConnected = true;
+//							jointDef.frequencyHz = g_Config.m_CharacterHookFrequency;
+//							jointDef.dampingRatio = g_Config.m_CharacterHookDampingRatio;
+//							Context()->Map().ge
+//							jointDef.Initialize(getBody(), pEnt->getBody(), getBody()->GetWorldCenter(), CSystemBox2D::sfToB2(m_HookPos-m_HookDir*3.0f));
+//							m_pHookJoint = pGame->Client()->getSystem<CSystemBox2D>()->getWorld()->CreateJoint(&jointDef);
+//							b2DistanceJoint *pDistanceJoint = static_cast<b2DistanceJoint*>(m_pHookJoint);
+//							pDistanceJoint->SetLength(-g_Config.m_CharacterHookRetractVel);
+						}
+
+						if (pEnt)
+						{
 							pEnt->m_ContactFx = onContactFx;
 							pEnt->m_TextureId = textureId;
 							pEnt->getBody()->SetAwake(isAwake);
 							pMapObj->m_EntID = pEnt->getID();
-							ups::msgDebug("GameContext", "Polygon Created! [#%d]", objId);
-						}
-						else
-						{
-							const Tmx::Ellipse *pEllipse = pMapObj->m_pObject->GetEllipse();
-							if (pEllipse)
-							{
-								const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, 0.0f, b2Type, CAT_BUILD);
-								CEntity *pEnt = new CB2Circle(
-										worldPosObj,
-										pEllipse->GetRadiusX(),
-										objRot,
-										colorGeom,
-										bodyInfo);
-								pEnt->m_ContactFx = onContactFx;
-								pEnt->m_TextureId = textureId;
-								pEnt->getBody()->SetAwake(isAwake);
-								pMapObj->m_EntID = pEnt->getID();
-								ups::msgDebug("GameContext", "Ellipse Created: %s [#%d]", pMapObj->m_pObject->GetType().c_str(), objId);
-							}
-							else
-							{
-								const Tmx::Polyline *pPolyline = pMapObj->m_pObject->GetPolyline();
-								if (pPolyline)
-								{
-									std::vector<sf::Vector2f> points;
-									for (int i=0; i<pPolyline->GetNumPoints(); ++i)
-										points.push_back(sf::Vector2f(pPolyline->GetPoint(i).x, pPolyline->GetPoint(i).y));
-
-									const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.5f, 0.1f, 0.0f, b2Type, CAT_BUILD);
-									CEntity *pEnt = new CB2Chain(
-											worldPosObj,
-											points,
-											objRot,
-											colorGeom,
-											bodyInfo);
-									pEnt->m_ContactFx = onContactFx;
-									pEnt->m_TextureId = textureId;
-									pEnt->getBody()->SetAwake(isAwake);
-									pMapObj->m_EntID = pEnt->getID();
-									ups::msgDebug("GameContext", "PolyLine Created! [#%d]", objId);
-								}
-								else
-								{
-									const CB2BodyInfo bodyInfo = CB2BodyInfo(0.9f, 0.85f, 0.1f, 0.0f, b2Type, CAT_BUILD);
-									CEntity *pEnt = new CB2Polygon(
-											worldPosObj,
-											sizeObj,
-											objRot,
-											colorGeom,
-											bodyInfo);
-									pEnt->m_ContactFx = onContactFx;
-									pEnt->m_TextureId = textureId;
-									pEnt->getBody()->SetAwake(isAwake);
-									pMapObj->m_EntID = pEnt->getID();
-									ups::msgDebug("GameContext", "Rectangle Created! [#%d]", objId);
-								}
-							}
 						}
 					}
 				}
@@ -442,7 +444,10 @@ void CController::onReset() noexcept
 
 void CController::onCharacterDeath(CCharacter *pVictim, CPlayer *pKiller) noexcept
 {
-
+	if (pVictim->getType() == CEntity::CHARACTER)
+	{
+		Game()->Client()->getSystem<CSystemSound>()->play(CAssetManager::SOUND_KILL, CSystemBox2D::b2ToSf(pVictim->getBody()->GetPosition()), 45.0f, 20.0f);
+	}
 }
 
 void CController::createImpactSparkMetal(const sf::Vector2f &worldPos) noexcept
@@ -475,7 +480,7 @@ void CController::createBloodSpark(const sf::Vector2f &worldPos, float duration)
 	CSimpleParticle *pParticle = new CSimpleParticle(sf::BlendAlpha, RENDER_BACK);
 	pParticle->m_Pos = worldPos;
 	pParticle->m_SizeInit = sf::Vector2f(2.0f, 2.0f);
-	pParticle->m_SizeEnd = sf::Vector2f(4.0f, 4.0f);
+	pParticle->m_SizeEnd = sf::Vector2f(14.0f, 14.0f);
 	pParticle->m_ColorInit = sf::Color::Red;
 	pParticle->m_ColorEnd = sf::Color::Red;
 	pParticle->m_ColorEnd.a = 0;

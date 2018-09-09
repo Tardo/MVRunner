@@ -28,12 +28,12 @@ MACRO_CONFIG_FLOAT(CharacterMaxVelocity, character_max_velocity, 480.0f, 0.1f, 9
 MACRO_CONFIG_FLOAT(CharacterImpulse, character_impulse, 21.4f, 0.1f, 99.0f, CConfig::SAVE)
 MACRO_CONFIG_FLOAT(CharacterJumpImpulse, character_jump_impulse, 700.0f, 0.1f, 999.0f, CConfig::SAVE)
 
-MACRO_CONFIG_FLOAT(CharacterHookFlyVel, character_hook_fly_vel, 55.0f, 0.1f, 999.0f, CConfig::SAVE)
-MACRO_CONFIG_FLOAT(CharacterHookRetractVel, character_hook_retract_vel, 1.0f, 0.1f, 999.0f, CConfig::SAVE)
-MACRO_CONFIG_FLOAT(CharacterHookForce, character_hook_force, 10.0f, 0.1f, 999.0f, CConfig::SAVE)
-MACRO_CONFIG_FLOAT(CharacterHookFrequency, character_hook_frequency, 0.8f, 0.1f, 999.0f, CConfig::SAVE)
+MACRO_CONFIG_FLOAT(CharacterHookFlyVel, character_hook_fly_vel, 100.0f, 0.1f, 999.0f, CConfig::SAVE)
+MACRO_CONFIG_FLOAT(CharacterHookRetractVel, character_hook_retract_vel, 100.0f, 0.1f, 999.0f, CConfig::SAVE)
+MACRO_CONFIG_FLOAT(CharacterHookForce, character_hook_force, 90.0f, 0.1f, 999.0f, CConfig::SAVE)
+MACRO_CONFIG_FLOAT(CharacterHookFrequency, character_hook_frequency, 0.14f, 0.1f, 999.0f, CConfig::SAVE)
 MACRO_CONFIG_FLOAT(CharacterHookDampingRatio, character_hook_damping_ratio, 6.5f, 0.1f, 999.0f, CConfig::SAVE)
-MACRO_CONFIG_FLOAT(CharacterHookMaxLength, character_hook_max_length, 15.0f, 0.1f, 999.0f, CConfig::SAVE)
+MACRO_CONFIG_FLOAT(CharacterHookMaxLength, character_hook_max_length, 650.0f, 0.1f, 999.0f, CConfig::SAVE)
 
 MACRO_CONFIG_FLOAT(AimLineLength, aim_line_length, 120.0f, 0.0f, 999.0f, CConfig::SAVE)
 MACRO_CONFIG_COLOR(AimLineColor, aim_line_color, 3357088255, CConfig::SAVE)

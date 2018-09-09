@@ -19,7 +19,7 @@ public:
 	};
 
 
-	CCamera(CGameClient *pGameClient) noexcept;
+	CCamera(CGameClient *pGameClient, const sf::Vector2u &screenSize) noexcept;
 	virtual ~CCamera() noexcept;
 
 	void update(float deltaTime) noexcept;
@@ -50,6 +50,8 @@ public:
 
 private:
 	class CEntity *m_pTarget;
+
+	sf::Vector2u m_ScreenSize;
 
 	float m_VibrateCamTime;
 	float m_VibrateCamIntensity;

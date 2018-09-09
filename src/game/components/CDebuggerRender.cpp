@@ -142,3 +142,54 @@ void CDebuggerRender::renderQuadTree(sf::RenderTarget& target, sf::RenderStates 
 	renderQuadTree(target, states, pQuadTree->m_pSW);
 	renderQuadTree(target, states, pQuadTree->m_pSE);
 }
+
+void CDebuggerRender::renderDebugInfo(sf::RenderTarget& target, sf::RenderStates states) const noexcept
+{
+	if (!Client()->Controller() || !Client()->Controller()->Context())
+		return;
+
+	CSystemSound *pSystemSound = Client()->getSystem<CSystemSound>();
+	CSystemBox2D *pSystemBox2D = Client()->getSystem<CSystemBox2D>();
+
+	sf::FloatRect rectArea;
+	Client()->getViewportGlobalBounds(&rectArea, Client()->getHudView());
+
+	char aBuff[128];
+	sf::Text sfStr;
+	sfStr.setFont(Client()->Assets().getDefaultFont());
+	sfStr.setCharacterSize(32);
+
+	#ifdef __LP64__
+	snprintf(aBuff, sizeof(aBuff), "Entities: %lu", Client()->Controller()->Context()->getEntities().size());
+	#else
+	snprintf(aBuff, sizeof(aBuff), "Entities: %u", Client()->Controller()->Context()->getEntities().size());
+	#endif
+	sfStr.setString(aBuff);
+	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 30.0f);
+	sfStr.setFillColor(sf::Color::Red);
+	target.draw(sfStr, states);
+
+	snprintf(aBuff, sizeof(aBuff), "Components: %d", Client()->getNumComponents());
+	sfStr.setString(aBuff);
+	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 60.0f);
+	sfStr.setFillColor(sf::Color::Red);
+	target.draw(sfStr, states);
+
+	snprintf(aBuff, sizeof(aBuff), "Systems: %d", Client()->getNumSystems());
+	sfStr.setString(aBuff);
+	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 90.0f);
+	sfStr.setFillColor(sf::Color::Red);
+	target.draw(sfStr, states);
+
+	snprintf(aBuff, sizeof(aBuff), "Sounds: %d", pSystemSound->getNumPlayingSound());
+	sfStr.setString(aBuff);
+	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 120.0f);
+	sfStr.setFillColor(sf::Color::Red);
+	target.draw(sfStr, states);
+
+	snprintf(aBuff, sizeof(aBuff), "Liquidfun Particles: %d", pSystemBox2D->getParticleSystem(CSystemBox2D::PARTICLE_SYSTEM_WATER)->GetParticleCount());
+	sfStr.setString(aBuff);
+	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 150.0f);
+	sfStr.setFillColor(sf::Color::Red);
+	target.draw(sfStr, states);
+}

@@ -13,25 +13,27 @@
 #include <engine/CSystemBox2D.hpp>
 #include <game/components/CMapRender.hpp>
 #include <game/components/CMenus.hpp>
-#include <game/components/CUI.hpp>
 #include <game/components/CPlayerRender.hpp>
 #include <game/components/CItemRender.hpp>
 #include <game/components/CControls.hpp>
 #include <game/components/CCamera.hpp>
 #include <game/components/CDebuggerRender.hpp>
 #include <game/components/CLightRender.hpp>
-#include <game/components/CFluidRender.hpp>
 #include <game/components/CParticleSystemRender.hpp>
+#include <game/components/CSimpleParticleRender.hpp>
+#include <game/components/CHUD.hpp>
 #include <game/CController.hpp>
 #include <game/CEntity.hpp>
+#include <game/CUI.hpp>
 #include <Zpg/Zpg.hpp>
 #include <cstdlib>
 #include <list>
 #include <deque>
-#include "components/CSimpleParticleRender.hpp"
 
 #define SCREEN_MARGIN_DRAW			128.0f
 #define SCREEN_MARGIN_DESTRUCTION	MARGIN_CREATE_OBJECTS + 250.0f
+#define BROADCAST_MAX_LENGTH	64
+#define HELP_TEXT_MAX_LENGTH	128
 
 enum
 {
@@ -88,19 +90,32 @@ public:
 
 	int getRenderMode() const noexcept { return m_RenderMode; }
 	void setRenderMode(int mode) noexcept;
-	sf::RenderTexture* getTexturePhase() { return &m_RenderPhaseTexture; }
-	sf::Sprite* getRenderPhase() { return &m_RenderPhase; }
 
 	bool canAdd100Hz() const noexcept { return m_Add100Hz; }
 	bool canAdd50Hz() const noexcept { return m_Add50Hz; }
+
+	void showBroadcastMessage(const char *pMsg, float duration) noexcept;
+	void showHelpMessage(const char *pMsg) noexcept;
+
+	void runPlayerTime(bool state) noexcept;
+	bool isPlayerTimerRun() const noexcept { return m_TimerPlayerRun; }
 
 	bool m_Debug;
 	bool m_Paused;
 	unsigned int m_FPS;
 	unsigned int m_MinFPS;
 
+	sf::Int64 m_TimerBroadcast;
+	float m_BroadcastDuration;
+	char m_aBroadcastMsg[BROADCAST_MAX_LENGTH];
+	char m_aHelpMsg[HELP_TEXT_MAX_LENGTH];
+
+	sf::Int64 m_TimerPlayerStart;
+	sf::Int64 m_TimerPlayerEnd;
+
 protected:
 	void renderComponentsPhase(int mode);
+	void renderCursor() noexcept;
 	void doUpdate();
 	void doRender();
 
@@ -120,10 +135,8 @@ private:
 	CMapRender m_MapRenderBack;
 	CMapRender m_MapRenderFront;
 	CMenus m_Menus;
-	CUI m_UI;
 	CPlayerRender m_PlayerRender;
 	CItemRender m_ItemRender;
-	CFluidRender m_FluidRender;
 	CSimpleParticleRender m_SimpleParticleRenderBack;
 	CSimpleParticleRender m_SimpleParticleRenderFront;
 	CSimpleParticleRender m_SimpleParticleRenderForeground;
@@ -131,16 +144,21 @@ private:
 	CControls m_Controls;
 	CDebuggerRender m_DebuggerRender;
 	CLightRender m_LightRender;
+	CHUD m_HUD;
+
+	CUI m_UI;
 
 	CSystemBox2D m_SystemBox2D;
 	CSystemSound m_SystemSound;
 
 	sf::RenderTexture m_RenderPhaseTexture;
 	sf::RenderTexture m_RenderPhaseTextureFinal;
-	sf::Sprite m_RenderPhase;
+	sf::RectangleShape m_RenderPhase;
 	int m_RenderMode;
 
 	sf::Int64 m_TimerGame;
+
+	bool m_TimerPlayerRun;
 
 	float m_DeltaTime;
 	sf::Clock m_Timer100Hz;

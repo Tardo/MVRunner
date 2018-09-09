@@ -42,9 +42,6 @@ public:
 	void setWeather(int weather) { m_Weather = weather; }
 	int getWeather() const { return m_Weather; }
 
-	sf::Color getColorClear() const noexcept { return m_ColorClear; }
-	sf::Color getColorShadow() const noexcept { return m_ColorShadow; }
-
 	CPlayer* getPlayer() noexcept { return m_pPlayer; }
 
 	sf::Int64 getTimerStorm() const { return m_TimerStorm; }

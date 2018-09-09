@@ -22,10 +22,6 @@ public:
 
 	void processEvent(const sf::Event &ev) noexcept;
 
-	const sf::Vector2i& getMousePos() const { return m_MousePosition; }
-	bool isMouseLeftClicked() const { return m_MouseLeftClicked; }
-	bool isMouseRightClicked() const { return m_MouseRightClicked; }
-
 	std::map<std::string, int>& getCmdBinds() { return m_mCmdBinds; }
 
 	bool isKeyPressed(const char *pCmd);
@@ -45,9 +41,6 @@ public:
 	}
 
 private:
-	bool m_MouseLeftClicked;
-	bool m_MouseRightClicked;
-	sf::Vector2i m_MousePosition;
 	std::map<std::string, int> m_mCmdBinds;
 	char m_aListenKeyBindCmd[MAX_COMMAND_LENGTH];
 };
