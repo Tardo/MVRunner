@@ -44,7 +44,7 @@ make
   ```
   make create_zpg
   ```
--  ### Create Share Package
+-  ### Create Distribution Packages (Optional)
   ```
   cpack --debug --verbose -C CPackConfig.cmake
   ```
