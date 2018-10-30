@@ -168,7 +168,6 @@ bool CController::isStaticObject(const char *pType) const noexcept
 void CController::tick() noexcept
 {
     // Update Entities
-	Context()->clearTrash();
 	Context()->tick();
 
 	// Camera Pos
@@ -198,7 +197,8 @@ void CController::tick() noexcept
 				pMapObj->m_pObject->GetX()+pMapObj->m_Offset.x, pMapObj->m_pObject->GetY()+pMapObj->m_Offset.y,
 				pMapObj->m_pObject->GetWidth(), pMapObj->m_pObject->GetHeight()
 			);
-			const sf::Vector2f worldPosObj(globalBounds.left+pMapObj->m_pObject->GetWidth()/2.0f, globalBounds.top+pMapObj->m_pObject->GetHeight()/2.0f);
+			const sf::Vector2f &worldPosObj = pMapObj->getPosition();
+			//const sf::Vector2f worldPosObj(globalBounds.left+pMapObj->m_pObject->GetWidth()/2.0f, globalBounds.top+pMapObj->m_pObject->GetHeight()/2.0f);
 			const sf::Vector2f sizeObj(globalBounds.width, globalBounds.height);
 			//const int objId = pMapObj->m_pObject->GetId();
 			const float objRot = pMapObj->m_pObject->GetRot();
@@ -330,7 +330,7 @@ void CController::tick() noexcept
 						else if (pMapObj->m_pObject->GetType().compare("kinematic") == 0)
 							b2Type = b2_kinematicBody;
 
-						const bool isAwake = (b2Type == b2_dynamicBody);
+						const bool isAwake = false; (b2Type == b2_dynamicBody);
 						const Tmx::Polygon *pPoly = pMapObj->m_pObject->GetPolygon();
 						const Tmx::Ellipse *pEllipse = pMapObj->m_pObject->GetEllipse();
 						const Tmx::Polyline *pPolyline = pMapObj->m_pObject->GetPolyline();
@@ -364,7 +364,18 @@ void CController::tick() noexcept
 						}
 						else
 						{
-							pEnt = new CB2Polygon(worldPosObj, sizeObj, objRot, colorGeom, bodyInfo);
+							std::vector<sf::Vector2f> points;
+							points.push_back(sf::Vector2f(0.0f, 0.0f));
+							points.push_back(sf::Vector2f(0.0f, globalBounds.height));
+							points.push_back(sf::Vector2f(globalBounds.width, globalBounds.height));
+							points.push_back(sf::Vector2f(globalBounds.width, 0.0f));
+
+							pEnt = new CB2Polygon(
+									sf::Vector2f(globalBounds.left, globalBounds.top),
+									points,
+									objRot,
+									colorGeom,
+									bodyInfo);
 
 //							b2DistanceJointDef jointDef;
 //							jointDef.collideConnected = true;

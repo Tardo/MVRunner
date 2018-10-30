@@ -25,9 +25,10 @@ CSystemSound::~CSystemSound() noexcept
 	#endif
 }
 
-bool CSystemSound::init() noexcept
+bool CSystemSound::init(CAssetManager *pAssetManager) noexcept
 {
-	return true;
+	m_pAssetManager = pAssetManager;
+	return m_pAssetManager != nullptr;
 }
 
 void CSystemSound::reset() noexcept

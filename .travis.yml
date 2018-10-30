@@ -27,13 +27,13 @@ addons:
 before_install:
 - | 
     # The SFML available in repositories is older than v2.5.0...
-    if [ ! -d ~/SFML-2.5.0 ]; then
-      wget -O ~/sfmlv2.5.0.tar.gz https://github.com/SFML/SFML/archive/2.5.0.tar.gz
-      tar -zxvf ~/sfmlv2.5.0.tar.gz -C ~/
+    if [ ! -d ~/SFML-2.5.1 ]; then
+      wget -O ~/sfmlv2.5.1.tar.gz https://github.com/SFML/SFML/archive/2.5.1.tar.gz
+      tar -zxvf ~/sfmlv2.5.1.tar.gz -C ~/
     fi
 - wget -O ~/zpgv1.0.0.zip https://gitlab.com/Tardo/Zpg/-/archive/master/Zpg-master.zip && unzip ~/zpgv1.0.0.zip -d ~/
 install:
-- cd ~/SFML-2.5.0; cmake -DBUILD_SHARED_LIBS:BOOL=FALSE -DCMAKE_INSTALL_PREFIX:PATH=/usr . && make && sudo make install
+- cd ~/SFML-2.5.1; cmake -DBUILD_SHARED_LIBS:BOOL=FALSE -DCMAKE_INSTALL_PREFIX:PATH=/usr . && make && sudo make install
 - cd ~/Zpg-master; cmake -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr . && make Zpg && make zpg_packer && sudo make install
 script:
 - |
@@ -45,3 +45,9 @@ script:
     cd ~/build/Tardo/MVRunner/
     mkdir build-debug/ && cd build-debug/
     cmake -DCMAKE_BUILD_TYPE:STRING=Debug .. && make
+addons:
+  artifacts:
+    paths:
+    - ~/build/Tardo/MVRunner/build-release/MVRunner
+    - ~/build/Tardo/MVRunner/build-debug/MVRunner_d
+    - ~/build/Tardo/MVRunner/build-release/*.tar.gz

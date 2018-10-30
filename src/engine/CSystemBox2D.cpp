@@ -30,7 +30,7 @@ CSystemBox2D::~CSystemBox2D() noexcept
 	#endif
 }
 
-bool CSystemBox2D::init() noexcept
+bool CSystemBox2D::init(CAssetManager *pAssetManager) noexcept
 {
 	m_World.SetContactListener(&m_ContactListener);
 	resetParticleSystems();
@@ -91,7 +91,7 @@ b2Body* CSystemBox2D::createBoxBody(const sf::Vector2f &worldPos, const sf::Vect
 	bodyDef.position.Set(worldPos.x*MPP, worldPos.y*MPP);
 	pBody = m_World.CreateBody(&bodyDef);
 
-	polyShape.SetAsBox(size.x/2*MPP, size.y/2*MPP);
+	polyShape.SetAsBox(size.x/2.0f*MPP, size.y/2.0f*MPP);
 
 	fixtureDef.shape = &polyShape;
 	fixtureDef.friction = bodyInfo.m_Friction;
@@ -109,7 +109,7 @@ b2Body* CSystemBox2D::createBoxBody(const sf::Vector2f &worldPos, const sf::Vect
 		MassData.mass = bodyInfo.m_Mass;
 		pBody->SetMassData(&MassData);
 	}
-	pBody->SetTransform(pBody->GetPosition(), upm::degToRad(rot));
+	pBody->SetTransform(pBody->GetWorldCenter(), upm::degToRad(rot));
 
 	return pBody;
 }
@@ -147,7 +147,7 @@ b2Body* CSystemBox2D::createPolygonBody(const sf::Vector2f &worldPos, const std:
 		MassData.mass = bodyInfo.m_Mass;
 		pBody->SetMassData(&MassData);
 	}
-	pBody->SetTransform(pBody->GetPosition(), upm::degToRad(rot));
+	pBody->SetTransform(pBody->GetWorldCenter(), upm::degToRad(rot));
 
 	delete [] pB2Points;
 
@@ -187,7 +187,7 @@ b2Body* CSystemBox2D::createPolyLineBody(const sf::Vector2f &worldPos, const std
 		MassData.mass = bodyInfo.m_Mass;
 		pBody->SetMassData(&MassData);
 	}
-	pBody->SetTransform(pBody->GetPosition(), upm::degToRad(rot));
+	pBody->SetTransform(pBody->GetWorldCenter(), upm::degToRad(rot));
 
 	delete [] pB2Points;
 
@@ -224,7 +224,7 @@ b2Body* CSystemBox2D::createCircleBody(const sf::Vector2f &worldPos, float radiu
 		MassData.mass = bodyInfo.m_Mass;
 		pBody->SetMassData(&MassData);
 	}
-	pBody->SetTransform(pBody->GetPosition(), upm::degToRad(rot));
+	pBody->SetTransform(pBody->GetWorldCenter(), upm::degToRad(rot));
 
 	return pBody;
 }

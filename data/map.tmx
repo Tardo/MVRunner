@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-up" width="176" height="200" tilewidth="64" tileheight="64" infinite="0" backgroundcolor="#00002b" nextobjectid="344">
+<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-up" width="300" height="200" tilewidth="64" tileheight="64" infinite="0" backgroundcolor="#00002b" nextobjectid="397">
  <properties>
   <property name="gravity_x" type="float" value="0"/>
   <property name="gravity_y" type="float" value="9.8"/>
-  <property name="shadow_background_color" type="color" value="#ff151515"/>
-  <property name="shadow_foreground_color" type="color" value="#ff000000"/>
+  <property name="shadow_background_color" type="color" value="#ff464646"/>
+  <property name="shadow_foreground_color" type="color" value="#ffaaaaaa"/>
   <property name="weather" type="int" value="2"/>
  </properties>
  <tileset firstgid="1" name="mario" tilewidth="64" tileheight="64" tilecount="256" columns="16">
@@ -256,29 +256,41 @@
  <tileset firstgid="513" name="race" tilewidth="64" tileheight="64" tilecount="256" columns="16">
   <image source="mapres/race.png" width="1024" height="1024"/>
  </tileset>
- <layer name="Background" width="176" height="200">
+ <tileset firstgid="769" name="mario_oldscool_n" tilewidth="64" tileheight="64" tilecount="256" columns="16">
+  <image source="mapres/mario_oldscool_n.png" width="1024" height="1024"/>
+ </tileset>
+ <layer name="Background" width="300" height="200">
+  <properties>
+   <property name="normalmap_id" type="int" value="3"/>
+  </properties>
   <data encoding="base64" compression="zlib">
-   eJzt2rFNw0AYhuHLMFSpqQIlezAKNTAEozAKyiQYiUgWciLnzs7vn3se6SuQg410L5AipQAAAAAAAAAAAAAAAAAAAAAAAAAAAABc7/HCYOv0yxruZlzbjVZ7P/2yhvuZ1+b2e+5++mUpr8Pehr0Pe5p57dTv+PqUv/c70S/ANuwnBlk8TAyy0C+Z6ZfM9Etm+iUz/ZKZfslMv2SmXzLTL0ua6ulnh1K+9qV8njZ8/Xzuta2DWueaGpr9GL9ur182SL9kdm2/tc+49DyodeH978v4M46HUt+afllL7f/6Jb8Pat2636lnQy39kpl+yUy/ZHarfq9tG+bw95fM9Etm+iUz71UBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAGsff7XbRP0kex3++TPRbJ7oxy/s7txXRZ2b6bRV9bqbfVtFnZ7SKPr/eR7voM+x5tIs+w55Hu+gz7Hm0iz7Dnke76DPsebSLPsOexzKiz1EHtIjuT7+0iO5Pv7SI7k+/tIjuT78AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJDHN5BRK90=
+   eJzt3EFu01AYhVFnC+yBUcaMCkP2gVgJY2ARLKVLqboSjESkKErS94zj+358jnQHkVO7k/epzSDTBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVPB1pQE8ml4BVegVUIVeAVXoFVCFXgFV6BVQhV4BaWt1aO0BXEp3Sa+AVuku6RXQKt0lvWJEn+6MnHSX9IoR6dWY0l3SK3q8b7h2ONvS++nVmNJd0it6fGi81tqrW/fTqzGlu6RXvOX7vB/zfs773Hjt1Kvz69dc3u9Er8aU7pJeAa3SXdIrKjheGdtLd0mvqODjlbG9dJf0igr0agzpLukVFejVGNJd0isq0KsxpLukgVSgV2NIN0SvqECvxpBuiF5RgV6NId0QvaICvQKq0CugCr0ClrrWjz97mqaX4zQ9nza//nLrvf86gBa3GjI36tf5+456BYTpFVBFb6+WPuPe8wBa3Pn86tv5d748TcvbolfAGpb+77bmzwG02LpX154N0EKvgCr0CqhCr4AqtupVb8sALvn7CqhCr4Aq9AqowmdNAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFT1+neHQ/o3gTG9/uerRK/gbemmWN3GQkL6jJpeQY/0OTW9gh7ps2pAj/R53fuAPukzu+cBfdJnds8D+qTP7J4H9Emf2T0P6JM+s3se0Cd9Zvc8oF/63Dr3QKt0b/QKaJXujV4BrdK90SugVbo3egUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD79O5BA1jTo1qlW8DatuiVZgFr0CugCr0CKtEroAq9AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgH37DZvNlVo=
   </data>
  </layer>
- <layer name="GameModifiers" width="176" height="200">
+ <layer name="GameModifiers" width="300" height="200">
   <data encoding="base64" compression="zlib">
-   eJztzkENAAAIBKCzs/1nCudDSEACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABs6LoeAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPDFAJyLAHY=
+   eJzt1DERADAMxLAETBiW/5VCO/0QCYEnVwEAAAAAAAAAAAAAAAAAAAAAAADwYzpdAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJB3Ol0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB7TKcLAN74FQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOx2AScGAOg=
   </data>
  </layer>
- <layer name="Game" width="176" height="200">
+ <layer name="Game" width="300" height="200">
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
- <layer name="Foreground" width="176" height="200">
+ <layer name="Foreground" width="300" height="200">
+  <properties>
+   <property name="normalmap_id" type="int" value="3"/>
+  </properties>
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
- <layer name="Animated" width="176" height="200">
+ <layer name="Animated" width="300" height="200">
+  <properties>
+   <property name="normalmap_id" type="int" value="3"/>
+  </properties>
   <data encoding="base64" compression="zlib">
-   eJzt2UEKgCAQBdA6oEew+x+jFgVSSZSRie/BMNroyr9rGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA+Mo4HgsAAIB6wlJx7am4m+3P5OZX9+BNU1K572dncvOre6kt3/DU0/wC0Bf/UwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoFZaKaw8n+ztr/md7m1Y7fZsaL/pWO3/yS4na+ZNfStTOn/wCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEA7ZiLnbzc=
+   eJzt2rENgCAQBVAdkBFw/zG0wIQgRLQhynvJ5cCDkl+5LAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlNb1WgAAAAAAQF04Kqaei8WsPNOa390DeGvLqvW9dqY1v7uXO/MMoMfbvAIA4B/8vwoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABzC0fF1ENl/2QNjHW+xa92YB7bxwuYx+i8kVdAr9F5I6+AXqPzRl4BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMB/7aIubzc=
   </data>
  </layer>
  <objectgroup name="Zones">
@@ -287,42 +299,13 @@
     <property name="gravity_scale" type="float" value="-1"/>
    </properties>
   </object>
+  <object id="347" type="zone" x="10053.3" y="921.152" width="4005.21" height="2140.24">
+   <properties>
+    <property name="gravity_scale" type="float" value="0"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup name="Emitters">
-  <object id="82" type="emitter" x="9594.5" y="10057.5" width="45.5" height="39.5">
-   <properties>
-    <property name="color" type="color" value="#ffff0000"/>
-    <property name="delay" type="float" value="1.2"/>
-    <property name="force_y" type="float" value="-600"/>
-    <property name="lifetime" type="float" value="3"/>
-   </properties>
-  </object>
-  <object id="84" type="emitter" x="9596.25" y="9978.25" width="45.5" height="39.5">
-   <properties>
-    <property name="color" type="color" value="#ff0000ff"/>
-    <property name="delay" type="float" value="1.2"/>
-    <property name="force_y" type="float" value="-600"/>
-    <property name="lifetime" type="float" value="3"/>
-   </properties>
-  </object>
-  <object id="85" type="emitter" x="9549.58" y="10017.6" width="45.5" height="39.5">
-   <properties>
-    <property name="color" type="color" value="#ffffff00"/>
-    <property name="delay" type="float" value="1.2"/>
-    <property name="force_x" type="float" value="600"/>
-    <property name="force_y" type="float" value="0"/>
-    <property name="lifetime" type="float" value="3"/>
-   </properties>
-  </object>
-  <object id="86" type="emitter" x="9640.92" y="10018.3" width="45.5" height="39.5">
-   <properties>
-    <property name="color" type="color" value="#ff00ff00"/>
-    <property name="delay" type="float" value="1.2"/>
-    <property name="force_x" type="float" value="-600"/>
-    <property name="force_y" type="float" value="0"/>
-    <property name="lifetime" type="float" value="3"/>
-   </properties>
-  </object>
   <object id="87" type="emitter" x="7937.92" y="7713.58" width="19.5" height="23.5">
    <properties>
     <property name="color" type="color" value="#ff0000ff"/>
@@ -1312,6 +1295,190 @@
   <object id="343" type="dynamic" x="3394" y="2276.33" width="83" height="83.3333">
    <properties>
     <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="344" type="static" x="8958" y="10177">
+   <polyline points="0,0 -446,1"/>
+  </object>
+  <object id="345" type="static" x="11341" y="1026">
+   <polyline points="0,0 -3,248"/>
+  </object>
+  <object id="346" type="static" x="11449" y="1027">
+   <polyline points="0,0 0,249"/>
+  </object>
+  <object id="348" type="dynamic" x="11342" y="1344.17" width="100" height="100">
+   <properties>
+    <property name="color" type="color" value="#ffffaa00"/>
+   </properties>
+   <ellipse/>
+  </object>
+  <object id="349" type="dynamic" x="10894" y="1780.3" width="17.0447" height="136.066">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="350" type="dynamic" x="11011.3" y="1763.69" width="17.0447" height="80.676" rotation="41.9314">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="351" type="dynamic" x="10913.7" y="1780.05" width="17.0447" height="58.3363" rotation="-45.9114">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="352" type="dynamic" x="11022.9" y="1780.33" width="17.0447" height="136.066">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="353" type="dynamic" x="11056.2" y="1780.95" width="17.0447" height="136.066" rotation="-22.2488">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="354" type="dynamic" x="11178.2" y="1776.17" width="17.0447" height="136.066" rotation="23.3424">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="355" type="dynamic" x="11261.6" y="1780.84" width="17.0447" height="136.066">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="356" type="dynamic" x="11283" y="1798.12" width="17.0447" height="69.6103" rotation="269.432">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="357" type="dynamic" x="11332.6" y="1803.92" width="17.0447" height="31.7414" rotation="359.596">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="358" type="dynamic" x="11283.6" y="1858.86" width="17.0447" height="69.6102" rotation="269.432">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="359" type="dynamic" x="11299.2" y="1874.45" width="17.0447" height="58.6768" rotation="317.562">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="360" type="dynamic" x="11372.2" y="1779.57" width="17.0447" height="113.399">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="361" type="dynamic" x="11373" y="1899.62" width="83.2116" height="15.484">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="362" type="dynamic" x="11439.3" y="1778.93" width="17.0447" height="113.399">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="363" type="dynamic" x="11478.7" y="1781.34" width="17.0447" height="136.066">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="364" type="dynamic" x="11498.7" y="1785" width="17.0447" height="136.066" rotation="-20.5533">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="365" type="dynamic" x="11564.3" y="1777.34" width="17.0447" height="136.066">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="366" type="dynamic" x="11716.7" y="1781.66" width="17.0447" height="136.066">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="367" type="dynamic" x="11740.8" y="1798.57" width="17.0447" height="46.3863" rotation="269.432">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="368" type="dynamic" x="11739.6" y="1918.04" width="17.0447" height="46.3863" rotation="269.432">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="369" type="dynamic" x="11739.3" y="1864.05" width="17.0447" height="38.7551" rotation="269.432">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="376" type="dynamic" x="11798.8" y="1781.21" width="17.0447" height="136.066">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="377" type="dynamic" x="11819.3" y="1797.87" width="17.0447" height="69.6102" rotation="269.432">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="378" type="dynamic" x="11871.4" y="1801.42" width="17.0447" height="37.8927" rotation="359.596">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="379" type="dynamic" x="11820.5" y="1862.14" width="17.0447" height="69.6102" rotation="269.432">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="380" type="dynamic" x="11839.8" y="1876.31" width="17.0447" height="58.6768" rotation="317.562">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="385" type="dynamic" x="11599.1" y="1780.69" width="17.0447" height="136.066">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="386" type="dynamic" x="11618.2" y="1784.9" width="17.0447" height="136.066" rotation="-20.5533">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="387" type="dynamic" x="11684.8" y="1777.25" width="17.0447" height="136.066">
+   <properties>
+    <property name="color" type="color" value="#ff55ff00"/>
+   </properties>
+  </object>
+  <object id="390" type="dynamic" x="11067.3" y="1505.26" width="105.333" height="110.667" rotation="29.4239">
+   <properties>
+    <property name="color" type="color" value="#ffffffff"/>
+    <property name="texture_id" type="int" value="16"/>
+   </properties>
+  </object>
+  <object id="392" type="dynamic" x="11503.5" y="1453.61" width="56.8937" height="61.5473" rotation="3.51865">
+   <properties>
+    <property name="color" type="color" value="#ffffffff"/>
+    <property name="texture_id" type="int" value="16"/>
+   </properties>
+  </object>
+  <object id="393" type="dynamic" x="11690.9" y="1574.01" width="105.333" height="110.667" rotation="1.53523">
+   <properties>
+    <property name="color" type="color" value="#ffffffff"/>
+    <property name="texture_id" type="int" value="16"/>
+   </properties>
+  </object>
+  <object id="395" type="dynamic" x="11603.7" y="2029.6" width="429.855" height="394.13" rotation="1.53523">
+   <properties>
+    <property name="color" type="color" value="#ffffffff"/>
+    <property name="texture_id" type="int" value="16"/>
    </properties>
   </object>
  </objectgroup>

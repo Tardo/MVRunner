@@ -37,7 +37,6 @@ public:
 	std::vector<CEntity*>& getEntities() noexcept { return m_vpEntities; }
 
 	void tick() noexcept;
-	void clearTrash() noexcept;
 
 	void setWeather(int weather) { m_Weather = weather; }
 	int getWeather() const { return m_Weather; }
@@ -58,8 +57,7 @@ private:
 	int m_Weather;
 	sf::Int64 m_TimerStorm;
 
-	sf::Color m_ColorClear;
-	sf::Color m_ColorShadow;
+	void clearTrash() noexcept;
 };
 
 #endif

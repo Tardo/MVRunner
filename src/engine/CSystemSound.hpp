@@ -16,7 +16,7 @@ public:
 	CSystemSound() noexcept;
 	virtual ~CSystemSound() noexcept final;
 
-	virtual bool init() noexcept final;
+	virtual bool init(CAssetManager *pAssetManager) noexcept final;
 	virtual void reset() noexcept final;
 	virtual void update(float deltaTime) noexcept final;
 
@@ -34,7 +34,6 @@ public:
 	void setSfxActive(bool status) noexcept;
 	void setMusicActive(bool status) noexcept;
 
-	void setAssetManager(CAssetManager *pAssetManager) noexcept { m_pAssetManager = pAssetManager; }
 	void setListenerPosition(const sf::Vector2f &listenerPos) noexcept;
 
 	sf::Sound* createSound(int soundId, const sf::Vector2f worldPos, float volume = 100.0f, bool loop = false, float minDist = SOUND_MIN_DISTANCE, bool play = false) noexcept;

@@ -33,7 +33,7 @@ void CMapRender::draw(sf::RenderTarget& target, sf::RenderStates states) const n
 
 	const sf::IntRect mapBounds = Map.getMapBounds(Client()->Camera());
 
-	if (Client()->getRenderMode() == RENDER_MODE_NORMAL)
+	if (Client()->getRenderMode() == RENDER_MODE_NORMAL || Client()->getRenderMode() == RENDER_MODE_NORMALMAP)
 	{
 		if (m_Render == RENDER_BACK)
 		{
@@ -189,7 +189,16 @@ void CMapRender::renderTilemap(sf::RenderTarget& target, sf::RenderStates states
 			vQuad[2].color = colorQuad;
 			vQuad[3].color = colorQuad;
 
-			const sf::Texture *pTexture = Map.m_vpTextures[curTile.tilesetId];
+			const sf::Texture *pTexture = nullptr;
+			if (Client()->getRenderMode() == RENDER_MODE_NORMALMAP)
+			{
+
+				const unsigned int normalmap_id = pTileLayer->GetProperties().GetIntProperty("normalmap_id", -1);
+				if (normalmap_id >= 0)
+					pTexture = Map.m_vpTextures[normalmap_id];
+			}
+			else
+				pTexture = Map.m_vpTextures[curTile.tilesetId];
 			if (pTexture)
 			{
 				const int dd = pTexture->getSize().x/tileSize.x;

@@ -202,7 +202,7 @@ void CMenus::renderMenuMain(sf::RenderTarget& target, sf::RenderStates states) c
 	static int buttonIdA;
 	if (Client()->UI().doButton(target, states, &buttonIdA, _("START GAME"), sf::FloatRect(rectArea.width-270.0f, rectArea.height-220.0f, 250.0f, 35.0f), CUI::TEXT_SIZE_NORMAL, CUI::ALIGN_CENTER))
 	{
-		Client()->initializeGameMode("main");
+		Client()->initializeGameMode(GAMETYPE_MAIN);
 		Client()->getSystem<CSystemSound>()->play(CAssetManager::SOUND_MOUSE_CLICK);
 	}
 

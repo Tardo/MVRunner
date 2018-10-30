@@ -30,7 +30,7 @@ void CZone::tick() noexcept
 	bounds.lowerBound.Set(getBody()->GetPosition().x - pShape->GetVertex(2).x, getBody()->GetPosition().y - pShape->GetVertex(2).y);
 	bounds.upperBound.Set(getBody()->GetPosition().x + pShape->GetVertex(2).x, getBody()->GetPosition().y + pShape->GetVertex(2).y);
 	// FIXME: idk why need divide by 10
-	const b2Vec2 force(pSystemBox2D->getWorld()->GetGravity() * m_GravityScale/10.0f);
+	b2Vec2 force(pSystemBox2D->getWorld()->GetGravity() * m_GravityScale/10.0f);
 	MultiQueryParticleSystemCallBack callbackParticleSystem;
 	for (b2ParticleSystem *pParticleSystem = pSystemBox2D->getWorld()->GetParticleSystemList(); pParticleSystem; pParticleSystem = pParticleSystem->GetNext())
 	{

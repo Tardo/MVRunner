@@ -86,7 +86,7 @@ void CControls::processEvent(const sf::Event &ev) noexcept
 		}
 		else if (ev.key.code == sf::Keyboard::R)
 		{
-			Client()->initializeGameMode("main");
+			Client()->initializeGameMode(GAMETYPE_MAIN);
 		}
 	}
 	else if (ev.type == sf::Event::MouseButtonPressed)

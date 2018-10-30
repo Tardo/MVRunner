@@ -65,11 +65,11 @@ void CUI::processEvent(const sf::Event &event) noexcept
 
 	if (m_HotControlType == CONTROL_EDIT)
 	{
-		const int textLength = strlen(m_pEditBuffer);
+		const int textLength = ups::strLen(m_pEditBuffer);
 		if (event.type == sf::Event::TextEntered && m_pEditBuffer && event.text.unicode < 128 && event.text.unicode != 8 && textLength < m_EditMaxLength)
 		{
 			 const char ascii = static_cast<char>(event.text.unicode);
-			 strncat(m_pEditBuffer, &ascii, 1);
+			 ups::strNCat(m_pEditBuffer, &ascii, 1);
 		}
 		else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::BackSpace && m_pEditBuffer && m_pEditBuffer[0] != 0)
 		{

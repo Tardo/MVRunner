@@ -7,9 +7,7 @@
 #include <SFML/System/Mutex.hpp>
 #include <Zpg/Zpg.hpp>
 
-#define MAX_PATH_LENGTH	128
-
-// TODO: Change THIS!!!!!
+#define MAX_PATH_LENGTH			128
 #define LOAD_TEXTURE(_a,_b) 	strncpy(m_aCurrentLoadAssetPath, _b, MAX_PATH_LENGTH); pFileData = m_pStorage->getFileData(_b, &fileSize); if (!m_vTextures[_a].loadFromMemory(pFileData, fileSize)) { m_LoadErrors = true; return; } else { ++m_Loaded; }
 #define LOAD_SOUND(_a,_b) 		strncpy(m_aCurrentLoadAssetPath, _b, MAX_PATH_LENGTH); pFileData = m_pStorage->getFileData(_b, &fileSize); if (!m_vSounds[_a].loadFromMemory(pFileData, fileSize)) { m_LoadErrors = true; return; } else { ++m_Loaded; }
 #define LOAD_SHADER(_a,_b,_c) 	strncpy(m_aCurrentLoadAssetPath, _b, MAX_PATH_LENGTH); pFileData = m_pStorage->getFileData(_b, &fileSize); if (!m_vShaders[_a].loadFromMemory(Zpg::toString(pFileData, fileSize), _c)) { m_LoadErrors = true; return; } else { ++m_Loaded;  }
@@ -63,6 +61,7 @@ public:
 		SHADER_FLAG,
 		SHADER_BLOOM,
 		SHADER_METABALL,
+		SHADER_NORMALMAP,
 		MAX_SHADERS,
 
 		NUM_TOTAL = MAX_TEXTURES + MAX_SOUNDS + MAX_SHADERS,

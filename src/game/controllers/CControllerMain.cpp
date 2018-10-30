@@ -167,8 +167,8 @@ void CControllerMain::tick() noexcept
 					std::map<int, CTeleport>::iterator it = m_vTeleports.find(teleId);
 					if (it != m_vTeleports.cend())
 					{
-						Game()->Client()->Camera().moveTo((*it).second.m_PosOut, 2.0f);
-						pChar->getBody()->SetTransform(CSystemBox2D::sfToB2((*it).second.m_PosOut), pChar->getBody()->GetAngle());
+						//Game()->Client()->Camera().moveTo((*it).second.m_PosOut, 2.0f);
+						pChar->teleport((*it).second.m_PosOut);
 					}
 				}
 				else if (tileId == TILE_STATE_ROTATE)

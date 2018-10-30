@@ -42,10 +42,12 @@ int CContext::addEntity(CEntity *pEntity) noexcept
 
 void CContext::tick() noexcept
 {
-	std::vector<CEntity*> ents = m_vpEntities; // Copy fixed list FIXME: tick can create new entities...
-    std::vector<CEntity*>::const_iterator citE = ents.begin();
-    while (citE != ents.end())
-    	(*citE++)->tick();
+	clearTrash();
+
+	std::vector<CEntity*>::const_iterator cit_end = m_vpEntities.cend();
+    std::vector<CEntity*>::const_iterator cit = m_vpEntities.cbegin();
+    while (cit != cit_end)
+    	(*cit++)->tick();
 }
 
 void CContext::clearTrash() noexcept

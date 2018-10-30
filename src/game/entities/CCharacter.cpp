@@ -57,7 +57,7 @@ void CCharacter::tick() noexcept
 		return;
 
 	CGame *pGame = CGame::getInstance();
-	const sf::Vector2f shapePos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
+	const sf::Vector2f shapePos = CSystemBox2D::b2ToSf(m_pBody->GetPosition());
 
 	if (isAlive())
 	{
@@ -306,9 +306,9 @@ void CCharacter::setMoveState(int state) noexcept
 	}
 }
 
-void teleport(const sf::Vector2f &worldPosTo) noexcept
+void CCharacter::teleport(const sf::Vector2f &worldPosTo) noexcept
 {
-	//m_State
+	getBody()->SetTransform(CSystemBox2D::sfToB2(worldPosTo), getBody()->GetAngle());
 }
 
 void CCharacter::setActiveWeapon(int wid) noexcept

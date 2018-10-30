@@ -2,14 +2,14 @@
 
 #ifndef H_ENGINE_INTERFACE_SYSTEM
 #define H_ENGINE_INTERFACE_SYSTEM
-
+#include "CAssetManager.hpp"
 
 class ISystem
 {
 public:
 	virtual ~ISystem() { }
 
-	virtual bool init() = 0;
+	virtual bool init(CAssetManager *pAssetManager) = 0;
 	virtual void reset() = 0;
 	virtual void update(float deltaTime) = 0;
 };

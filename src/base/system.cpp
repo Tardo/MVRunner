@@ -3,22 +3,40 @@
 #include "system.hpp"
 #include <cstdio>
 #include <cstdarg>
-#include <cstring>
 #include <ctime>
 #include <cmath>
-#if defined(__unix__)
+#if defined(SFML_SYSTEM_LINUX)
 	#include <sys/time.h>
-#else
+#elif defined(SFML_SYSTEM_WINDOWS)
     #include <windows.h>
 #endif
 
 namespace ups
 {
-	/* TOOL FUNCS */
+	/* RENDER TOOLS */
+	// Original Source: https://github.com/SFML/SFML/wiki/Source%3A-cubic-bezier-curve
+	void calcCubicBezier(
+				const sf::Vector2f &start,
+				const sf::Vector2f &end,
+				const sf::Vector2f &startControl,
+				const sf::Vector2f &endControl,
+				sf::Vector2f *vpPoints,
+				const unsigned int numSegments) noexcept
+	{
+		float p = 1.f / (numSegments-2);
+		const float q = p;
+		vpPoints[0] = start;
+		vpPoints[numSegments-1] = end;
+		for (size_t i = 1; i < numSegments-1; ++i, p += q)
+			vpPoints[i] = p * p * p * (end + 3.f * (startControl - endControl) - start) +
+						  3.f * p * p * (start - 2.f * startControl + endControl) +
+						  3.f * p * (startControl - start) + start;
+	}
+
 	sf::Color hsvToRgb(const sf::Vector3f &hsv) noexcept
 	{
 		sf::Color color;
-		const int i = static_cast<const int>(std::floor(hsv.x * 6));
+		const int i = static_cast<const int>(std::floor(hsv.x * 6.0f));
 		const sf::Uint8 f = static_cast<const sf::Uint8>(hsv.x * 6.0f - i);
 		const sf::Uint8 p = static_cast<const sf::Uint8>(hsv.z * (1.0f - hsv.y));
 		const sf::Uint8 q = static_cast<const sf::Uint8>(hsv.z * (1.0f - f * hsv.y));
@@ -60,37 +78,6 @@ namespace ups
 		}
 	}
 
-	sf::Color intToColor(unsigned int color) noexcept
-	{
-		return sf::Color((color>>24) & 255, (color>>16) & 255, (color>>8) & 255, color & 255);
-	}
-
-	unsigned int colorToInt(const sf::Color &color) noexcept
-	{
-		return ((color.r&255)<<24) + ((color.g&255)<<16) + ((color.b&255)<<8) + (color.a&255);
-	}
-
-
-	// Original Source: https://github.com/SFML/SFML/wiki/Source%3A-cubic-bezier-curve
-	void calcCubicBezier(
-				const sf::Vector2f &start,
-				const sf::Vector2f &end,
-				const sf::Vector2f &startControl,
-				const sf::Vector2f &endControl,
-				sf::Vector2f *vpPoints,
-				const unsigned int numSegments) noexcept
-	{
-		float p = 1.f / (numSegments-2);
-		const float q = p;
-		vpPoints[0] = start;
-		vpPoints[numSegments-1] = end;
-		for (size_t i = 1; i < numSegments-1; ++i, p += q)
-			vpPoints[i] = p * p * p * (end + 3.f * (startControl - endControl) - start) +
-						  3.f * p * p * (start - 2.f * startControl + endControl) +
-						  3.f * p * (startControl - start) + start;
-	}
-
-
 	/** TIME **/
 	/* Original code from teeworlds source */
 	sf::Int64 timeGet() noexcept
@@ -125,36 +112,6 @@ namespace ups
 	#endif
 	}
 
-
-	/** STRINGS **/
-	int strNCaseCmp(const char *a, const char *b, const int num) noexcept
-	{
-	#if defined(SFML_SYSTEM_WINDOWS)
-		return _strnicmp(a, b, num);
-	#else
-		return strncasecmp(a, b, num);
-	#endif
-	}
-
-	int strCaseCmp(const char *a, const char *b) noexcept
-	{
-	#if defined(SFML_SYSTEM_WINDOWS)
-		return _stricmp(a,b);
-	#else
-		return strcasecmp(a,b);
-	#endif
-	}
-
-	char* strCopy(char *to, const char *from, unsigned int len) noexcept
-	{
-		#if defined(SFML_SYSTEM_WINDOWS)
-			return strncpy(to, from, len);
-		#else
-			return strncpy(to, from, len);
-		#endif
-	}
-
-
 	/** LOGGING **/
 	/* Original code from teeworlds source */
 	extern "C" void msgDebug(const char *sys, const char *fmt, ...)
@@ -169,7 +126,7 @@ namespace ups
 		msg = (char *)str + len;
 
 		va_start(args, fmt);
-	#if defined(__unix__)
+	#if defined(SFML_SYSTEM_LINUX)
 		vsnprintf(msg, sizeof(str)-len, fmt, args);
 	#else
 		_vsnprintf(msg, sizeof(str)-len, fmt, args);

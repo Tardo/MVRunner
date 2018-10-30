@@ -4,47 +4,47 @@ environment:
   matrix:
     - ZLIB_ROOT: C:\Program Files (x86)\zlib
       ZPG_ROOT: C:\Program Files (x86)\libZpg
-      SFML_ROOT: c:\projects\SFML-2.5.0_win32
-      SFML_PACKAGE: SFML-2.5.0-windows-vc15-32-bit.zip
+      SFML_ROOT: c:\projects\SFML-2.5.1_win32
+      SFML_PACKAGE: SFML-2.5.1-windows-vc15-32-bit.zip
       CMAKE_GENERATOR: Visual Studio 15 2017
       CMAKE_BUILD_TYPE: Debug
       ZPG_PACKER_NAME: zpg_packer_d
     - ZLIB_ROOT: C:\Program Files (x86)\zlib
       ZPG_ROOT: C:\Program Files (x86)\libZpg
-      SFML_ROOT: c:\projects\SFML-2.5.0_win32
-      SFML_PACKAGE: SFML-2.5.0-windows-vc15-32-bit.zip
+      SFML_ROOT: c:\projects\SFML-2.5.1_win32
+      SFML_PACKAGE: SFML-2.5.1-windows-vc15-32-bit.zip
       CMAKE_GENERATOR: Visual Studio 15 2017
       CMAKE_BUILD_TYPE: Release
       ZPG_PACKER_NAME: zpg_packer
     - ZLIB_ROOT: C:\Program Files\zlib
       ZPG_ROOT: C:\Program Files\libZpg
-      SFML_ROOT: c:\projects\SFML-2.5.0_win64
-      SFML_PACKAGE: SFML-2.5.0-windows-vc15-64-bit.zip
+      SFML_ROOT: c:\projects\SFML-2.5.1_win64
+      SFML_PACKAGE: SFML-2.5.1-windows-vc15-64-bit.zip
       CMAKE_GENERATOR: Visual Studio 15 2017 Win64
       CMAKE_BUILD_TYPE: Debug
       ZPG_PACKER_NAME: zpg_packer_d
     - ZLIB_ROOT: C:\Program Files\zlib
       ZPG_ROOT: C:\Program Files\libZpg
-      SFML_ROOT: c:\projects\SFML-2.5.0_win64
-      SFML_PACKAGE: SFML-2.5.0-windows-vc15-64-bit.zip
+      SFML_ROOT: c:\projects\SFML-2.5.1_win64
+      SFML_PACKAGE: SFML-2.5.1-windows-vc15-64-bit.zip
       CMAKE_GENERATOR: Visual Studio 15 2017 Win64
       CMAKE_BUILD_TYPE: Release
       ZPG_PACKER_NAME: zpg_packer
 
 matrix:
   allow_failures:
-    - platform: x86
-      configuration: Debug
+    - platform: x64
+      configuration: Release
     - platform: x86
       configuration: Release
     - platform: x64
       configuration: Debug
-    - platform: x64
-      configuration: Release
+    - platform: x86
+      configuration: Debug
   
 cache:
-  - c:\projects\SFML-2.5.0_win32
-  - c:\projects\SFML-2.5.0_win64
+  - c:\projects\SFML-2.5.1_win32
+  - c:\projects\SFML-2.5.1_win64
   - C:\Program Files (x86)\libZpg
   - C:\Program Files (x86)\zlib
   - C:\Program Files\libZpg
@@ -52,7 +52,7 @@ cache:
 
 install:
   - cd c:\projects
-  # Download SFML 2.4.2 binaries
+  # Download SFML 2.5.1 binaries
   - IF NOT EXIST "%SFML_ROOT%" (
     curl -LfsS -o sfml.zip https://www.sfml-dev.org/files/%SFML_PACKAGE% &&
     7z x sfml.zip &&
@@ -95,9 +95,11 @@ build_script:
 
 artifacts:
   - path: build/Release/MVRunner.exe
-          build/Debug/MVRunner_d.exe
-          build/*.zip
-    name: MVRunner
+    name: MVRunner Release
+  - path: build/Debug/MVRunner_d.exe
+    name: MVRunner Debug
+  - path: build/*.zip
+    name: MVRunner Package
 
 branches:
   except:

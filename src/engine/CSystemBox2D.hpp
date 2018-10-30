@@ -73,7 +73,7 @@ public:
 	CSystemBox2D() noexcept;
 	virtual ~CSystemBox2D() noexcept;
 
-	virtual bool init() noexcept final;
+	virtual bool init(CAssetManager *pAssetManager) noexcept final;
 	virtual void reset() noexcept final;
 	virtual void update(float deltaTime) noexcept final;
 

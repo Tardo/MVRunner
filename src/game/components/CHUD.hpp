@@ -19,6 +19,7 @@ public:
 private:
 	void renderTime(sf::RenderTarget& target, sf::RenderStates states) const noexcept;
 	void renderMessages(sf::RenderTarget& target, sf::RenderStates states) const noexcept;
+	void renderCursor(sf::RenderTarget& target, sf::RenderStates states) const noexcept;
 };
 
 #endif

@@ -79,7 +79,6 @@ void CItemRender::renderPrimitive(sf::RenderTarget& target, sf::RenderStates sta
 		return;
 
 	// TODO: Check if need render by b2type
-
 	if (pEntity->getType() == CEntity::B2POLY)
 	{
 		b2PolygonShape *pB2Poly = static_cast<b2PolygonShape*>(pEntity->getBody()->GetFixtureList()[0].GetShape());
@@ -97,7 +96,9 @@ void CItemRender::renderPrimitive(sf::RenderTarget& target, sf::RenderStates sta
 	else if (pEntity->getType() == CEntity::B2CIRCLE)
 	{
 		b2CircleShape *pB2Circle = static_cast<b2CircleShape*>(pEntity->getBody()->GetFixtureList()[0].GetShape());
-		sf::CircleShape Shape(pB2Circle->m_radius);
+		const int radius = CSystemBox2D::b2ToSf(pB2Circle->m_radius);
+		sf::CircleShape Shape(radius, 16);
+		Shape.setOrigin(radius, radius);
 		Shape.setPosition(CSystemBox2D::b2ToSf(pEntity->getBody()->GetPosition()));
 		Shape.setRotation(upm::radToDeg(pEntity->getBody()->GetAngle()));
 		Shape.setFillColor(pEntity->m_Color);

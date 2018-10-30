@@ -40,6 +40,12 @@ enum
 	RENDER_MODE_NORMAL=0,
 	RENDER_MODE_LIGHTING,
 	RENDER_MODE_LIQUID,
+	RENDER_MODE_NORMALMAP,
+};
+
+enum GameType {
+	GAMETYPE_MENU=0,
+	GAMETYPE_MAIN,
 };
 
 class CGameClient final : public sf::RenderWindow
@@ -75,7 +81,7 @@ public:
 
 	void reset() noexcept;
 	void run() noexcept;
-	bool initializeGameMode(const char *pGameType) noexcept;
+	bool initializeGameMode(GameType gametype) noexcept;
 
 	void getViewportGlobalBounds(sf::FloatRect *pRect, const sf::View &view, float margin=0.0f) noexcept;
 	sf::View& getHudView() noexcept { return m_ViewHud; }
@@ -114,10 +120,10 @@ public:
 	sf::Int64 m_TimerPlayerEnd;
 
 protected:
-	void renderComponentsPhase(int mode);
-	void renderCursor() noexcept;
-	void doUpdate();
-	void doRender();
+	void renderComponentsPhase(int mode) noexcept;
+	void renderLoadAssets() noexcept;
+	void doUpdate() noexcept;
+	void doRender() noexcept;
 
 private:
 	bool init() noexcept;

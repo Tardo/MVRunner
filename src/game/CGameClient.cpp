@@ -136,7 +136,7 @@ void CGameClient::run() noexcept
     }
 }
 
-void CGameClient::doUpdate()
+void CGameClient::doUpdate() noexcept
 {
 	if (Controller() && Controller()->Context()->getPlayer()->getCharacter())
 	{
@@ -157,11 +157,11 @@ void CGameClient::doUpdate()
     	Controller()->tick();
 }
 
-void CGameClient::doRender()
+void CGameClient::doRender() noexcept
 {
     // Render Components
-    // Normal Mode
 	const bool mapLoaded = Controller()->Context()->Map().isMapLoaded();
+    // Normal Mode
 	m_RenderPhaseTexture.clear(mapLoaded?CMap::tmxToSf(Controller()->Context()->Map().GetBackgroundColor()):sf::Color::Black);
     renderComponentsPhase(RENDER_MODE_NORMAL);
     draw(m_RenderPhase);
@@ -247,28 +247,10 @@ void CGameClient::doRender()
 		}
 	}
 
-	//ImGUI
-	setView(getHudView());
-	renderCursor();
-
     display();
 }
 
-void CGameClient::renderCursor() noexcept
-{
-	setView(getHudView());
-	sf::Vertex line[] =
-	{
-		sf::Vertex(sf::Vector2f(UI().getMousePos().x-10.0f, UI().getMousePos().y), sf::Color::White),
-		sf::Vertex(sf::Vector2f(UI().getMousePos().x+10.0f, UI().getMousePos().y), sf::Color::White),
-		sf::Vertex(sf::Vector2f(UI().getMousePos().x, UI().getMousePos().y-10.0f), sf::Color::White),
-		sf::Vertex(sf::Vector2f(UI().getMousePos().x, UI().getMousePos().y+10.0f), sf::Color::White)
-	};
-
-	draw(line, 4, sf::Lines);
-}
-
-void CGameClient::renderComponentsPhase(int mode)
+void CGameClient::renderComponentsPhase(int mode) noexcept
 {
     setRenderMode(mode);
     std::deque<CComponent*>::const_iterator itComp = m_vpComponents.cbegin();
@@ -318,52 +300,12 @@ bool CGameClient::init() noexcept
 	/** LOADING ASSETS **/
 	sf::Thread thread(&CAssetManager::load, &m_AssetManager);
 	thread.launch();
-
-	sf::FloatRect rectArea;
-	getViewportGlobalBounds(&rectArea, getHudView());
-	while (!m_AssetManager.isLoaded())
+	while (!m_AssetManager.isLoaded() && !m_AssetManager.hasErrors())
+		renderLoadAssets();
+	if (m_AssetManager.hasErrors())
 	{
-		if (m_AssetManager.hasErrors())
-		{
-			ups::msgDebug("CGameClient", "ERROR: Can't load assets!");
-			return false;
-		}
-
-		clear(sf::Color::Black);
-		setView(getHudView());
-
-		sf::Text text;
-		text.setFont(Assets().getDefaultFont());
-		text.setCharacterSize(94);
-		text.setFillColor(sf::Color::White);
-
-		text.setString(_("LOADING"));
-		float textW = text.getLocalBounds().width;
-		text.setPosition(rectArea.width/2.0f-textW/2.0f, rectArea.height/2-160.0f);
-		draw(text);
-
-		const float boxSize = rectArea.width/2.0f;
-		sf::RectangleShape box(sf::Vector2f(boxSize, 100.0f));
-		box.setFillColor(sf::Color::Transparent);
-		box.setOutlineColor(sf::Color::White);
-		box.setOutlineThickness(4.0f);
-		box.setPosition(boxSize-boxSize/2.0f, rectArea.height/2-100.0f/2.0f);
-		draw(box);
-
-		const float ww = (m_AssetManager.getLoadedNum()/(float)(CAssetManager::NUM_TOTAL))*boxSize;
-		box.setSize(sf::Vector2f(ww-8.0f, 100.0f-8.0f));
-		box.setFillColor(sf::Color::White);
-		box.setOutlineThickness(0.0f);
-		box.setPosition(boxSize-boxSize/2.0f+4.0f, rectArea.height/2-100.0f/2.0f+4.0f);
-		draw(box);
-
-		text.setCharacterSize(42);
-		text.setString(m_AssetManager.getCurrentLoadAssetPath());
-		textW = text.getLocalBounds().width;
-		text.setPosition(rectArea.width/2.0f-textW/2.0f, rectArea.height/2-100.0f/2.0f + 80.0f);
-		draw(text);
-
-		display();
+		ups::msgDebug("CGameClient", "ERROR: Can't load assets!");
+		return false;
 	}
 	/**/
 
@@ -380,36 +322,70 @@ bool CGameClient::init() noexcept
 	m_vpComponents.push_back(&m_Menus);
 	m_vpComponents.push_back(&m_HUD);
 
-	m_SystemSound.setAssetManager(&Assets());
-
 	m_vpSystems.push_back(&m_SystemSound); 		// Sound: sound spatialization
 	m_vpSystems.push_back(&m_SystemBox2D); 		// Box2D: for realistic physics
 
 	std::deque<ISystem*>::iterator itEng = m_vpSystems.begin();
 	while (itEng != m_vpSystems.end())
 	{
-    	if (!(*itEng)->init())
+    	if (!(*itEng)->init(&Assets()))
     		return false;
     	++itEng;
 	}
 
-	return initializeGameMode("menu");
+	return initializeGameMode(GAMETYPE_MENU);
 }
 
-bool CGameClient::initializeGameMode(const char *pGameType) noexcept
+void CGameClient::renderLoadAssets() noexcept
+{
+	sf::FloatRect rectArea;
+	getViewportGlobalBounds(&rectArea, getHudView());
+
+	clear(sf::Color::Black);
+	setView(getHudView());
+
+	sf::Text text;
+	text.setFont(Assets().getDefaultFont());
+	text.setCharacterSize(94);
+	text.setFillColor(sf::Color::White);
+
+	text.setString(_("LOADING"));
+	float textW = text.getLocalBounds().width;
+	text.setPosition(rectArea.width/2.0f-textW/2.0f, rectArea.height/2-160.0f);
+	draw(text);
+
+	const float boxSize = rectArea.width/2.0f;
+	sf::RectangleShape box(sf::Vector2f(boxSize, 100.0f));
+	box.setFillColor(sf::Color::Transparent);
+	box.setOutlineColor(sf::Color::White);
+	box.setOutlineThickness(4.0f);
+	box.setPosition(boxSize-boxSize/2.0f, rectArea.height/2-100.0f/2.0f);
+	draw(box);
+
+	const float ww = (m_AssetManager.getLoadedNum()/(float)(CAssetManager::NUM_TOTAL))*boxSize;
+	box.setSize(sf::Vector2f(ww-8.0f, 100.0f-8.0f));
+	box.setFillColor(sf::Color::White);
+	box.setOutlineThickness(0.0f);
+	box.setPosition(boxSize-boxSize/2.0f+4.0f, rectArea.height/2-100.0f/2.0f+4.0f);
+	draw(box);
+
+	text.setCharacterSize(42);
+	text.setString(m_AssetManager.getCurrentLoadAssetPath());
+	textW = text.getLocalBounds().width;
+	text.setPosition(rectArea.width/2.0f-textW/2.0f, rectArea.height/2-100.0f/2.0f + 80.0f);
+	draw(text);
+
+	display();
+}
+
+bool CGameClient::initializeGameMode(GameType gametype) noexcept
 {
 	reset();
 
-	if (!pGameType)
-	{
-		ups::msgDebug("CGameClient", "Invalid Game Mode!");
-		return false;
-	}
-
     ups::msgDebug("CGameClient", "Initializing game mode...");
-    if (ups::strCaseCmp(pGameType, "menu") == 0)
+    if (gametype == GAMETYPE_MENU)
     	m_pGameController = new CControllerMenu();
-    else if (ups::strCaseCmp(pGameType, "main") == 0)
+    else if (gametype == GAMETYPE_MAIN)
     	m_pGameController = new CControllerMain();
     else
 	{
