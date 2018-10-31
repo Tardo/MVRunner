@@ -2,7 +2,7 @@
 
 # The SFML available in system repositories is older than v2.5.1...
 if [ ! -d ~/SFML-$SFML_VER ]; then
-	wget -O ~/sfmlv$SFML_VER.tar.gz https://github.com/SFML/SFML/archive/$SFML_vER.tar.gz
+	wget -O ~/sfmlv$SFML_VER.tar.gz https://github.com/SFML/SFML/archive/$SFML_VER.tar.gz
 	tar -zxvf ~/sfmlv$SFML_VER.tar.gz -C ~/
 fi
 # ZPG Library is not available from system repositories
