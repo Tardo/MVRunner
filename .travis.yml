@@ -15,7 +15,10 @@ matrix:
   - os: linux
     dist: trusty
     sudo: true
-    before_install: sudo apt-get install -f -y gcc-multilib g++-multilib cmake:i386 zlib1g-dev:i386 libfreetype6-dev:i386 libx11-dev:i386 libxrandr-dev:i386 libxcb1-dev:i386 libx11-xcb-dev:i386 libxcb-randr0-dev:i386 libxcb-image0-dev:i386 libflac-dev:i386 libogg-dev:i386 libvorbis-dev:i386 libvorbisenc2:i386 libvorbisfile3:i386 libopenal-dev:i386 libudev-dev:i386 libsndfile1-dev:i386 libglew-dev:i386
+    before_install:
+      - sudo dpkg --add-architecture i386
+      - sudo apt-get update
+      - sudo apt-get install -f -y gcc-multilib g++-multilib cmake:i386 zlib1g-dev:i386 libfreetype6-dev:i386 libx11-dev:i386 libxrandr-dev:i386 libxcb1-dev:i386 libx11-xcb-dev:i386 libxcb-randr0-dev:i386 libxcb-image0-dev:i386 libflac-dev:i386 libogg-dev:i386 libvorbis-dev:i386 libvorbisenc2:i386 libvorbisfile3:i386 libopenal-dev:i386 libudev-dev:i386 libsndfile1-dev:i386 libglew-dev:i386
     env: CMAKE_BUILD_TYPE=Release SFML_VER=2.5.1 TARGET_BITS=32 ZPG_PACKER_BIN=/usr/bin/zpg_packer
     stage: Release32
     addons:
@@ -37,7 +40,10 @@ matrix:
   - os: linux
     sudo: true
     dist: trusty
-    before_install: sudo apt-get install -f -y gcc-multilib g++-multilib cmake:i386 zlib1g-dev:i386 libfreetype6-dev:i386 libx11-dev:i386 libxrandr-dev:i386 libxcb1-dev:i386 libx11-xcb-dev:i386 libxcb-randr0-dev:i386 libxcb-image0-dev:i386 libflac-dev:i386 libogg-dev:i386 libvorbis-dev:i386 libvorbisenc2:i386 libvorbisfile3:i386 libopenal-dev:i386 libudev-dev:i386 libsndfile1-dev:i386 libglew-dev:i386
+    before_install:
+      - sudo dpkg --add-architecture i386
+      - sudo apt-get update
+      - sudo apt-get install -f -y gcc-multilib g++-multilib cmake:i386 zlib1g-dev:i386 libfreetype6-dev:i386 libx11-dev:i386 libxrandr-dev:i386 libxcb1-dev:i386 libx11-xcb-dev:i386 libxcb-randr0-dev:i386 libxcb-image0-dev:i386 libflac-dev:i386 libogg-dev:i386 libvorbis-dev:i386 libvorbisenc2:i386 libvorbisfile3:i386 libopenal-dev:i386 libudev-dev:i386 libsndfile1-dev:i386 libglew-dev:i386
     env: CMAKE_BUILD_TYPE=Debug SFML_VER=2.5.1 TARGET_BITS=32 ZPG_PACKER_BIN=/usr/bin/zpg_packer_d
     stage: Debug32
     addons:
