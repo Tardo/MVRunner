@@ -4,15 +4,15 @@ matrix:
   - os: linux
     dist: trusty
     sudo: true
-    install: sudo apt-get install -y cmake zlib1g-dev libfreetype6-dev libx11-dev libxrandr-dev libxcb1-dev libx11-xcb-dev libxcb-randr0-dev libxcb-image0-dev libflac-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisfile3 libopenal-dev libudev-dev libsndfile1-dev libglew-dev
-    before_install: chmod +x $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh && $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh
+    before_install: sudo apt-get install -y cmake zlib1g-dev libfreetype6-dev libx11-dev libxrandr-dev libxcb1-dev libx11-xcb-dev libxcb-randr0-dev libxcb-image0-dev libflac-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisfile3 libopenal-dev libudev-dev libsndfile1-dev libglew-dev
+    install: chmod +x $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh && $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh
     script: chmod +x $TRAVIS_BUILD_DIR/.travis_compile.sh && $TRAVIS_BUILD_DIR/.travis_compile.sh
     env: BUILD_TYPE=Release SFML_VER=2.5.1
   - os: linux
     sudo: true
     dist: trusty
-    install: sudo apt-get install -y cmake zlib1g-dev libfreetype6-dev libx11-dev libxrandr-dev libxcb1-dev libx11-xcb-dev libxcb-randr0-dev libxcb-image0-dev libflac-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisfile3 libopenal-dev libudev-dev libsndfile1-dev libglew-dev
-    before_install: chmod +x $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh && $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh
+    before_install: sudo apt-get install -y cmake zlib1g-dev libfreetype6-dev libx11-dev libxrandr-dev libxcb1-dev libx11-xcb-dev libxcb-randr0-dev libxcb-image0-dev libflac-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisfile3 libopenal-dev libudev-dev libsndfile1-dev libglew-dev
+    install: chmod +x $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh && $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh
     script: chmod +x $TRAVIS_BUILD_DIR/.travis_compile.sh && $TRAVIS_BUILD_DIR/.travis_compile.sh
     env: BUILD_TYPE=Debug SFML_VER=2.5.1
 addons:
