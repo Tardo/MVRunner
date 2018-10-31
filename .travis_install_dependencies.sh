@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Install necessary dependencies
-sudo apt-get install -y cmake zlib1g-dev libfreetype6-dev libx11-dev libxrandr-dev libxcb1-dev libx11-xcb-dev libxcb-randr0-dev libxcb-image0-dev libflac-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisfile3 libopenal-dev libudev-dev libsndfile1-dev libglew-dev
-
 # The SFML available in system repositories is older than v2.5.1...
 if [ ! -d ~/SFML-$SFML_VER ]; then
 	wget -O ~/sfmlv$SFML_VER.tar.gz https://github.com/SFML/SFML/archive/$SFML_vER.tar.gz
