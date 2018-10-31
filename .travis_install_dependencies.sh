@@ -31,7 +31,7 @@ elif [[ $TRAVIS_OS_NAME == 'windows' ]]; then
 	    tar -zxvf zlib-1.2.11.tar.gz
 	    cd zlib-1.2.11
 	    mkdir build & cd build
-	    cmake -Werror=dev -G"$CMAKE_GENERATOR" ..
+	    cmake -Werror=dev -G "$CMAKE_GENERATOR" ..
 	    cd ..
 	    cmake --build build --config $CMAKE_BUILD_TYPE --target install
 	fi
@@ -42,7 +42,7 @@ elif [[ $TRAVIS_OS_NAME == 'windows' ]]; then
 	    7z x libzpg.zip
 	    cd Zpg-master
 	    mkdir build && cd build
-	    cmake -Werror=dev -G"$CMAKE_GENERATOR" -DZLIB_ROOT="$ZLIB_ROOT" -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE ..
+	    cmake -Werror=dev -G "$CMAKE_GENERATOR" -DZLIB_ROOT="$ZLIB_ROOT" -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE ..
 	    cd ..
 	    cmake --build build --config $CMAKE_BUILD_TYPE --target Zpg
 	    cmake --build build --config $CMAKE_BUILD_TYPE --target zpg_packer
