@@ -4,13 +4,14 @@ if [[ $TRAVIS_OS_NAME == 'trusty' ]]; then
 	cd $TRAVIS_BUILD_DIR && cd ..
 	# The SFML available in system repositories is older than v2.5.1...
 	if [ ! -d $TRAVIS_BUILD_DIR/../SFML-$SFML_VER ]; then
-		wget -O ~/sfmlv$SFML_VER.tar.gz https://github.com/SFML/SFML/archive/$SFML_VER.tar.gz
-		tar -zxvf ~/sfmlv$SFML_VER.tar.gz -C ~/
+		wget https://github.com/SFML/SFML/archive/$SFML_VER.tar.gz
+		tar -zxvf $SFML_VER.tar.gz
 	fi
 	
 	# ZPG Library is not available from system repositories
 	if [ ! -d $TRAVIS_BUILD_DIR/../Zpg-master ]; then
-		wget -O ~/zpgv1.0.0.zip https://gitlab.com/Tardo/Zpg/-/archive/master/Zpg-master.zip && unzip ~/zpgv1.0.0.zip
+		wget https://gitlab.com/Tardo/Zpg/-/archive/master/Zpg-master.zip
+		unzip Zpg-master.zip
 	fi
 	
 	# Compile & Install SFML and ZPG
@@ -19,16 +20,15 @@ if [[ $TRAVIS_OS_NAME == 'trusty' ]]; then
 elif [[ $TRAVIS_OS_NAME == 'windows' ]]; then
 	if [ ! -d $SFML_ROOT ]; then
 		cd $TRAVIS_BUILD_DIR && cd ..
-		curl -LfsS -o sfml.zip https://www.sfml-dev.org/files/$SFML_PACKAGE
-	    7z x sfml.zip
-	    mv SFML-$SFML_VER $SFML_ROOT
+		wget https://www.sfml-dev.org/files/$SFML_PACKAGE
+	    unzip sfml.zip
+	    mv SFML-$SFML_VER "$SFML_ROOT"
 	fi
 	
 	if [ ! -d $ZLIB_ROOT ]; then
 		cd $TRAVIS_BUILD_DIR && cd ..
-		curl -LfsS -o zlib-1.2.11.tar.gz http://zlib.net/zlib-1.2.11.tar.gz
-	    7z x zlib-1.2.11.tar.gz
-	    7z x zlib-1.2.11.tar
+		wget http://zlib.net/zlib-1.2.11.tar.gz
+	    tar -zxvf zlib-1.2.11.tar.gz
 	    cd zlib-1.2.11
 	    mkdir build & cd build
 	    cmake -Werror=dev -G$CMAKE_GENERATOR ..
