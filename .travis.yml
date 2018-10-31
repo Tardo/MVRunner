@@ -1,30 +1,18 @@
 language: c++
-sudo: true
-dist: trusty
-os:
-- linux
-before_install:
-- sudo apt-get install -y cmake zlib1g-dev libfreetype6-dev libx11-dev libxrandr-dev libxcb1-dev libx11-xcb-dev libxcb-randr0-dev libxcb-image0-dev libflac-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisfile3 libopenal-dev libudev-dev libsndfile1-dev libglew-dev
-- | 
-    # The SFML available in repositories is older than v2.5.0...
-    if [ ! -d ~/SFML-2.5.1 ]; then
-      wget -O ~/sfmlv2.5.1.tar.gz https://github.com/SFML/SFML/archive/2.5.1.tar.gz
-      tar -zxvf ~/sfmlv2.5.1.tar.gz -C ~/
-    fi
-- wget -O ~/zpgv1.0.0.zip https://gitlab.com/Tardo/Zpg/-/archive/master/Zpg-master.zip && unzip ~/zpgv1.0.0.zip -d ~/
-install:
-- cd ~/SFML-2.5.1; cmake -DBUILD_SHARED_LIBS:BOOL=FALSE -DCMAKE_INSTALL_PREFIX:PATH=/usr . && make && sudo make install
-- cd ~/Zpg-master; cmake -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr . && make Zpg && make zpg_packer && sudo make install
-script:
-- |
-    cd ~/build/Tardo/MVRunner/
-    mkdir build-release/ && cd build-release/
-    cmake -DCMAKE_BUILD_TYPE:STRING=Release .. && make && make create_zpg
-    cpack --debug --verbose -C CPackConfig.cmake
-- |
-    cd ~/build/Tardo/MVRunner/
-    mkdir build-debug/ && cd build-debug/
-    cmake -DCMAKE_BUILD_TYPE:STRING=Debug .. && make
+matrix:
+  include:
+  - os: linux
+    dist: trusty
+    sudo: true
+    install: .travis_install_dependencies.sh
+    script: .travis_compile.sh
+    env: BUILD_TYPE=Release SFML_VER=2.5.1
+  - os: linux
+    sudo: true
+    dist: trusty
+    install: .travis_install_dependencies.sh
+    script: .travis_compile.sh
+    env: BUILD_TYPE=Debug SFML_VER=2.5.1
 addons:
   artifacts:
     paths:
