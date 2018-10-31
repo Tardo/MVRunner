@@ -4,18 +4,18 @@ matrix:
   - os: linux
     dist: trusty
     sudo: true
-    install: .travis_install_dependencies.sh
-    script: .travis_compile.sh
+    install: $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh
+    script: $TRAVIS_BUILD_DIR/.travis_compile.sh
     env: BUILD_TYPE=Release SFML_VER=2.5.1
   - os: linux
     sudo: true
     dist: trusty
-    install: .travis_install_dependencies.sh
-    script: .travis_compile.sh
+    install: $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh
+    script: $TRAVIS_BUILD_DIR/.travis_compile.sh
     env: BUILD_TYPE=Debug SFML_VER=2.5.1
 addons:
   artifacts:
     paths:
-    - ~/build/Tardo/MVRunner/build-release/MVRunner
-    - ~/build/Tardo/MVRunner/build-debug/MVRunner_d
-    - ~/build/Tardo/MVRunner/build-release/*.tar.gz
+    - ~/build/Tardo/MVRunner/build-Release/MVRunner
+    - ~/build/Tardo/MVRunner/build-Debug/MVRunner_d
+    - ~/build/Tardo/MVRunner/build-Release/*.tar.gz
