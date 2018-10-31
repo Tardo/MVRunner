@@ -4,7 +4,7 @@ cd $TRAVIS_BUILD_DIR
 
 if [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 	mkdir build-$CMAKE_BUILD_TYPE/ && cd build-$CMAKE_BUILD_TYPE/
-	Scmake -DCMAKE_BUILD_TYPE:STRING=$CMAKE_BUILD_TYPE -DZPG_PACKER_BIN="$ZPG_PACKER_NAME" ..
+	cmake -DCMAKE_BUILD_TYPE:STRING=$CMAKE_BUILD_TYPE -DZPG_PACKER_BIN="$ZPG_PACKER_NAME" ..
 	make && make create_zpg
 	cpack --debug --verbose -C CPackConfig.cmake
 elif [[ $TRAVIS_OS_NAME == 'windows' ]]; then

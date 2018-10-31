@@ -29,8 +29,7 @@ elif [[ $TRAVIS_OS_NAME == 'windows' ]]; then
 		cd $TRAVIS_BUILD_DIR && cd ..
 		wget http://zlib.net/zlib-1.2.11.tar.gz
 	    tar -zxvf zlib-1.2.11.tar.gz
-	    cd zlib-1.2.11
-	    mkdir build & cd build
+	    cd zlib-1.2.11 && mkdir build && cd build
 	    cmake -Werror=dev -G "$CMAKE_GENERATOR" ..
 	    cd ..
 	    cmake --build build --config $CMAKE_BUILD_TYPE --target install
@@ -38,10 +37,9 @@ elif [[ $TRAVIS_OS_NAME == 'windows' ]]; then
 	
 	if [ ! -d "$ZPG_ROOT" ]; then
 		cd $TRAVIS_BUILD_DIR && cd ..
-		curl -LfsS -o libzpg.zip https://gitlab.com/Tardo/Zpg/-/archive/master/Zpg-master.zip
-	    7z x libzpg.zip
-	    cd Zpg-master
-	    mkdir build && cd build
+		wget https://gitlab.com/Tardo/Zpg/-/archive/master/Zpg-master.zip
+	    unzip Zpg-master.zip
+	    cd Zpg-master && mkdir build && cd build
 	    cmake -Werror=dev -G "$CMAKE_GENERATOR" -DZLIB_ROOT="$ZLIB_ROOT" -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE ..
 	    cd ..
 	    cmake --build build --config $CMAKE_BUILD_TYPE --target Zpg
