@@ -13,20 +13,9 @@ matrix:
         - $TRAVIS_BUILD_DIR/build-Release/MVRunner
         - $TRAVIS_BUILD_DIR/build-Release/*.tar.gz
   - os: linux
-    sudo: true
-    dist: trusty
-    before_install: sudo apt-get install -y cmake zlib1g-dev libfreetype6-dev libx11-dev libxrandr-dev libxcb1-dev libx11-xcb-dev libxcb-randr0-dev libxcb-image0-dev libflac-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisfile3 libopenal-dev libudev-dev libsndfile1-dev libglew-dev
-    env: CMAKE_BUILD_TYPE=Debug SFML_VER=2.5.1 TARGET_BITS=64 ZPG_PACKER_BIN=/usr/bin/zpg_packer_d
-    stage: Debug64
-    addons:
-      artifacts:
-        paths:
-        - $TRAVIS_BUILD_DIR/build-Debug/MVRunner_d
-        - $TRAVIS_BUILD_DIR/build-Debug/*.tar.gz
-  - os: linux
     dist: trusty
     sudo: true
-    before_install: sudo apt-get install -y cmake zlib1g-dev libfreetype6-dev libx11-dev libxrandr-dev libxcb1-dev libx11-xcb-dev libxcb-randr0-dev libxcb-image0-dev libflac-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisfile3 libopenal-dev libudev-dev libsndfile1-dev libglew-dev
+    before_install: sudo apt-get install -y gcc-multilib cmake zlib1g-dev libfreetype6-dev libx11-dev libxrandr-dev libxcb1-dev libx11-xcb-dev libxcb-randr0-dev libxcb-image0-dev libflac-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisfile3 libopenal-dev libudev-dev libsndfile1-dev libglew-dev
     env: CMAKE_BUILD_TYPE=Release SFML_VER=2.5.1 TARGET_BITS=32 ZPG_PACKER_BIN=/usr/bin/zpg_packer
     stage: Release32
     addons:
@@ -38,6 +27,17 @@ matrix:
     sudo: true
     dist: trusty
     before_install: sudo apt-get install -y cmake zlib1g-dev libfreetype6-dev libx11-dev libxrandr-dev libxcb1-dev libx11-xcb-dev libxcb-randr0-dev libxcb-image0-dev libflac-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisfile3 libopenal-dev libudev-dev libsndfile1-dev libglew-dev
+    env: CMAKE_BUILD_TYPE=Debug SFML_VER=2.5.1 TARGET_BITS=64 ZPG_PACKER_BIN=/usr/bin/zpg_packer_d
+    stage: Debug64
+    addons:
+      artifacts:
+        paths:
+        - $TRAVIS_BUILD_DIR/build-Debug/MVRunner_d
+        - $TRAVIS_BUILD_DIR/build-Debug/*.tar.gz
+  - os: linux
+    sudo: true
+    dist: trusty
+    before_install: sudo apt-get install -y gcc-multilib cmake zlib1g-dev libfreetype6-dev libx11-dev libxrandr-dev libxcb1-dev libx11-xcb-dev libxcb-randr0-dev libxcb-image0-dev libflac-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisfile3 libopenal-dev libudev-dev libsndfile1-dev libglew-dev
     env: CMAKE_BUILD_TYPE=Debug SFML_VER=2.5.1 TARGET_BITS=32 ZPG_PACKER_BIN=/usr/bin/zpg_packer_d
     stage: Debug32
     addons:
@@ -54,6 +54,14 @@ matrix:
         - $TRAVIS_BUILD_DIR/build/Release/MVRunner
         - $TRAVIS_BUILD_DIR/build/*.zip
   - os: windows
+    env: CMAKE_BUILD_TYPE=Debug SFML_VER=2.5.1 TARGET_BITS=32 ZLIB_ROOT="C:\Program Files\zlib" ZPG_ROOT="C:\Program Files\libZpg" SFML_ROOT=$TRAVIS_BUILD_DIR\..\SFML-${SFML_VER}_win${TARGET_BITS} SFML_PACKAGE=SFML-$SFML_VER-windows-vc15-$TARGET_BITS-bit.zip CMAKE_GENERATOR="Visual Studio 15 2017" ZPG_PACKER_BIN="${ZPG_ROOT}\bin\zpg_packer.exe"
+    stage: Release32
+    addons:
+      artifacts:
+        paths:
+        - $TRAVIS_BUILD_DIR/build/Release/MVRunner
+        - $TRAVIS_BUILD_DIR/build/*.zip
+  - os: windows
     env: CMAKE_BUILD_TYPE=Debug SFML_VER=2.5.1 TARGET_BITS=64 ZLIB_ROOT="C:\Program Files\zlib" ZPG_ROOT="C:\Program Files\libZpg" SFML_ROOT=$TRAVIS_BUILD_DIR\..\SFML-${SFML_VER}_win${TARGET_BITS} SFML_PACKAGE=SFML-$SFML_VER-windows-vc15-$TARGET_BITS-bit.zip CMAKE_GENERATOR="Visual Studio 15 2017 Win$TARGET_BITS" ZPG_PACKER_BIN="${ZPG_ROOT}\bin\zpg_packer_d.exe"
     stage: Debug64
     addons:
@@ -62,15 +70,7 @@ matrix:
         - $TRAVIS_BUILD_DIR/build/Debug/MVRunner
         - $TRAVIS_BUILD_DIR/build/*.zip
   - os: windows
-    env: CMAKE_BUILD_TYPE=Debug SFML_VER=2.5.1 TARGET_BITS=32 ZLIB_ROOT="C:\Program Files\zlib" ZPG_ROOT="C:\Program Files\libZpg" SFML_ROOT=$TRAVIS_BUILD_DIR\..\SFML-${SFML_VER}_win${TARGET_BITS} SFML_PACKAGE=SFML-$SFML_VER-windows-vc15-$TARGET_BITS-bit.zip CMAKE_GENERATOR="Visual Studio 15 2017 Win$TARGET_BITS" ZPG_PACKER_BIN="${ZPG_ROOT}\bin\zpg_packer.exe"
-    stage: Release32
-    addons:
-      artifacts:
-        paths:
-        - $TRAVIS_BUILD_DIR/build/Release/MVRunner
-        - $TRAVIS_BUILD_DIR/build/*.zip
-  - os: windows
-    env: CMAKE_BUILD_TYPE=Debug SFML_VER=2.5.1 TARGET_BITS=32 ZLIB_ROOT="C:\Program Files\zlib" ZPG_ROOT="C:\Program Files\libZpg" SFML_ROOT=$TRAVIS_BUILD_DIR\..\SFML-${SFML_VER}_win${TARGET_BITS} SFML_PACKAGE=SFML-$SFML_VER-windows-vc15-$TARGET_BITS-bit.zip CMAKE_GENERATOR="Visual Studio 15 2017 Win$TARGET_BITS" ZPG_PACKER_BIN="${ZPG_ROOT}\bin\zpg_packer_d.exe"
+    env: CMAKE_BUILD_TYPE=Debug SFML_VER=2.5.1 TARGET_BITS=32 ZLIB_ROOT="C:\Program Files\zlib" ZPG_ROOT="C:\Program Files\libZpg" SFML_ROOT=$TRAVIS_BUILD_DIR\..\SFML-${SFML_VER}_win${TARGET_BITS} SFML_PACKAGE=SFML-$SFML_VER-windows-vc15-$TARGET_BITS-bit.zip CMAKE_GENERATOR="Visual Studio 15 2017" ZPG_PACKER_BIN="${ZPG_ROOT}\bin\zpg_packer_d.exe"
     stage: Debug32
     addons:
       artifacts:
