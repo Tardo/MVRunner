@@ -5,16 +5,14 @@ matrix:
     dist: trusty
     sudo: true
     before_install: sudo apt-get install -y cmake zlib1g-dev libfreetype6-dev libx11-dev libxrandr-dev libxcb1-dev libx11-xcb-dev libxcb-randr0-dev libxcb-image0-dev libflac-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisfile3 libopenal-dev libudev-dev libsndfile1-dev libglew-dev
+    jobs:
+      include:
+      - stage: Compile Release
+        env: CMAKE_BUILD_TYPE=Release SFML_VER=2.5.1 ZPG_PACKER_BIN=/usr/bin/zpg_packer
+      - stage: Compile Debug
+        env: CMAKE_BUILD_TYPE=Debug SFML_VER=2.5.1 ZPG_PACKER_BIN=/usr/bin/zpg_packer_d
     install: chmod +x $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh && $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh
     script: chmod +x $TRAVIS_BUILD_DIR/.travis_compile.sh && $TRAVIS_BUILD_DIR/.travis_compile.sh
-    env: CMAKE_BUILD_TYPE=Release SFML_VER=2.5.1 ZPG_PACKER_BIN=/usr/bin/zpg_packer
-  - os: linux
-    sudo: true
-    dist: trusty
-    before_install: sudo apt-get install -y cmake zlib1g-dev libfreetype6-dev libx11-dev libxrandr-dev libxcb1-dev libx11-xcb-dev libxcb-randr0-dev libxcb-image0-dev libflac-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisfile3 libopenal-dev libudev-dev libsndfile1-dev libglew-dev
-    install: chmod +x $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh && $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh
-    script: chmod +x $TRAVIS_BUILD_DIR/.travis_compile.sh && $TRAVIS_BUILD_DIR/.travis_compile.sh
-    env: CMAKE_BUILD_TYPE=Debug SFML_VER=2.5.1 ZPG_PACKER_BIN=/usr/bin/zpg_packer_d
   - os: windows
     install: chmod +x $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh && $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh
     script: chmod +x $TRAVIS_BUILD_DIR/.travis_compile.sh && $TRAVIS_BUILD_DIR/.travis_compile.sh
@@ -23,6 +21,9 @@ matrix:
 addons:
   artifacts:
     paths:
-    - ~/build/Tardo/MVRunner/build-Release/MVRunner
-    - ~/build/Tardo/MVRunner/build-Debug/MVRunner_d
-    - ~/build/Tardo/MVRunner/build-Release/*.tar.gz
+    - $TRAVIS_BUILD_DIR/build-Release/MVRunner
+    - $TRAVIS_BUILD_DIR/build-Debug/MVRunner_d
+    - $TRAVIS_BUILD_DIR/build-Release/*.tar.gz
+    - $TRAVIS_BUILD_DIR/build/Release/MVRunner
+    - $TRAVIS_BUILD_DIR/build/Debug/MVRunner_d
+    - $TRAVIS_BUILD_DIR/build/*.zip
