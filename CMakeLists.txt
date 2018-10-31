@@ -215,7 +215,7 @@ if (TARGET_OS STREQUAL "windows")
 	endif()
 	add_custom_target(create_zpg COMMAND "${ZPG_PACKER_BIN}" ${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/assets.zpg -C -A ${CMAKE_SOURCE_DIR}/data/)
 else()
-	add_custom_target(create_zpg COMMAND ${ZPG_PACKER_BIN} assets.zpg -C -A ${CMAKE_SOURCE_DIR}/data/)
+	add_custom_target(create_zpg COMMAND "${ZPG_PACKER_BIN}" assets.zpg -C -A ${CMAKE_SOURCE_DIR}/data/)
 endif()
                         
 # INSTALL
