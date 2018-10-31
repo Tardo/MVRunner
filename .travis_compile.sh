@@ -11,7 +11,7 @@ elif [[ $TRAVIS_OS_NAME == 'windows' ]]; then
 	mkdir build-$CMAKE_BUILD_TYPE/ && cd build-$CMAKE_BUILD_TYPE/
     cmake -Werror=dev -G "$CMAKE_GENERATOR" -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE -DZLIB_ROOT="$ZLIB_ROOT" -DZPG_PACKER_BIN="$ZPG_ROOT\bin\$ZPG_PACKER_NAME.exe" ..
     cd ..
-    cmake --build build --config $CMAKE_BUILD_TYPE --target MVRunner
-    cmake --build build --config $CMAKE_BUILD_TYPE --target create_zpg
-    cmake --build build --config $CMAKE_BUILD_TYPE --target package
+    cmake --build build-$CMAKE_BUILD_TYPE --config $CMAKE_BUILD_TYPE --target MVRunner
+    cmake --build build-$CMAKE_BUILD_TYPE --config $CMAKE_BUILD_TYPE --target create_zpg
+    cmake --build build-$CMAKE_BUILD_TYPE --config $CMAKE_BUILD_TYPE --target package
 fi
