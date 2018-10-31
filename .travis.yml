@@ -4,14 +4,14 @@ matrix:
   - os: linux
     dist: trusty
     sudo: true
-    install: $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh
-    script: $TRAVIS_BUILD_DIR/.travis_compile.sh
+    install: chmod +x $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh && $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh
+    script: chmod +x $TRAVIS_BUILD_DIR/.travis_compile.sh && $TRAVIS_BUILD_DIR/.travis_compile.sh
     env: BUILD_TYPE=Release SFML_VER=2.5.1
   - os: linux
     sudo: true
     dist: trusty
-    install: $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh
-    script: $TRAVIS_BUILD_DIR/.travis_compile.sh
+    install: chmod +x $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh && $TRAVIS_BUILD_DIR/.travis_install_dependencies.sh
+    script: chmod +x $TRAVIS_BUILD_DIR/.travis_compile.sh && $TRAVIS_BUILD_DIR/.travis_compile.sh
     env: BUILD_TYPE=Debug SFML_VER=2.5.1
 addons:
   artifacts:
