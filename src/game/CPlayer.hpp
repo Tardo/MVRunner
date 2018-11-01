@@ -22,7 +22,7 @@ public:
 
 	void addPoints(int points) noexcept { m_Points += points; }
 	void resetPoints() noexcept { m_Points = 0; }
-	const unsigned int getPoints() const noexcept { return m_Points; }
+	unsigned int getPoints() const noexcept { return m_Points; }
 
 	void giveWeapon(int wid, int ammo, int maxammo) noexcept;
 

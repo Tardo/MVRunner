@@ -36,11 +36,11 @@ namespace ups
 	sf::Color hsvToRgb(const sf::Vector3f &hsv) noexcept
 	{
 		sf::Color color;
-		const int i = static_cast<const int>(std::floor(hsv.x * 6.0f));
-		const sf::Uint8 f = static_cast<const sf::Uint8>(hsv.x * 6.0f - i);
-		const sf::Uint8 p = static_cast<const sf::Uint8>(hsv.z * (1.0f - hsv.y));
-		const sf::Uint8 q = static_cast<const sf::Uint8>(hsv.z * (1.0f - f * hsv.y));
-		const sf::Uint8 t = static_cast<const sf::Uint8>(hsv.z * (1.0f - (1.0f - f) * hsv.y));
+		const int i = static_cast<int>(floor(hsv.x * 6.0f));
+		const sf::Uint8 f = static_cast<sf::Uint8>(hsv.x * 6.0f - i);
+		const sf::Uint8 p = static_cast<sf::Uint8>(hsv.z * (1.0f - hsv.y));
+		const sf::Uint8 q = static_cast<sf::Uint8>(hsv.z * (1.0f - f * hsv.y));
+		const sf::Uint8 t = static_cast<sf::Uint8>(hsv.z * (1.0f - (1.0f - f) * hsv.y));
 
 		switch (i % 6)
 		{

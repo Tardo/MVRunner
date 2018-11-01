@@ -30,8 +30,8 @@ public:
 	void setActive(int mid, CEntity *pEnt = nullptr) noexcept;
 	void setActiveModal(int mid) noexcept;
 	void setActiveEntity(CEntity *pEnt) { m_pEntity = pEnt; }
-	const int getActive() const noexcept { return m_ActiveMenu; }
-	const int getActiveModal() const noexcept { return m_ActiveModal; }
+	int getActive() const noexcept { return m_ActiveMenu; }
+	int getActiveModal() const noexcept { return m_ActiveModal; }
 
 private:
 	int m_ActiveMenu;

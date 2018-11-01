@@ -101,11 +101,11 @@ endif()
 # CONFIGURE FLAGS
 if (TARGET_COMPILER STREQUAL "gcc" OR
     TARGET_COMPILER STREQUAL "clang")
-    set(cxx_flags "${CMAKE_CXX_FLAGS} -Wall")
-    set(c_flags "${CMAKE_C_FLAGS} -Wall")
+    set(cxx_flags "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-parameter")
+    set(c_flags "${CMAKE_C_FLAGS} -Wall -Wextra -Wno-unused-parameter")
 elseif (TARGET_COMPILER STREQUAL "cl")
-    set(cxx_flags "${CMAKE_CXX_FLAGS} /W4 /EHsc /MP /GS")
-    set(c_flags "${CMAKE_C_FLAGS} /W4 /MP /GS")
+    set(cxx_flags "${CMAKE_CXX_FLAGS} /W3 /EHsc /MP /GS")
+    set(c_flags "${CMAKE_C_FLAGS} /W3 /MP /GS")
     add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
 endif()
 

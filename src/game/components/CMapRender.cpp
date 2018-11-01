@@ -193,7 +193,7 @@ void CMapRender::renderTilemap(sf::RenderTarget& target, sf::RenderStates states
 			if (Client()->getRenderMode() == RENDER_MODE_NORMALMAP)
 			{
 
-				const unsigned int normalmap_id = pTileLayer->GetProperties().GetIntProperty("normalmap_id", -1);
+				const int normalmap_id = pTileLayer->GetProperties().GetIntProperty("normalmap_id", -1);
 				if (normalmap_id >= 0)
 					pTexture = Map.m_vpTextures[normalmap_id];
 			}

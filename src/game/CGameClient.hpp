@@ -75,8 +75,8 @@ public:
 		return 0x0;
 	}
 
-	const int getNumComponents() const noexcept { return m_vpComponents.size(); }
-	const int getNumSystems() const noexcept { return m_vpSystems.size(); }
+	int getNumComponents() const noexcept { return m_vpComponents.size(); }
+	int getNumSystems() const noexcept { return m_vpSystems.size(); }
 
 	void reset() noexcept;
 	void run() noexcept;
@@ -91,7 +91,7 @@ public:
 
 	unsigned int getFPS() const noexcept { return m_FPS; }
 	float getDeltaTime() const noexcept { return m_DeltaTime; }
-	const float getElapsedTime() const noexcept { return (ups::timeGet()-m_TimerGame)/(float)ups::timeFreq(); }
+	float getElapsedTime() const noexcept { return (ups::timeGet()-m_TimerGame)/(float)ups::timeFreq(); }
 
 	int getRenderMode() const noexcept { return m_RenderMode; }
 	void setRenderMode(int mode) noexcept;
