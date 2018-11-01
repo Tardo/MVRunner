@@ -3,7 +3,7 @@
 #include "CEntity.hpp"
 #include <base/math.hpp>
 #include <base/system.hpp>
-#include <engine/CGame.hpp>
+#include <engine/client/CClient.hpp>
 #include <game/CGameClient.hpp>
 
 
@@ -20,7 +20,7 @@ CEntity::CEntity(int type, const sf::Color color)
 	m_ContactFx = FX_NONE;
 	m_SelfDelete = true;
 
-	CGame *pGame = CGame::getInstance();
+	CClient *pGame = CClient::getInstance();
 	m_Id = pGame->Client()->Controller()->Context()->addEntity(this);
 }
 
@@ -28,7 +28,7 @@ CEntity::~CEntity()
 {
 	if (m_pBody)
 	{
-		CGame *pGame = CGame::getInstance();
+		CClient *pGame = CClient::getInstance();
 		CSystemBox2D *pSystemBox2D = pGame->Client()->getSystem<CSystemBox2D>();
 		if (pGame->Client()->Controller()->Context()->getPlayer()->getCharacter() && !pGame->Client()->Controller()->Context()->getPlayer()->getCharacter()->isToDelete())
 		{

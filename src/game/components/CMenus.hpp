@@ -4,6 +4,7 @@
 #define H_GAME_COMPONENT_MENUS
 
 #include <game/CComponent.hpp>
+#include <game/CEntity.hpp>
 
 class CMenus final : public CComponent
 {

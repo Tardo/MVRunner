@@ -8,7 +8,7 @@
 #include <SFML/Graphics.hpp>
 #include <game/CEntity.hpp>
 #include <vector>
-#include "ISystem.hpp"
+#include "../ISystem.hpp"
 
 #define VELITER 1
 #define POSITER 1

@@ -7,30 +7,30 @@
 #include <cstdlib>
 
 
-class CGame final
+class CClient final
 {
-	static CGame *ms_pCoreInstance;
+	static CClient *ms_pCoreInstance;
 public:
-	static CGame* getInstance()
+	static CClient* getInstance()
 	{
 		if (!ms_pCoreInstance)
 		{
-			ms_pCoreInstance = new CGame();
+			ms_pCoreInstance = new CClient();
 			atexit(&destroyInstance);
 		}
 
 		return ms_pCoreInstance;
 	}
-	~CGame();
+	~CClient();
 
 	class CGameClient* Client() const noexcept { return m_pGameClient; }
 
 	void init() noexcept;
 
 protected:
-	CGame() noexcept;
-	CGame(const CGame&) noexcept;
-	CGame& operator= (const CGame&) noexcept;
+	CClient() noexcept;
+	CClient(const CClient&) noexcept;
+	CClient& operator= (const CClient&) noexcept;
 
 	class CGameClient *m_pGameClient;
 

@@ -1,7 +1,7 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
-#include <engine/CGame.hpp>
 #include <engine/CLocalization.hpp>
+#include <game/CGameClient.hpp>
 #include "CCamera.hpp"
 
 CCamera::CCamera(CGameClient *pGameClient, const sf::Vector2u &screenSize) noexcept

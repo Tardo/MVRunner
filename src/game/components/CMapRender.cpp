@@ -2,7 +2,7 @@
 
 #include <SFML/OpenGL.hpp>
 #include <base/math.hpp>
-#include <engine/CGame.hpp>
+#include <engine/client/CClient.hpp>
 #include <tmxparser/TmxTile.h>
 #include "CMapRender.hpp"
 #include <game/CController.hpp>

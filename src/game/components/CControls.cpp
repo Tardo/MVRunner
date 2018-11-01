@@ -1,6 +1,6 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
-#include <engine/CGame.hpp>
+#include <engine/client/CClient.hpp>
 #include <game/controllers/CControllerMenu.hpp>
 #include "CControls.hpp"
 

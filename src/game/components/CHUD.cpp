@@ -1,6 +1,6 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
-#include <engine/CGame.hpp>
+#include <engine/client/CClient.hpp>
 #include <engine/CLocalization.hpp>
 #include <game/version.h>
 #include "CHUD.hpp"
@@ -40,7 +40,7 @@ void CHUD::renderTime(sf::RenderTarget& target, sf::RenderStates states) const n
 	if (elapsedTimeMili > 0)
 	{
 		const int elapsedTimeSeconds = elapsedTimeMili / ups::timeFreq();
-		char aBuff[10];
+		char aBuff[28];
 		sprintf(aBuff, "%02d:%02d.%03d", elapsedTimeSeconds/60, elapsedTimeSeconds%60, (int)(elapsedTimeMili%1000));
 		Client()->UI().doLabel(target, states, aBuff, sf::FloatRect(0.0f, 0.0f, rectArea.width, 80.0f), sf::Color::Red, 42u, CUI::ALIGN_CENTER);
 	}

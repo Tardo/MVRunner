@@ -1,7 +1,9 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
-#include <engine/CAssetManager.hpp>
-#include <engine/CGame.hpp>
+#include <Box2D/Particle/b2Particle.h>
+#include <Box2D/Particle/b2ParticleSystem.h>
+#include <engine/client/CAssetManager.hpp>
+#include <engine/client/CClient.hpp>
 #include <game/CGameClient.hpp>
 #include "CParticleSystemRender.hpp"
 

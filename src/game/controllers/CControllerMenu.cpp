@@ -2,12 +2,12 @@
 
 #include <base/math.hpp>
 #include <base/system.hpp>
-#include <engine/CAssetManager.hpp>
+#include <engine/client/CAssetManager.hpp>
+#include <engine/client/CSystemSound.hpp>
 #include <engine/CLocalization.hpp>
 #include <game/CContext.hpp>
 #include "CControllerMenu.hpp"
 #include <cstring>
-#include <engine/CSystemSound.hpp>
 
 CControllerMenu::CControllerMenu() noexcept
 : CController(),

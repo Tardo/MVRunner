@@ -1,17 +1,18 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
+#include "CClient.hpp"
+
 #include <base/system.hpp>
-#include "CGame.hpp"
 #ifdef SFML_SYSTEM_LINUX
 //#include <X11/Xlib.h>
 #endif
 
-CGame* CGame::ms_pCoreInstance = nullptr;
-CGame::CGame() noexcept
+CClient* CClient::ms_pCoreInstance = nullptr;
+CClient::CClient() noexcept
 {
 	m_pGameClient = nullptr;
 }
-CGame::~CGame() noexcept
+CClient::~CClient() noexcept
 {
     if (m_pGameClient)
     	delete m_pGameClient;
@@ -23,7 +24,7 @@ CGame::~CGame() noexcept
 }
 
 
-void CGame::init() noexcept
+void CClient::init() noexcept
 {
 	m_pGameClient = new CGameClient();
 	m_pGameClient->run();
@@ -42,7 +43,7 @@ int main()
 	else
 		ups::msgDebug("MAIN", "Configuration file successfully loaded");
 
-	CGame::getInstance()->init();
+	CClient::getInstance()->init();
 
 	if (!config.save())
 		ups::msgDebug("CONFIG", "Error while saving configuration!");

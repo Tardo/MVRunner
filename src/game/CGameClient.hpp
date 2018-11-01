@@ -6,11 +6,10 @@
 #include <SFML/Graphics.hpp>
 #include <tmxparser/TmxMap.h>
 #include <base/system.hpp>
-#include <engine/CAssetManager.hpp>
-#include <engine/CConfig.hpp>
+#include <engine/client/CAssetManager.hpp>
+#include <engine/client/CConfig.hpp>
+#include <engine/client/CSystemSound.hpp>
 #include <engine/ISystem.hpp>
-#include <engine/CSystemSound.hpp>
-#include <engine/CSystemBox2D.hpp>
 #include <game/components/CMapRender.hpp>
 #include <game/components/CMenus.hpp>
 #include <game/components/CPlayerRender.hpp>

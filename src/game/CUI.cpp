@@ -5,7 +5,7 @@
 #include <cstring>
 #include <base/math.hpp>
 #include <base/system.hpp>
-#include <engine/CConfig.hpp>
+#include <engine/client/CConfig.hpp>
 #include "CUI.hpp"
 
 const sf::Vector2f CUI::SCROLL_SIZE(8.0f, 30.0f);

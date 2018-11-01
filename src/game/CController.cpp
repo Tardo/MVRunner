@@ -15,22 +15,20 @@
 #include <tmxparser/TmxPolyline.h>
 #include <tmxparser/TmxPoint.h>
 #include <Box2D/Box2D.h>
-#include <engine/CGame.hpp>
 #include <game/components/CMapRender.hpp>
 #include <game/components/CLightRender.hpp>
 #include <game/controllers/CControllerMain.hpp>
 #include <game/CController.hpp>
-#include <engine/CSystemBox2D.hpp>
 
 
 CController::CController() noexcept
 {
-	m_pGame = CGame::getInstance();
+	m_pGame = CClient::getInstance();
 	m_pGameContext = new CContext();
 }
 CController::CController(class CContext *pContext) noexcept
 {
-	m_pGame = CGame::getInstance();
+	m_pGame = CClient::getInstance();
 	m_pGameContext = pContext;
 }
 CController::~CController() noexcept
@@ -647,7 +645,7 @@ void CController::createPoints(const sf::Vector2f &worldPos, int points) noexcep
 {
 	CSimpleParticle *pParticle = new CSimpleParticle(sf::BlendAlpha, RENDER_FOREGROUND);
 	pParticle->m_ModeText = true;
-	char buff[5];
+	char buff[28];
 	if (points >= 0) snprintf(buff, sizeof(buff), "+%d", points);
 	else snprintf(buff, sizeof(buff), "%d", points);
 	pParticle->m_String = buff;

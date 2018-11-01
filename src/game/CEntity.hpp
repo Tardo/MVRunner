@@ -5,8 +5,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
-
-#include "../engine/CSystemBox2D.hpp"
+#include <engine/shared/CSystemBox2D.hpp>
 
 #define MAX_SHADOWS	4
 

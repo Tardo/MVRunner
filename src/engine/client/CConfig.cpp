@@ -32,7 +32,7 @@ bool CConfig::load() noexcept
 	{
 		#define MACRO_CONFIG_INT(Name,ScriptName,def,min,max,flags) if (paramName.compare(#ScriptName) == 0) g_Config.m_##Name = upm::clamp(::atoi(paramValue.c_str()), min, max);
 		#define MACRO_CONFIG_FLOAT(Name,ScriptName,def,min,max,flags) if (paramName.compare(#ScriptName) == 0) g_Config.m_##Name = upm::clamp((float)::atof(paramValue.c_str()), min, max);
-		#define MACRO_CONFIG_STR(Name,ScriptName,len,def,flags) if (paramName.compare(#ScriptName) == 0) strncpy(g_Config.m_##Name, paramValue.c_str(), len);
+		#define MACRO_CONFIG_STR(Name,ScriptName,len,def,flags) if (paramName.compare(#ScriptName) == 0) strncpy(g_Config.m_##Name, paramValue.c_str(), len-1);
 		#define MACRO_CONFIG_BOOL(Name,ScriptName,def,flags) if (paramName.compare(#ScriptName) == 0) g_Config.m_##Name = (paramValue.compare("true") == 0);
 		#define MACRO_CONFIG_COLOR(Name,ScriptName,def,flags) if (paramName.compare(#ScriptName) == 0) g_Config.m_##Name = ups::intToColor(::atoi(paramValue.c_str()));
 

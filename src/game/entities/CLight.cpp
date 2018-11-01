@@ -1,7 +1,7 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
 #include "CLight.hpp"
-#include <engine/CGame.hpp>
+#include <engine/client/CClient.hpp>
 
 /** LIGHT **/
 CLight::CLight(sf::Texture *pTexture, const sf::Vector2f &nposition, float angle, const sf::Vector2f &nscale, const sf::Color &ncolor, bool alwaysOn, float blink, float variationSize, int render) noexcept
@@ -28,7 +28,7 @@ CLight::~CLight() noexcept
 
 void CLight::tick() noexcept
 {
-	CGame *pGame = CGame::getInstance();
+	CClient *pGame = CClient::getInstance();
 	if (pGame->Client()->isClipped(m_Position, SCREEN_MARGIN_DESTRUCTION))
 		destroy();
 

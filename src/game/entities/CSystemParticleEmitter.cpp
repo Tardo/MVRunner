@@ -1,7 +1,6 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
-#include <engine/CGame.hpp>
-#include <engine/CSystemBox2D.hpp>
+#include <engine/client/CClient.hpp>
 #include <game/CGameClient.hpp>
 #include "CSystemParticleEmitter.hpp"
 
@@ -27,7 +26,7 @@ CSystemParticleEmitter::~CSystemParticleEmitter() noexcept
 
 void CSystemParticleEmitter::tick() noexcept
 {
-	CGame *pGame = CGame::getInstance();
+	CClient *pGame = CClient::getInstance();
 	if (pGame->Client()->isClipped(m_Pos, SCREEN_MARGIN_DESTRUCTION))
 		destroy();
 

@@ -1,7 +1,7 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
-#include <engine/CConfig.hpp>
-#include <engine/CGame.hpp>
+#include <engine/client/CConfig.hpp>
+#include <engine/client/CClient.hpp>
 #include "CMap.hpp"
 
 CMap::CMap() noexcept
@@ -50,7 +50,7 @@ bool CMap::init() noexcept
 
 	// Procesar Imágenes
 	{
-		CGame *pGame = CGame::getInstance();
+		CClient *pGame = CClient::getInstance();
 		std::vector<Tmx::Tileset*>::const_iterator it = GetTilesets().cbegin();
 		while (it != GetTilesets().cend())
 		{
@@ -245,7 +245,7 @@ sf::IntRect CMap::getMapBounds(const sf::View &camera) noexcept
 {
 	const sf::Vector2i tileSize(GetTileWidth(), GetTileHeight());
 	sf::FloatRect screenArea;
-	CGame *pGame = CGame::getInstance();
+	CClient *pGame = CClient::getInstance();
 	pGame->Client()->getViewportGlobalBounds(&screenArea, camera);
 	return sf::IntRect(
 			upm::clamp((int)(screenArea.left/tileSize.x-1), 0, GetWidth()),

@@ -1,14 +1,13 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
-#include <engine/CGame.hpp>
-#include <engine/CAssetManager.hpp>
+#include <engine/client/CClient.hpp>
+#include <engine/client/CAssetManager.hpp>
+#include <engine/client/CSystemSound.hpp>
 #include "CCharacter.hpp"
 #include "CProjectile.hpp"
 #include "CHitBox.hpp"
 #include "CFire.hpp"
 #include <game/controllers/CControllerMain.hpp>
-#include <engine/CSystemBox2D.hpp>
-#include <engine/CSystemSound.hpp>
 
 
 const float CCharacter::SIZE = 28.0f;
@@ -56,7 +55,7 @@ void CCharacter::tick() noexcept
 	if (!m_pBody || !m_Visible)
 		return;
 
-	CGame *pGame = CGame::getInstance();
+	CClient *pGame = CClient::getInstance();
 	const sf::Vector2f shapePos = CSystemBox2D::b2ToSf(m_pBody->GetPosition());
 
 	if (isAlive())
@@ -68,7 +67,7 @@ void CCharacter::tick() noexcept
 	    // Can't impulse in air
 	    if ((m_State&MOVE_STATE_LEFT) || (m_State&MOVE_STATE_RIGHT))
 	    {
-			CGame *pGame = CGame::getInstance();
+			CClient *pGame = CClient::getInstance();
 			CSystemBox2D *pB2Engine = pGame->Client()->getSystem<CSystemBox2D>();
 			const sf::Vector2f charPos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
 			const sf::Vector2f groundColPos = charPos + sf::Vector2f(0.0f, CCharacter::SIZE+5.0f);
@@ -220,7 +219,7 @@ void CCharacter::doFire() noexcept
 		if (m_aWeapons[m_ActiveWeapon].m_Ammo != -1 && m_aWeapons[m_ActiveWeapon].m_Ammo == 0)
 			return;
 
-		CGame *pGame = CGame::getInstance();
+		CClient *pGame = CClient::getInstance();
 		const sf::Vector2f CharPos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
 		const sf::Vector2f CharDir = upm::vectorNormalize(pGame->Client()->mapPixelToCoords(pGame->Client()->UI().getMousePos(), pGame->Client()->Camera()) - CharPos);
 
@@ -249,7 +248,7 @@ void CCharacter::doHook(bool state) noexcept
 	if (state && m_HookState == HOOK_STATE_RETRACTED)
 	{
 		m_HookState = HOOK_STATE_FLYING;
-		CGame *pGame = CGame::getInstance();
+		CClient *pGame = CClient::getInstance();
 		const sf::Vector2f CharPos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
 		m_HookDir = upm::vectorNormalize(pGame->Client()->mapPixelToCoords(pGame->Client()->UI().getMousePos(), pGame->Client()->Camera()) - CharPos);
 		m_HookLength = 0.0f;
@@ -279,7 +278,7 @@ void CCharacter::takeHealth(int amount, class CPlayer *pPlayer) noexcept
 {
 	const sf::Vector2f charPos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
 	m_Health = upm::max(m_Health-amount, 0);
-	CGame *pGame = CGame::getInstance();
+	CClient *pGame = CClient::getInstance();
 	m_TimerDamageIndicator = ups::timeGet();
 	pGame->Client()->Controller()->createPoints(charPos, -amount);
 	pGame->Client()->getSystem<CSystemSound>()->play(CAssetManager::SOUND_DAMAGE, charPos, 15.0f);
@@ -345,11 +344,11 @@ void CCharacter::onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexc
 	const sf::Vector2f charVel = CSystemBox2D::b2ToSf(getBody()->GetLinearVelocity());
 	if ((m_State&MOVE_STATE_LEFT) && charVel.x > 500.0f)
 	{
-		CGame *pGame = CGame::getInstance();
+		CClient *pGame = CClient::getInstance();
 		pGame->Client()->Controller()->createSmokeImpact(worldPos, sf::Vector2f(-1.0f, 0.0f), upm::vectorLength(charVel)/500.0f);
 	} else if ((m_State&MOVE_STATE_RIGHT) && charVel.x < -500.0f)
 	{
-		CGame *pGame = CGame::getInstance();
+		CClient *pGame = CClient::getInstance();
 		pGame->Client()->Controller()->createSmokeImpact(worldPos, sf::Vector2f(1.0f, 0.0f), upm::vectorLength(charVel)/500.0f);
 	}
 }

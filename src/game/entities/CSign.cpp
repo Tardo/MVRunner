@@ -1,9 +1,8 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
-#include <engine/CGame.hpp>
-#include <engine/CAssetManager.hpp>
+#include <engine/client/CClient.hpp>
+#include <engine/client/CAssetManager.hpp>
 #include "CSign.hpp"
-#include <engine/CSystemBox2D.hpp>
 
 const CB2BodyInfo CSign::ms_BodyInfo = CB2BodyInfo(0.2f, 0.7f, 0.1f, 0.0f, b2_dynamicBody, CAT_SIGN, true, CAT_CHARACTER_PLAYER);
 CSign::CSign(const sf::Vector2f &pos, const sf::Vector2f &size, float rot, const char *pText) noexcept
@@ -29,12 +28,12 @@ void CSign::tick() noexcept
 void CSign::onSensorIn(CEntity *pEntity) noexcept
 {
 	CB2Polygon::onSensorIn(pEntity);
-	CGame *pGame = CGame::getInstance();
+	CClient *pGame = CClient::getInstance();
 	pGame->Client()->showHelpMessage(m_aText);
 }
 void CSign::onSensorOut(CEntity *pEntity) noexcept
 {
 	CB2Polygon::onSensorOut(pEntity);
-	CGame *pGame = CGame::getInstance();
+	CClient *pGame = CClient::getInstance();
 	pGame->Client()->showHelpMessage("");
 }

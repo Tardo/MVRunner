@@ -1,13 +1,13 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
 #include <base/math.hpp>
-#include <engine/CGame.hpp>
+#include <engine/client/CClient.hpp>
 #include "CB2Chain.hpp"
 
 CB2Chain::CB2Chain(const sf::Vector2f &worldPos, const std::vector<sf::Vector2f> &points, float rot, const sf::Color &color, const CB2BodyInfo &bodyInfo, int entityType) noexcept
 : CEntity(entityType, color)
 {
-	CGame *pGame = CGame::getInstance();
+	CClient *pGame = CClient::getInstance();
 	m_pBody = pGame->Client()->getSystem<CSystemBox2D>()->createPolyLineBody(worldPos, points, rot, bodyInfo);
 	m_pBody->SetUserData(this);
 }
@@ -20,7 +20,7 @@ CB2Chain::~CB2Chain() noexcept
 
 void CB2Chain::tick() noexcept
 {
-	CGame *pGame = CGame::getInstance();
+	CClient *pGame = CClient::getInstance();
 	if (canSelfDelete())
 	{
 		bool needDelete = true;
@@ -39,7 +39,7 @@ void CB2Chain::onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexcep
 {
 	if (m_ContactFx != CEntity::FX_NONE)
 	{
-		CGame *pGame = CGame::getInstance();
+		CClient *pGame = CClient::getInstance();
 		if (m_ContactFx == CEntity::FX_SPARKS)
 			pGame->Client()->Controller()->createImpactSparkMetal(worldPos);
 	}

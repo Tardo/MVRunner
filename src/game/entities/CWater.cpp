@@ -1,9 +1,8 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
 #include "CWater.hpp"
-#include <engine/CGame.hpp>
-#include <engine/CAssetManager.hpp>
-#include <engine/CSystemBox2D.hpp>
+#include <engine/client/CClient.hpp>
+#include <engine/client/CAssetManager.hpp>
 
 const CB2BodyInfo CWater::ms_BodyInfo = CB2BodyInfo(0.2f, 1.2f, 0.1f, 0.0f, b2_staticBody, CAT_WATER, true, CAT_BUILD|CAT_GENERIC|CAT_CHARACTER_PLAYER|CAT_PROJECTILE);
 CWater::CWater(const sf::Vector2f &pos, const sf::Vector2f &size, float rot) noexcept
@@ -88,7 +87,7 @@ void CWater::tick() noexcept
 		++cit;
 	}
 
-	CGame *pGame = CGame::getInstance();
+	CClient *pGame = CClient::getInstance();
 	CSystemBox2D *pSystemBox2D = pGame->Client()->getSystem<CSystemBox2D>();
 	// LiquidFun Particles
 	b2AABB bounds;

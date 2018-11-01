@@ -1,6 +1,5 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
-#include <engine/CAssetManager.hpp>
 #include "CPlayer.hpp"
 
 CPlayer::CPlayer() noexcept

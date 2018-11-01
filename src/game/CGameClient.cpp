@@ -465,12 +465,12 @@ void CGameClient::showBroadcastMessage(const char *pMsg, float duration) noexcep
 {
 	m_TimerBroadcast = ups::timeGet();
 	m_BroadcastDuration = duration;
-	ups::strCopy(m_aBroadcastMsg, pMsg, BROADCAST_MAX_LENGTH);
+	ups::strCopy(m_aBroadcastMsg, pMsg, BROADCAST_MAX_LENGTH-1);
 }
 
 void CGameClient::showHelpMessage(const char *pMsg) noexcept
 {
-	ups::strCopy(m_aHelpMsg, pMsg, HELP_TEXT_MAX_LENGTH);
+	ups::strCopy(m_aHelpMsg, pMsg, HELP_TEXT_MAX_LENGTH-1);
 }
 
 void CGameClient::runPlayerTime(bool state) noexcept

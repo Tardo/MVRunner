@@ -1,9 +1,8 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
 #include "CFire.hpp"
-#include <engine/CGame.hpp>
-#include <engine/CAssetManager.hpp>
-#include <engine/CSystemBox2D.hpp>
+#include <engine/client/CClient.hpp>
+#include <engine/client/CAssetManager.hpp>
 
 const float CFire::SIZE = 8.0f;
 const CB2BodyInfo CFire::ms_BodyInfo = CB2BodyInfo(0.2f, 0.7f, 0.1f, 0.0f, b2_kinematicBody, CAT_FIRE, false, CAT_FIRE|CAT_BUILD|CAT_GENERIC);
@@ -14,7 +13,7 @@ CFire::CFire(const sf::Vector2f &pos, float rot, const sf::Vector2f &dir, float 
 	m_Dir = dir;
 	m_Force = force;
 
-	CGame *pGame = CGame::getInstance();
+	CClient *pGame = CClient::getInstance();
 
 	pGame->Client()->Controller()->createFireBall(this, lifeTime-0.01f);
 	if (getBody())
@@ -41,7 +40,7 @@ CFire::~CFire() noexcept
 void CFire::tick() noexcept
 {
 	CB2Circle::tick();
-	CGame *pGame = CGame::getInstance();
+	CClient *pGame = CClient::getInstance();
 
 	const sf::Vector2f shapePos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
 	const unsigned long elapsedTicks = ups::timeGet()-m_TickStart;
@@ -64,6 +63,6 @@ void CFire::onContact(CEntity *pEntity, const sf::Vector2f &worldPos) noexcept
 	if (pEntity->getType() == CEntity::FIRE)
 		return;
 
-	CGame *pGame = CGame::getInstance();
+	CClient *pGame = CClient::getInstance();
 	pGame->Client()->Controller()->createFireTrailLarge(worldPos);
 }

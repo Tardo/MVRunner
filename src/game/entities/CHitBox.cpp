@@ -1,9 +1,8 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
 #include "CHitBox.hpp"
-#include <engine/CGame.hpp>
-#include <engine/CAssetManager.hpp>
-#include <engine/CSystemBox2D.hpp>
+#include <engine/client/CClient.hpp>
+#include <engine/client/CAssetManager.hpp>
 
 const CB2BodyInfo CHitBox::ms_BodyInfo = CB2BodyInfo(0.1f, 0.7f, 0.1f, 0.0f, b2_dynamicBody, CAT_HITBOX, false, CAT_CHARACTER_PLAYER|CAT_BUILD|CAT_GENERIC|CAT_HITBOX|CAT_ZONE);
 CHitBox::CHitBox(const sf::Vector2f &pos, const sf::Vector2f &size, float rot, const sf::Vector2f &dir, float force, float lifeTime, unsigned int typeHitBox, unsigned int level, const sf::Color &color, int textureId) noexcept
@@ -62,7 +61,7 @@ CHitBox::~CHitBox() noexcept
 void CHitBox::tick() noexcept
 {
 	CB2Polygon::tick();
-	CGame *pGame = CGame::getInstance();
+	CClient *pGame = CClient::getInstance();
 
 	const sf::Vector2f shapePos = CSystemBox2D::b2ToSf(getBody()->GetPosition());
 	const unsigned long elapsedTicks = ups::timeGet()-m_TickStart;

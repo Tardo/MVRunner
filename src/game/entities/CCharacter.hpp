@@ -3,7 +3,7 @@
 #ifndef H_ENTITY_CCHARACTER
 #define H_ENTITY_CCHARACTER
 
-#include <engine/CConfig.hpp>
+#include <engine/client/CConfig.hpp>
 #include "primitives/CB2Circle.hpp"
 #include <vector>
 

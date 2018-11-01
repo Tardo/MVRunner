@@ -63,7 +63,7 @@ public:
 	CController(CContext *pContext) noexcept;
 	virtual ~CController() noexcept;
 
-	class CGame* Game() const noexcept { return m_pGame; }
+	class CClient* Game() const noexcept { return m_pGame; }
 	CContext *Context() const noexcept { return m_pGameContext; }
 
 	virtual void tick() noexcept;
@@ -102,7 +102,7 @@ public:
 	CLight* createCustom(int textId, const sf::Vector2f &worldPos, const sf::Vector2f &origin, float angle, const sf::Vector2f &scale, const sf::Color &color, bool alwaysOn = false, float blink = 0.0f, float variationSize = 0.0f) noexcept;
 
 private:
-	class CGame *m_pGame;
+	class CClient *m_pGame;
 	CContext *m_pGameContext;
 };
 

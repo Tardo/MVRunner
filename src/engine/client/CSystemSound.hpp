@@ -6,7 +6,7 @@
 #include "CAssetManager.hpp"
 #include <SFML/Audio.hpp>
 #include <list>
-#include "ISystem.hpp"
+#include "../ISystem.hpp"
 
 #define SOUND_MIN_DISTANCE	1.0f
 

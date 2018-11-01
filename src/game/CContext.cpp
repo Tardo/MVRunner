@@ -1,7 +1,6 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
 #include <base/system.hpp>
-#include <engine/CGame.hpp>
 #include "CContext.hpp"
 
 CContext::CContext() noexcept

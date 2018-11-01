@@ -1,10 +1,10 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
-#include <engine/CGame.hpp>
+#include <engine/client/CClient.hpp>
 #include <engine/CLocalization.hpp>
+#include <engine/client/CSystemSound.hpp>
 #include <game/version.h>
 #include "CMenus.hpp"
-#include <engine/CSystemSound.hpp>
 
 CMenus::CMenus(CGameClient *pGameClient) noexcept
 : CComponent(pGameClient)

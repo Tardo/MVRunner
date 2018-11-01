@@ -2,7 +2,7 @@
 
 #ifndef H_ENGINE_INTERFACE_SYSTEM
 #define H_ENGINE_INTERFACE_SYSTEM
-#include "CAssetManager.hpp"
+#include "client/CAssetManager.hpp"
 
 class ISystem
 {

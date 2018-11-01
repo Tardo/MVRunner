@@ -1,7 +1,7 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
-#include <engine/CAssetManager.hpp>
-#include <engine/CGame.hpp>
+#include <engine/client/CAssetManager.hpp>
+#include <engine/client/CClient.hpp>
 #include <game/CGameClient.hpp>
 #include "CSimpleParticleRender.hpp"
 

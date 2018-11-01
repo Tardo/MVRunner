@@ -2,9 +2,9 @@
 
 #include <base/math.hpp>
 #include <base/system.hpp>
-#include <engine/CAssetManager.hpp>
-#include <engine/CSystemBox2D.hpp>
-#include <engine/CSystemSound.hpp>
+#include <engine/client/CAssetManager.hpp>
+#include <engine/client/CSystemSound.hpp>
+#include <engine/shared/CSystemBox2D.hpp>
 #include <game/entities/CCharacter.hpp>
 #include <game/entities/CFire.hpp>
 #include <game/entities/CProjectile.hpp>

@@ -5,7 +5,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <game/CEntity.hpp>
-#include <engine/CSystemBox2D.hpp>
+#include <engine/shared/CSystemBox2D.hpp>
 
 class CB2Polygon : public CEntity
 {

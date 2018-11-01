@@ -1,10 +1,9 @@
-#include <engine/CGame.hpp>
-#include <engine/CAssetManager.hpp>
+#include <engine/client/CClient.hpp>
+#include <engine/client/CAssetManager.hpp>
+#include <engine/client/CConfig.hpp>
+#include <engine/client/CSystemSound.hpp>
 #include "CProjectile.hpp"
 #include "CFire.hpp"
-#include <engine/CConfig.hpp>
-#include <engine/CSystemBox2D.hpp>
-#include <engine/CSystemSound.hpp>
 
 const CB2BodyInfo CProjectile::ms_BodyInfo = CB2BodyInfo(0.2f, 1.25f, 0.1f, 0.0f, b2_dynamicBody, CAT_PROJECTILE, false, CAT_FIRE|CAT_BUILD|CAT_GENERIC|CAT_PROJECTILE|CAT_WATER|CAT_ZONE);
 CProjectile::CProjectile(const sf::Vector2f &pos, const sf::Vector2f &size, float rot, const sf::Vector2f &dir, class CPlayer *pOwner, unsigned int type, unsigned int subtype) noexcept
@@ -67,7 +66,7 @@ void CProjectile::tick() noexcept
 		{
 			if (ups::timeGet()-m_TimerSpawnFire > ups::timeFreq()*0.08f)
 			{
-				CGame *pGame = CGame::getInstance();
+				CClient *pGame = CClient::getInstance();
 				pGame->Client()->Controller()->createFireTrailLarge(ProjPos-m_Dir*48.0f);
 				m_TimerSpawnFire = ups::timeGet();
 			}
@@ -91,7 +90,7 @@ void CProjectile::tick() noexcept
 	const unsigned long elapsedTicks = ups::timeGet()-m_TickStart;
 	if (m_LifeTime < 0.0f || (m_LifeTime != 0.0f && elapsedTicks > ups::timeFreq()*m_LifeTime))
 	{
-		CGame *pGame = CGame::getInstance();
+		CClient *pGame = CClient::getInstance();
 		const sf::Vector2f ProjPos = m_HasTouched?m_ContactWorldPoint:CSystemBox2D::b2ToSf(getBody()->GetPosition());
 
 		switch (m_ProjType)

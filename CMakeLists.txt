@@ -151,13 +151,13 @@ add_subdirectory(${EXTERNAL_DIR} ${CMAKE_CURRENT_BINARY_DIR}/libs)
 
 # GAME SOURCE
 set(BASE_SRC    src/base/system.cpp)
-set(ENGINE_SRC  src/engine/CAssetManager.cpp
-                src/engine/CConfig.cpp
-                src/engine/CGame.cpp
+set(ENGINE_SRC  src/engine/client/CAssetManager.cpp
+                src/engine/client/CConfig.cpp
+                src/engine/client/CClient.cpp
+                src/engine/client/CSystemSound.cpp
                 src/engine/CLocalization.cpp
                 src/engine/CNoise.cpp
-                src/engine/CSystemBox2D.cpp
-                src/engine/CSystemSound.cpp)
+                src/engine/shared/CSystemBox2D.cpp)
 set(GAME_SRC    src/game/components/CMapRender.cpp
                 src/game/components/CMenus.cpp
                 src/game/components/CPlayerRender.cpp

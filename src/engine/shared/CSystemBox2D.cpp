@@ -1,8 +1,10 @@
 /* (c) Alexandre Díaz. See licence.txt in the root of the distribution for more information. */
 
+#include <Box2D/Particle/b2ParticleSystem.h>
+#include <Box2D/Particle/b2ParticleGroup.h>
 #include "CSystemBox2D.hpp"
 #include <base/math.hpp>
-#include "CGame.hpp"
+
 
 b2Vec2 CSystemBox2D::ZERO(0.0f, 0.0f);
 CSystemBox2D::CSystemBox2D() noexcept

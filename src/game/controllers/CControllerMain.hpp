@@ -3,7 +3,7 @@
 #ifndef H_GAME_CONTROLLER_MAIN
 #define H_GAME_CONTROLLER_MAIN
 
-#include <engine/CGame.hpp>
+#include <engine/client/CClient.hpp>
 #include <game/CContext.hpp>
 #include <game/CController.hpp>
 #include <vector>
