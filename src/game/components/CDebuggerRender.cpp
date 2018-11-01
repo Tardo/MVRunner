@@ -162,7 +162,7 @@ void CDebuggerRender::renderDebugInfo(sf::RenderTarget& target, sf::RenderStates
 	#ifdef __LP64__
 	snprintf(aBuff, sizeof(aBuff), "Entities: %lu", Client()->Controller()->Context()->getEntities().size());
 	#else
-	snprintf(aBuff, sizeof(aBuff), "Entities: %u", Client()->Controller()->Context()->getEntities().size());
+	snprintf(aBuff, sizeof(aBuff), "Entities: %zu", Client()->Controller()->Context()->getEntities().size());
 	#endif
 	sfStr.setString(aBuff);
 	sfStr.setPosition(rectArea.width-sfStr.getLocalBounds().width-10.0f, 30.0f);

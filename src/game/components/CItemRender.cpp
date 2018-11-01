@@ -66,9 +66,9 @@ void CItemRender::renderProjectile(sf::RenderTarget& target, sf::RenderStates st
 		Shape.setTexture(Client()->Assets().getTexture(CAssetManager::TEXTURE_GRENADE));
 
 	if (pProj->getDir().x < 0.0f)
-		Shape.setTextureRect(sf::IntRect(0, Shape.getTexture()->getSize().y, Shape.getTexture()->getSize().x, -Shape.getTexture()->getSize().y));
+		Shape.setTextureRect(sf::IntRect(0, Shape.getTexture()->getSize().y, Shape.getTexture()->getSize().x, -static_cast<int>(Shape.getTexture()->getSize().y)));
 	if (pProj->getDir().y < 0.0f)
-			Shape.setTextureRect(sf::IntRect(Shape.getTexture()->getSize().x, 0, -Shape.getTexture()->getSize().x, Shape.getTexture()->getSize().y));
+			Shape.setTextureRect(sf::IntRect(Shape.getTexture()->getSize().x, 0, -static_cast<int>(Shape.getTexture()->getSize().x), Shape.getTexture()->getSize().y));
 
 	target.draw(Shape, states);
 }
