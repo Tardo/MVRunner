@@ -101,15 +101,15 @@ endif()
 # CONFIGURE FLAGS
 if (TARGET_COMPILER STREQUAL "gcc" OR
     TARGET_COMPILER STREQUAL "clang")
-    set(cxx_flags "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-parameter")
+    set(cxx_flags "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -Wextra -Wno-unused-parameter")
     set(c_flags "${CMAKE_C_FLAGS} -Wall -Wextra -Wno-unused-parameter")
 elseif (TARGET_COMPILER STREQUAL "cl")
-    set(cxx_flags "${CMAKE_CXX_FLAGS} /W3 /EHsc /MP /GS")
-    set(c_flags "${CMAKE_C_FLAGS} /W3 /MP /GS")
+    set(cxx_flags "${CMAKE_CXX_FLAGS} /W3 /EHsc /MP /GS /wd4267 /wd4244")
+    set(c_flags "${CMAKE_C_FLAGS} /W3 /MP /GS /wd4267 /wd4244")
     add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
 endif()
 
-set(CMAKE_CXX_FLAGS "${cxx_flags} -std=c++0x"
+set(CMAKE_CXX_FLAGS "${cxx_flags}"
     CACHE STRING "Flags used by the compiler during all build types." FORCE)
 set(CMAKE_C_FLAGS   "${c_flags}"
     CACHE STRING "Flags used by the compiler during all build types." FORCE)
